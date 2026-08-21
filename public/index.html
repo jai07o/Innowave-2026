@@ -1,0 +1,1858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INNOWAVE-2026 · Engineer's Day Celebration · PSCMR CET</title>
+<meta name="description" content="INNOWAVE-2026 National-Level Engineer's Day Celebration. Register for technical events across engineering domains.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Arvo:wght@700&family=Fredoka:wght@700&family=Montserrat:wght@700;800;900&family=Bebas+Neue&family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Three.js for 3D Background Scene -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<style>
+:root {
+  --bg-primary:   #040406;
+  --bg-panel:     #0b0c10;
+  --border:       #1f242d;
+  --accent:       #ffffff;
+  --accent-dim:   rgba(255, 255, 255, 0.15);
+  --warn:         #e0e0e0;
+  --text-primary: #ffffff;
+  --text-muted:   #9fa9b8;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+#webgl-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.font-space { font-family: 'Space Grotesk', sans-serif; }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 4vw; }
+/* Top Accreditation Header - Official Banner Image (HD Crisp Render) */
+.accreditation-wrapper {
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  margin: 0;
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+  overflow: hidden;
+}
+.official-header-img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  object-fit: fill;
+}
+
+/* Sticky Navbar - Medium/Small Normal Height */
+nav.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(4, 4, 6, 0.94);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+nav .nav-in {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 50px;
+}
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+.brand-logo .accent-text { color: var(--accent); }
+.brand-logo .dot {
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--accent);
+}
+.nav-links { display: flex; gap: 20px; align-items: center; }
+.nav-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 13.5px;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--text-primary); }
+.nav-cta {
+  background: #ffffff;
+  color: #000000;
+  font-weight: 700;
+  padding: 7px 16px;
+  border-radius: 4px;
+  font-family: 'Space Grotesk', sans-serif;
+  text-decoration: none;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.nav-cta:hover { transform: translateY(-1px); background: #e0e0e0; }
+header.hero {
+  padding: 55px 0 35px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent-dim);
+  border: 1px solid var(--border);
+  padding: 6px 18px;
+  border-radius: 4px;
+  color: var(--accent);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.35em;
+  margin: 0 auto 18px;
+}
+.hero-title {
+  font-family: 'Arvo', 'Fredoka', 'Montserrat', serif;
+  font-weight: 700;
+  font-size: clamp(2.2rem, 5.2vw, 3.8rem);
+  line-height: 1.15;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #ffffff 20%, #e0f7fa 70%, #b2ebf2 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 6px 18px rgba(0, 212, 255, 0.45)) drop-shadow(0 2px 0px rgba(0, 0, 0, 0.9));
+  max-width: 860px;
+  margin: 0 auto 10px;
+  text-align: center;
+}
+.hero-title .accent { color: var(--accent); }
+.hero-subtitle {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(0.85rem, 1.8vw, 1.1rem);
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0 auto 20px;
+  text-align: center;
+}
+
+/* Compact Live Countdown Timer */
+.countdown-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin: 16px auto 22px;
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+.timer-segment {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 14px;
+  min-width: 68px;
+  text-align: center;
+}
+.timer-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+}
+.timer-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-top: 3px;
+  letter-spacing: 0.08em;
+}
+
+/* Date & Deadline Banner */
+.hero-date-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 167, 38, 0.08);
+  border: 1px solid var(--warn);
+  padding: 8px 20px;
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 13.5px;
+  margin: 0 auto 24px;
+  text-align: center;
+}
+.hero-date-banner span { color: var(--warn); font-weight: 700; }
+
+.hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin: 0 auto 24px; text-align: center; }
+
+.btn-primary-lg {
+  background: var(--accent);
+  color: #041220;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 15px 36px;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+.btn-primary-lg:hover { transform: translateY(-2px); box-shadow: 0 10px 30px var(--accent-dim); }
+
+.btn-secondary-lg {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 15px 32px;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.btn-secondary-lg:hover { border-color: var(--accent); color: var(--accent); }
+
+section { padding: 36px 0 20px; }
+.sec-title-wrap { text-align: center; margin-bottom: 22px; }
+.sec-tag { color: var(--accent); font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.35em; }
+.sec-title { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(1.8rem, 3.5vw, 2.6rem); letter-spacing: -0.02em; color: var(--text-primary); margin-top: 6px; }
+
+/* Floating Cyber Pod Medallions (Centered Flexbox Grid) */
+.events-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 28px;
+}
+.event-pod {
+  position: relative;
+  flex: 0 1 calc(33.333% - 28px);
+  min-width: 280px;
+  max-width: 350px;
+  background: radial-gradient(circle at 50% 30%, rgba(20, 24, 36, 0.9), rgba(4, 4, 6, 0.96));
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 40px;
+  padding: 34px 26px 26px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: space-between;
+  overflow: hidden;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
+  min-height: 290px;
+}
+.event-pod:hover {
+  transform: translateY(-8px) scale(1.03);
+  border-color: var(--pod-accent, #ffffff);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.95), 0 0 30px rgba(255, 255, 255, 0.25);
+}
+
+/* Background Watermark Imprint Graphic (Strictly Inside Each Pod) */
+.card-imprint {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  width: 110%;
+  height: 110%;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.12;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.event-pod:hover .card-imprint {
+  opacity: 0.25;
+  transform: translate(-50%, -50%) scale(1.15) rotate(4deg);
+}
+
+/* Floating Center Icon Medallion with Orbital Ring */
+.pod-icon-wrapper {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+.pod-orbital-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1.5px dashed var(--pod-accent, #ffffff);
+  opacity: 0.4;
+  animation: spinOrbital 14s linear infinite;
+}
+@keyframes spinOrbital {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.pod-icon-circle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+}
+
+.pod-number-pill {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 20px;
+  color: #ffffff;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  z-index: 3;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.event-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 3;
+}
+.event-desc {
+  color: var(--text-muted);
+  font-size: 13.5px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+  position: relative;
+  z-index: 3;
+}
+.btn-view-details {
+  position: relative;
+  z-index: 3;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: var(--text-primary);
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  padding: 10px 24px;
+  border-radius: 30px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 220px;
+  margin: 0 auto;
+  transition: 0.25s ease;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 11.5px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+.btn-view-details:hover {
+  background: var(--pod-accent, #ffffff);
+  color: #041220;
+  border-color: var(--pod-accent, #ffffff);
+  box-shadow: 0 6px 20px rgba(255,255,255,0.3);
+}
+
+/* Subdued & Compact Animated Frame for Sir M. Visvesvaraya Portrait */
+.portrait-frame-wrapper {
+  position: relative;
+  display: inline-block;
+  padding: 14px;
+  perspective: 1000px;
+}
+
+/* Layer 1: Rotating Hexagon Background Halo */
+.portrait-frame-ring {
+  position: absolute;
+  top: -18px; left: -18px; right: -18px; bottom: -18px;
+  background: conic-gradient(from 0deg, #ffffff, rgba(0, 212, 255, 0.85), transparent 30%, #ffffff, rgba(0, 230, 118, 0.85), transparent 80%);
+  animation: spinBorderRing 8s linear infinite;
+  z-index: 1;
+  opacity: 0.85;
+  filter: blur(2px);
+  clip-path: polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%);
+  will-change: transform;
+}
+@keyframes spinBorderRing {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Layer 2: Cyber Hexagonal Inner Container */
+.portrait-frame-container {
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(145deg, rgba(12, 16, 26, 0.96) 0%, rgba(4, 6, 12, 0.98) 100%);
+  clip-path: polygon(12% 0%, 88% 0%, 100% 12%, 100% 88%, 88% 100%, 12% 100%, 0% 88%, 0% 12%);
+  padding: 8px;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85), 0 0 20px rgba(0, 212, 255, 0.15);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.3s ease;
+  overflow: hidden;
+}
+.portrait-frame-wrapper:hover .portrait-frame-container {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.95), 0 0 25px rgba(0, 212, 255, 0.35);
+  border-color: rgba(255, 255, 255, 0.75);
+}
+
+/* Layer 3: Silver Tech Corner Brackets on All 4 Corners */
+.tech-corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: #ffffff;
+  border-style: solid;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0.85;
+}
+.tech-corner.top-left { top: 4px; left: 4px; border-width: 2px 0 0 2px; border-top-left-radius: 3px; }
+.tech-corner.top-right { top: 4px; right: 4px; border-width: 2px 2px 0 0; border-top-right-radius: 3px; }
+.tech-corner.bottom-left { bottom: 4px; left: 4px; border-width: 0 0 2px 2px; border-bottom-left-radius: 3px; }
+.tech-corner.bottom-right { bottom: 4px; right: 4px; border-width: 0 2px 2px 0; border-bottom-right-radius: 3px; }
+
+/* Layer 4: Soft Vertical Laser Beam Scanning Line Overlay */
+.laser-scan-line {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  box-shadow: 0 0 6px #ffffff;
+  z-index: 5;
+  pointer-events: none;
+  animation: laserScanLine 5.5s ease-in-out infinite;
+}
+@keyframes laserScanLine {
+  0% { top: -5%; opacity: 0; }
+  20% { opacity: 0.6; }
+  80% { opacity: 0.6; }
+  100% { top: 102%; opacity: 0; }
+}
+
+.portrait-img-box {
+  background: #ffffff;
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 5px;
+  display: block;
+  position: relative;
+}
+.portrait-img-box img {
+  width: 100%;
+  max-width: 148px;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+  object-fit: contain;
+  transition: transform 0.4s ease;
+}
+.portrait-frame-wrapper:hover .portrait-img-box img {
+  transform: scale(1.03);
+}
+
+/* Unified Fee Slot & Registration Panel */
+.registration-panel { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 12px; padding: 36px; }
+
+.fee-slot-card {
+  background: rgba(5, 9, 20, 0.8);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 28px;
+  text-align: center;
+}
+.fee-slot-title { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: var(--accent); margin-bottom: 14px; letter-spacing: 0.05em; text-transform: uppercase; }
+.fee-slot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 650px; margin: 0 auto 14px; }
+.fee-option-box {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.fee-option-box:hover, .fee-option-box.active {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+.fee-option-box h4 { font-family: 'Space Grotesk', sans-serif; color: var(--text-primary); font-size: 15px; font-weight: 700; }
+.fee-option-box .amount { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; color: var(--accent); margin-top: 4px; }
+.fee-note { color: var(--text-muted); font-size: 12.5px; font-weight: 600; }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { margin-bottom: 16px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group label { display: block; font-weight: 600; font-size: 13.5px; margin-bottom: 6px; color: var(--text-primary); }
+.form-group input, .form-group select { width: 100%; background: var(--bg-primary); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; color: var(--text-primary); font-family: inherit; font-size: 14.5px; outline: none; transition: border-color 0.2s; }
+.form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+
+/* Chief Patrons Section (Centered Flexbox Grid) */
+.patrons-card-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 22px;
+}
+.patron-card {
+  flex: 0 1 calc(33.333% - 22px);
+  min-width: 260px;
+  max-width: 360px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.patron-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 15px rgba(255,255,255,0.15);
+}
+.patron-name { font-family: 'Space Grotesk', sans-serif; font-size: 16.5px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+.patron-role { color: var(--accent); font-size: 13px; font-weight: 600; }
+
+/* Contacts Grid */
+.contacts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
+.contact-card { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: left; }
+.contact-role { color: var(--accent); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.contact-name { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; margin: 4px 0 6px; color: var(--text-primary); }
+
+/* Holographic Blueprint Event Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(4, 4, 6, 0.92);
+  backdrop-filter: blur(16px);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-content {
+  position: relative;
+  background: radial-gradient(circle at top left, rgba(20, 24, 36, 0.96), rgba(4, 4, 6, 0.98));
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  border-radius: 24px;
+  max-width: 650px;
+  width: 100%;
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 34px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), 0 0 35px rgba(255, 255, 255, 0.12);
+}
+.modal-close {
+  position: absolute;
+  top: 20px;
+  right: 22px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: var(--text-primary);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.2s ease;
+  z-index: 10;
+}
+.modal-close:hover {
+  background: var(--accent);
+  color: #041220;
+}
+
+footer { border-top: 1px solid var(--border); padding: 36px 0; text-align: center; color: var(--text-muted); font-size: 14px; background: var(--bg-primary); }
+
+/* Explicit Laptop & PC Desktop Layout Optimization */
+@media (min-width: 992px) {
+  .wrap { max-width: 1200px !important; margin: 0 auto !important; width: 92% !important; }
+  .hero { text-align: center !important; padding: 50px 0 40px !important; }
+  .hero-title { font-size: clamp(2.8rem, 4.8vw, 3.8rem) !important; text-align: center !important; }
+  .hero-subtitle { text-align: center !important; }
+  
+  #about .sec-title-wrap {
+    text-align: center !important;
+    margin-bottom: 22px !important;
+    display: block !important;
+    width: 100% !important;
+  }
+  #about .sec-tag {
+    display: inline-block !important;
+    margin-bottom: 8px !important;
+  }
+  #about .sec-title {
+    display: block !important;
+    margin-top: 2px !important;
+  }
+
+  #about .wrap > div {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 44px !important;
+    padding: 32px 40px !important;
+    border-radius: 20px !important;
+  }
+  .portrait-img-box img { max-width: 140px !important; }
+  .portrait-frame-wrapper { transform: scale(1) !important; }
+
+  .events-grid {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 28px !important;
+  }
+  .event-pod {
+    flex: 0 1 calc(33.333% - 28px) !important;
+    max-width: 350px !important;
+    min-width: 290px !important;
+  }
+
+  #ieee-leaders .events-grid {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 32px !important;
+    max-width: 860px !important;
+    margin: 0 auto !important;
+  }
+  #ieee-leaders .event-pod {
+    flex: 0 1 360px !important;
+    max-width: 360px !important;
+    width: 360px !important;
+  }
+
+  .contacts-grid {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 20px !important;
+  }
+  .contact-card {
+    flex: 0 1 240px !important;
+    width: 240px !important;
+  }
+
+  .patrons-card-grid {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 24px !important;
+  }
+  .patron-card {
+    flex: 0 1 320px !important;
+    width: 320px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  html, body { overflow-x: hidden !important; width: 100% !important; }
+  .accreditation-wrapper {
+    padding: 0 !important;
+    background: #ffffff !important;
+    width: 100% !important;
+    border-bottom: 1px solid var(--border) !important;
+  }
+  .official-header-img {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 52px !important;
+    height: auto !important;
+    object-fit: fill !important;
+    display: block !important;
+  }
+
+  nav .nav-in { padding: 0 12px !important; height: 48px !important; flex-wrap: nowrap !important; gap: 10px !important; justify-content: space-between !important; }
+  .brand-logo { font-size: 15px !important; gap: 6px !important; }
+  .brand-logo img { height: 28px !important; }
+  .nav-links { display: none !important; }
+  .nav-cta { padding: 6px 14px !important; font-size: 11.5px !important; white-space: nowrap !important; }
+
+  .hero { padding: 30px 4vw 40px !important; text-align: left; }
+  .hero-title { font-size: clamp(2.0rem, 7.5vw, 3.0rem); }
+  
+  /* Mobile Reduced Tribute Section & Portrait Size */
+  #about { padding: 24px 0 !important; }
+  #about .sec-title-wrap { margin-bottom: 16px !important; }
+  #about .wrap > div { padding: 20px 14px !important; gap: 16px !important; }
+  .portrait-img-box img { max-width: 90px !important; }
+  .portrait-frame-wrapper { padding: 4px !important; transform: scale(0.9); }
+  #about p { font-size: 13px !important; line-height: 1.5 !important; margin-bottom: 10px !important; }
+
+  .form-grid { grid-template-columns: 1fr; }
+  .fee-slot-grid { grid-template-columns: 1fr; }
+
+  /* Mobile 6 Events Compact 2-Column Grid */
+  .events-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+  .event-pod {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding: 18px 10px 14px !important;
+    border-radius: 24px !important;
+    min-height: 230px !important;
+  }
+
+  /* Mobile IEEE Leaders Side-by-Side 2-Column Grid */
+  #ieee-leaders .events-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  #ieee-leaders .event-pod {
+    padding: 16px 8px 14px !important;
+    min-height: auto !important;
+    border-radius: 20px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+  #ieee-leaders .pod-number-pill {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    margin: 0 auto 6px !important;
+    font-size: 9px !important;
+    padding: 3px 8px !important;
+    border-radius: 12px !important;
+    display: inline-block !important;
+  }
+  #ieee-leaders .leader-img-box {
+    width: 100px !important;
+    height: 130px !important;
+    margin: 4px auto 8px !important;
+    border-radius: 14px !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+  }
+  #ieee-leaders .event-name {
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    line-height: 1.25 !important;
+    margin-bottom: 2px !important;
+  }
+  #ieee-leaders .event-desc {
+    font-size: 8.5px !important;
+    font-weight: 700 !important;
+    margin-bottom: 8px !important;
+    display: block !important;
+    -webkit-line-clamp: initial !important;
+    line-height: 1.2 !important;
+  }
+  #ieee-leaders .phone-pill {
+    padding: 5px 8px !important;
+    font-size: 10.5px !important;
+    white-space: nowrap !important;
+    width: 100% !important;
+    justify-content: center !important;
+    border-radius: 16px !important;
+  }
+  .pod-number-pill {
+    top: 10px !important;
+    left: 10px !important;
+    font-size: 9px !important;
+    padding: 2px 6px !important;
+  }
+  .pod-icon-wrapper {
+    width: 52px !important;
+    height: 52px !important;
+    margin: 6px auto 10px !important;
+  }
+  .pod-icon-circle {
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 20px !important;
+  }
+  .event-name {
+    font-size: 13px !important;
+    letter-spacing: 0 !important;
+    margin-bottom: 4px !important;
+  }
+  .event-desc {
+    font-size: 11px !important;
+    margin-bottom: 12px !important;
+    line-height: 1.3 !important;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .btn-view-details {
+    padding: 8px 10px !important;
+    font-size: 9.5px !important;
+    border-radius: 20px !important;
+  }
+
+  /* Mobile Chief Patrons & Co-ordinators Compact 2-Column Grid */
+  .patrons-card-grid, .contacts-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  .patron-card, .contact-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding: 12px 8px !important;
+    text-align: center !important;
+    border-radius: 12px !important;
+  }
+  /* Mobile Global High Vertical Gap Reduction */
+  section {
+    padding: 16px 0 !important;
+  }
+  .sec-title-wrap {
+    margin-bottom: 12px !important;
+  }
+  .sec-title {
+    font-size: clamp(1.5rem, 6.5vw, 2.2rem) !important;
+    margin-top: 4px !important;
+  }
+  .hero-date-banner {
+    margin-top: 12px !important;
+    margin-bottom: 14px !important;
+    padding: 8px 10px !important;
+    font-size: 11px !important;
+  }
+  .hero-actions {
+    gap: 10px !important;
+    margin-top: 14px !important;
+  }
+  .countdown-box {
+    gap: 8px !important;
+    margin-bottom: 14px !important;
+  }
+  .countdown-box .timer-segment {
+    min-width: 54px !important;
+    padding: 6px 4px !important;
+  }
+  .registration-panel {
+    padding: 18px 12px !important;
+    border-radius: 14px !important;
+  }
+  .fee-slot-card {
+    padding: 14px 10px !important;
+    margin-bottom: 16px !important;
+  }
+  .contacts-grid {
+    gap: 12px !important;
+  }
+  .contact-card {
+    padding: 14px 12px !important;
+  }
+}
+
+@media print {
+  @page { size: auto; margin: 15mm; }
+  html, body { background: #ffffff !important; color: #000000 !important; }
+  #webgl-canvas, .accreditation-wrapper, nav, header, #about, #events, #patrons, #contacts, footer, .modal-overlay, .sec-title-wrap, .fee-slot-card, #mainRegForm, #paymentModal { display: none !important; }
+  section#register { padding: 0 !important; margin: 0 !important; }
+  .registration-panel { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
+  #successSlip { display: block !important; position: relative !important; width: 100% !important; border: 2px solid #000000 !important; border-radius: 8px !important; padding: 28px !important; margin: 0 auto !important; background: #ffffff !important; color: #000000 !important; }
+  #successSlip * { color: #000000 !important; }
+  #successSlip #slipTeamId { color: #00796b !important; }
+  .no-print { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="webgl-canvas"></canvas>
+
+<!-- Top Accreditation Header Banner Image -->
+<div class="accreditation-wrapper">
+  <img src="assets/official_header_banner.png" alt="Official Accreditation Header Banner" class="official-header-img">
+</div>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="wrap nav-in">
+    <a href="#top" class="brand-logo">
+      <img src="assets/logo_college.png" alt="PSCMRCET Logo" style="height:36px; width:auto; object-fit:contain; filter:drop-shadow(0 0 6px rgba(0,212,255,0.3));">
+      <span class="dot"></span>INNOWAVE<span class="accent-text">2026</span>
+    </a>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#events">Events</a>
+      <a href="#contacts">Co-ordinators</a>
+      <a href="register.html">Register</a>
+    </div>
+    <a href="register.html" class="nav-cta">REGISTER NOW</a>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<a id="top"></a>
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-badge">IEEE Student Branch · National Level Fest</div>
+    <h1 class="hero-title">INNOWAVE-2026</h1>
+    <div class="hero-subtitle">ENGINEER'S DAY CELEBRATION</div>
+
+    <!-- Live Countdown Timer -->
+    <div class="countdown-box">
+      <div class="timer-segment">
+        <div class="timer-num" id="cdDays">00</div>
+        <div class="timer-label">Days</div>
+      </div>
+      <div class="timer-segment">
+        <div class="timer-num" id="cdHours">00</div>
+        <div class="timer-label">Hours</div>
+      </div>
+      <div class="timer-segment">
+        <div class="timer-num" id="cdMins">00</div>
+        <div class="timer-label">Minutes</div>
+      </div>
+      <div class="timer-segment">
+        <div class="timer-num" id="cdSecs">00</div>
+        <div class="timer-label">Seconds</div>
+      </div>
+    </div>
+    
+    <div class="hero-date-banner">
+      📅 Event Date: <span>SEPTEMBER 15, 2026</span> | Reg Deadline: <span>10 September 2026</span>
+    </div>
+
+    <div class="hero-actions">
+      <a href="register.html" class="btn-primary-lg">REGISTER NOW</a>
+      <a href="#events" class="btn-secondary-lg">EXPLORE EVENTS</a>
+    </div>
+  </div>
+</header>
+
+<!-- Engineers' Day Tribute Section -->
+<section id="about" style="padding:36px 0;">
+  <div class="wrap">
+    <div class="sec-title-wrap" style="margin-bottom:22px; text-align:center;">
+      <div class="sec-tag" style="display:inline-block; background:rgba(0, 212, 255, 0.12); border:1px solid var(--accent); padding:4px 16px; border-radius:20px; font-size:11px; letter-spacing:0.25em; font-weight:700; color:var(--accent); margin-bottom:8px;">ENGINEERS' DAY TRIBUTE</div>
+      <h2 class="sec-title" style="margin-top:2px;">Saluting Bharat Ratna Sir M. Visvesvaraya</h2>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:28px; flex-wrap:wrap; justify-content:center; max-width:840px; margin:0 auto; background:var(--bg-panel); border:1px solid var(--border); border-radius:16px; padding:24px 28px;">
+      
+      <!-- Futuristic Multi-Layer Animated Portrait Frame -->
+      <div style="flex:0 0 auto; text-align:center;">
+        <div class="portrait-frame-wrapper">
+          <div class="portrait-frame-ring"></div>
+          <div class="portrait-frame-container">
+            <div class="tech-corner top-left"></div>
+            <div class="tech-corner top-right"></div>
+            <div class="tech-corner bottom-left"></div>
+            <div class="tech-corner bottom-right"></div>
+            <div class="laser-scan-line"></div>
+            <div class="portrait-img-box">
+              <img src="assets/visvesvaraya.png" alt="Bharat Ratna Sir M. Visvesvaraya Sketch Portrait">
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:6px; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:13px; color:var(--text-primary); letter-spacing:0.05em; text-transform:uppercase;">
+          Sir M. Visvesvaraya
+        </div>
+        <div style="font-size:11px; color:var(--text-muted); font-weight:600;">(1861 – 1962) · Bharat Ratna</div>
+      </div>
+
+      <!-- Biography & Formula Details -->
+      <div style="flex:1; min-width:260px; font-size:13.5px; color:var(--text-primary); line-height:1.55;">
+        <p style="margin-bottom:12px; color:var(--text-primary);">
+          Engineers’ Day is celebrated in India on <strong>September 15</strong> to honor engineers and their contributions to the nation. The day marks the birth anniversary of <strong>Sir M. Visvesvaraya</strong>, born in 1861 in Karnataka. A renowned civil engineer and statesman, he contributed to water management, dams, irrigation and flood control, including the KRS Dam and automatic water-control gates. He served as the Dewan of Mysore from 1912–1918 and received the Bharat Ratna in 1955.
+        </p>
+
+        <!-- Legacy Formula Box -->
+        <div style="background:rgba(255,255,255,0.05); border:1px solid var(--border); border-left:3px solid #ffffff; border-radius:8px; padding:12px 16px; margin:14px 0;">
+          <div style="font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:700; color:var(--text-primary); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">
+            Sir M. Visvesvaraya's Life Represents:
+          </div>
+          <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:13px; color:#ffffff; line-height:1.4;">
+            Knowledge + Discipline + Innovation + Problem-Solving + Service = Nation Building
+          </div>
+        </div>
+
+        <p style="color:var(--text-muted); font-size:13px; margin-top:10px;">
+          Engineers’ Day celebrates his legacy and inspires young engineers to innovate and serve society.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Official Brochure Events Section -->
+<section id="events">
+  <div class="wrap">
+    <div class="sec-title-wrap">
+      <div class="sec-tag">CHOOSE YOUR CHALLENGE</div>
+      <h2 class="sec-title">The 6 Official Events</h2>
+    </div>
+
+    <div class="events-grid">
+      <!-- 01: Technical Quiz -->
+      <div class="event-pod" style="--pod-accent:#e53935;">
+        <div class="card-imprint">
+          <svg viewBox="0 0 200 200" fill="none" stroke="#e53935" stroke-width="1.2">
+            <circle cx="100" cy="100" r="85" stroke-dasharray="4 4" />
+            <path d="M30 100 h140 M100 30 v140 M50 50 l100 100 M150 50 l-100 100" />
+            <circle cx="100" cy="100" r="45" />
+          </svg>
+        </div>
+        <span class="pod-number-pill" style="background:#e53935;">01 · QUIZ</span>
+        <div class="pod-icon-wrapper">
+          <div class="pod-orbital-ring"></div>
+          <div class="pod-icon-circle">🧠</div>
+        </div>
+        <div>
+          <div class="event-name">TECHNICAL QUIZ</div>
+          <p class="event-desc">Test your technical knowledge, logical thinking, engineering awareness, and rapid response ability.</p>
+        </div>
+        <button class="btn-view-details" onclick="openModal('Technical Quiz', 'Test your core engineering concepts, technical facts, logical reasoning, and rapid response skills.')">View Details</button>
+      </div>
+
+      <!-- 02: Coding -->
+      <div class="event-pod" style="--pod-accent:#8e24aa;">
+        <div class="card-imprint">
+          <svg viewBox="0 0 200 200" fill="none" stroke="#8e24aa" stroke-width="1.2">
+            <circle cx="100" cy="100" r="80" />
+            <rect x="30" y="40" width="140" height="120" rx="10" stroke-dasharray="6 3"/>
+            <path d="M60 85 l25 15 l-25 15 M110 115 h30" />
+          </svg>
+        </div>
+        <span class="pod-number-pill" style="background:#8e24aa;">02 · CODE</span>
+        <div class="pod-icon-wrapper">
+          <div class="pod-orbital-ring"></div>
+          <div class="pod-icon-circle">💻</div>
+        </div>
+        <div>
+          <div class="event-name">CODING</div>
+          <p class="event-desc">Solve programming challenges and demonstrate your coding logic and algorithmic thinking skills.</p>
+        </div>
+        <button class="btn-view-details" onclick="openModal('Coding Challenge', 'Competitive algorithmic programming. Solve problem statements with optimal efficiency.')">View Details</button>
+      </div>
+
+      <!-- 03: Treasure Hunt -->
+      <div class="event-pod" style="--pod-accent:#1e88e5;">
+        <div class="card-imprint">
+          <svg viewBox="0 0 200 200" fill="none" stroke="#1e88e5" stroke-width="1.2">
+            <circle cx="100" cy="100" r="85" />
+            <polygon points="100,25 118,82 175,100 118,118 100,175 82,118 25,100 82,82" />
+          </svg>
+        </div>
+        <span class="pod-number-pill" style="background:#1e88e5;">03 · HUNT</span>
+        <div class="pod-icon-wrapper">
+          <div class="pod-orbital-ring"></div>
+          <div class="pod-icon-circle">🗺️</div>
+        </div>
+        <div>
+          <div class="event-name">TREASURE HUNT</div>
+          <p class="event-desc">Decode technical clues, solve puzzles, and navigate through an exciting tech-powered treasure hunt.</p>
+        </div>
+        <button class="btn-view-details" onclick="openModal('Treasure Hunt', 'Follow tech puzzles and campus clues to unearth the final engineering treasure.')">View Details</button>
+      </div>
+
+      <!-- 04: Project Expo -->
+      <div class="event-pod" style="--pod-accent:#ffffff;">
+        <div class="card-imprint">
+          <svg viewBox="0 0 200 200" fill="none" stroke="#ffffff" stroke-width="1.2">
+            <circle cx="100" cy="100" r="80" />
+            <polygon points="100,20 175,60 175,140 100,180 25,140 25,60" />
+            <path d="M100 20 v160 M25 60 l150 80 M175 60 l-150 80" />
+          </svg>
+        </div>
+        <span class="pod-number-pill" style="background:#ffffff; color:#040406;">04 · EXPO</span>
+        <div class="pod-icon-wrapper">
+          <div class="pod-orbital-ring"></div>
+          <div class="pod-icon-circle">🚀</div>
+        </div>
+        <div>
+          <div class="event-name">PROJECT EXPO</div>
+          <p class="event-desc">Showcase your innovative working project, hardware/software prototype, or engineering solution.</p>
+        </div>
+        <button class="btn-view-details" onclick="openModal('Project Expo', 'Display your working prototype before expert judges. Evaluated on innovation and execution.')">View Details</button>
+      </div>
+
+      <!-- 05: Prompt Engineering -->
+      <div class="event-pod" style="--pod-accent:#f57c00;">
+        <div class="card-imprint">
+          <svg viewBox="0 0 200 200" fill="none" stroke="#f57c00" stroke-width="1.2">
+            <circle cx="100" cy="100" r="85" />
+            <rect x="55" y="55" width="90" height="90" rx="14" />
+            <path d="M25 75 h30 M25 100 h30 M25 125 h30 M145 75 h30 M145 100 h30 M145 125 h30 M75 25 v30 M100 25 v30 M125 25 v30 M75 145 v30 M100 145 v30 M125 145 v30" />
+          </svg>
+        </div>
+        <span class="pod-number-pill" style="background:#f57c00;">05 · AI</span>
+        <div class="pod-icon-wrapper">
+          <div class="pod-orbital-ring"></div>
+          <div class="pod-icon-circle">🤖</div>
+        </div>
+        <div>
+          <div class="event-name">PROMPT ENGINEERING</div>
+          <p class="event-desc">Demonstrate your ability to design effective prompts and leverage Generative AI tools strategically.</p>
+        </div>
+        <button class="btn-view-details" onclick="openModal('Prompt Engineering', 'Craft precise AI prompts to generate optimal solutions and code using state-of-the-art LLMs.')">View Details</button>
+      </div>
+
+      <!-- 06: Reels (1 Min) -->
+      <div class="event-pod" style="--pod-accent:#43a047;">
+        <div class="card-imprint">
+          <svg viewBox="0 0 200 200" fill="none" stroke="#43a047" stroke-width="1.2">
+            <circle cx="100" cy="100" r="85" stroke-dasharray="6 3" />
+            <circle cx="100" cy="100" r="50" />
+            <circle cx="100" cy="100" r="22" />
+            <path d="M100 15 v35 M100 150 v35 M15 100 h35 M150 100 h35" />
+          </svg>
+        </div>
+        <span class="pod-number-pill" style="background:#43a047;">06 · REELS</span>
+        <div class="pod-icon-wrapper">
+          <div class="pod-orbital-ring"></div>
+          <div class="pod-icon-circle">🎬</div>
+        </div>
+        <div>
+          <div class="event-name">REELS (1 MIN)</div>
+          <p class="event-desc">Create an engaging 1-minute video reel centered on the Engineering Day theme and innovation.</p>
+        </div>
+        <button class="btn-view-details" onclick="openModal('Reels (1 Min)', 'Record and edit a high-impact 60-second video reflecting the spirit of Engineer\'s Day.')">View Details</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PSCMRCET IEEE STUDENT BRANCH LEADERS SECTION -->
+<section id="ieee-leaders">
+  <div class="wrap">
+    <div class="sec-title-wrap">
+      <div class="sec-tag">PSCMRCET</div>
+      <h2 class="sec-title">IEEE STUDENT BRANCH</h2>
+    </div>
+
+    <div class="events-grid">
+      
+      <!-- Chairperson Card -->
+      <div class="event-pod" style="--pod-accent:rgba(255,255,255,0.4);">
+        <span class="pod-number-pill" style="background:rgba(255,255,255,0.15);">CHAIRPERSON</span>
+        <div class="leader-img-box" style="width: 140px; height: 175px; margin: 12px auto 14px; border-radius: 20px; overflow: hidden; border: 2px solid rgba(255, 255, 255, 0.25); box-shadow: 0 8px 25px rgba(0,0,0,0.6);">
+          <img src="assets/shaik_mahabub.jpg" alt="Mr. SHAIK MAHABUBSUBHANI" style="width: 100%; height: 100%; object-fit: cover; object-position: center top;">
+        </div>
+        <div>
+          <div class="event-name" style="font-size: 16px; margin-bottom: 4px;">Mr. SHAIK. MAHABUBSUBHANI.</div>
+          <p class="event-desc" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">PSCMR IEEE STUDENT BRANCH CHAIRPERSON</p>
+        </div>
+        <div class="phone-pill" style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); padding: 8px 20px; border-radius: 24px; font-size: 14px; font-weight: 700; color: var(--text-primary);">
+          📱 9177713984
+        </div>
+      </div>
+
+      <!-- Secretary Card -->
+      <div class="event-pod" style="--pod-accent:rgba(255,255,255,0.4);">
+        <span class="pod-number-pill" style="background:rgba(255,255,255,0.15);">SECRETARY</span>
+        <div class="leader-img-box" style="width: 140px; height: 175px; margin: 12px auto 14px; border-radius: 20px; overflow: hidden; border: 2px solid rgba(255, 255, 255, 0.25); box-shadow: 0 8px 25px rgba(0,0,0,0.6);">
+          <img src="assets/gurram_datta.png" alt="Gurram Datta Venkata Satya Sai" style="width: 100%; height: 100%; object-fit: cover; object-position: center top;">
+        </div>
+        <div>
+          <div class="event-name" style="font-size: 16px; margin-bottom: 4px;">Gurram Datta Venkata Satya Sai</div>
+          <p class="event-desc" style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">PSCMR IEEE STUDENT BRANCH SECRETARY</p>
+        </div>
+        <div class="phone-pill" style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); padding: 8px 20px; border-radius: 24px; font-size: 14px; font-weight: 700; color: var(--text-primary);">
+          📱 888635822
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<section id="contacts">
+  <div class="wrap">
+    <div class="sec-title-wrap">
+      <div class="sec-tag">ORGANIZING TEAM</div>
+      <h2 class="sec-title">Co-ordinators</h2>
+    </div>
+
+    <div class="contacts-grid">
+      <div class="contact-card">
+        <div class="contact-role">Co-ordinator</div>
+        <div class="contact-name">Mr. SK. SUBHANI</div>
+        <div style="color:var(--text-primary); font-weight:700;">📱 9177713984</div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-role">Co-ordinator</div>
+        <div class="contact-name">Mr. G SATYA SAI</div>
+        <div style="color:var(--text-primary); font-weight:700;">📱 8888635822</div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-role">Co-ordinator</div>
+        <div class="contact-name">Mr. G. AAKASH</div>
+        <div style="color:var(--text-primary); font-weight:700;">📱 8121296346</div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-role">Co-ordinator</div>
+        <div class="contact-name">Ms. MD. RAZIYA</div>
+        <div style="color:var(--text-primary); font-weight:700;">📱 9390946598</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Chief Patrons Section (AT THE LAST before Footer) -->
+<section id="patrons">
+  <div class="wrap">
+    <div class="sec-title-wrap">
+      <div class="sec-tag">LEADERSHIP & PATRONS</div>
+      <h2 class="sec-title">Chief Patrons</h2>
+    </div>
+
+    <div class="patrons-card-grid">
+      <div class="patron-card">
+        <div class="patron-name">Sri Chalavadi Mallikarjuna Rao</div>
+        <div class="patron-role">President</div>
+      </div>
+      <div class="patron-card">
+        <div class="patron-name">Sri Potti Surendra Kumar</div>
+        <div class="patron-role">Vice President</div>
+      </div>
+      <div class="patron-card">
+        <div class="patron-name">Dr. C.A. Chitta Amar Sudheer</div>
+        <div class="patron-role">Secretary and Correspondent</div>
+      </div>
+      <div class="patron-card">
+        <div class="patron-name">Sri Grandhi Pavan Kumar</div>
+        <div class="patron-role">Joint Secretary</div>
+      </div>
+      <div class="patron-card">
+        <div class="patron-name">Sri Khaza Raghavaiah</div>
+        <div class="patron-role">Treasurer</div>
+      </div>
+      <div class="patron-card">
+        <div class="patron-name">Dr. S. Sarsama Kumar</div>
+        <div class="patron-role">Principal</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Full-Screen Confetti Blast Canvas -->
+<canvas id="confettiCanvas" style="position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:1200; display:none;"></canvas>
+
+<!-- Congratulations Confetti Blast Popup Modal -->
+<div class="modal-overlay" id="congratulationsModal" style="display:none; align-items:center; justify-content:center; z-index:1100;">
+  <div class="modal-content" style="max-width:540px; text-align:center; background:linear-gradient(135deg, rgba(4, 16, 36, 0.98), rgba(3, 10, 20, 0.99)); border:2px solid var(--emerald); box-shadow: 0 0 50px rgba(0, 230, 118, 0.35), 0 10px 40px rgba(0,0,0,0.8); border-radius:24px; padding:32px; position:relative;">
+    <button class="modal-close" onclick="closeCongratulationsModal()" style="font-size:22px; color:var(--text-muted);">✕</button>
+
+    <div style="font-size:56px; line-height:1; margin-bottom:10px; animation: bounce 0.8s infinite alternate;">🎉 🏆 🎊</div>
+    <h2 class="font-orbitron" style="color:var(--emerald); font-size:26px; margin-bottom:6px; text-shadow:0 0 15px rgba(0,230,118,0.5);">CONGRATULATIONS!</h2>
+    <div style="font-size:15px; font-weight:800; color:var(--gold); margin-bottom:16px; letter-spacing:0.5px;">YOUR REGISTRATION HAS BEEN CONFIRMED!</div>
+
+    <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px; line-height:1.5;">
+      Welcome to <b>INNOWAVE-2026 Engineer's Day Celebration</b>! Your payment and registration details have been successfully verified and saved.
+    </p>
+
+    <!-- Registration Details Box -->
+    <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(0,230,118,0.25); border-radius:16px; padding:18px; margin-bottom:24px; text-align:left; font-size:14px; display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div>
+        <div style="color:var(--text-muted); font-size:12px;">Registration ID:</div>
+        <div id="popTeamId" style="color:var(--emerald); font-size:20px; font-weight:900;">IW26-XXXX</div>
+      </div>
+      <div>
+        <div style="color:var(--text-muted); font-size:12px;">Payment Status:</div>
+        <div id="popStatus" style="color:#2e7d32; font-weight:800; font-size:13.5px; background:#e8f5e9; padding:2px 8px; border-radius:6px; display:inline-block; margin-top:2px;">✓ PAID (Auto-Verified)</div>
+      </div>
+      <div>
+        <div style="color:var(--text-muted); font-size:12px;">Participant Name:</div>
+        <div id="popName" style="color:#fff; font-weight:700;"></div>
+      </div>
+      <div>
+        <div style="color:var(--text-muted); font-size:12px;">Amount Paid:</div>
+        <div id="popAmount" style="color:var(--gold); font-weight:800;"></div>
+      </div>
+      <div style="grid-column: span 2;">
+        <div style="color:var(--text-muted); font-size:12px;">UPI Reference (UTR):</div>
+        <div id="popRef" style="color:#fff; font-family:monospace; font-weight:700;"></div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <button onclick="viewAndPrintReceipt()" class="btn-primary-lg" style="border:none; cursor:pointer; width:100%; font-size:15px; background:linear-gradient(135deg, var(--emerald), #00b0ff); color:#030a14; font-weight:900;">🖨️ DOWNLOAD / PRINT OFFICIAL RECEIPT</button>
+      <button onclick="resetRegistrationForm()" class="btn-secondary-lg" style="border:1px solid var(--border-line); color:#fff; background:transparent; font-size:13.5px; cursor:pointer; padding:10px;">➕ REGISTER ANOTHER PARTICIPANT</button>
+    </div>
+  </div>
+</div>
+
+<!-- Holographic Event Blueprint Modal -->
+<div class="modal-overlay" id="eventModal" onclick="closeModal()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="mBadge" style="display:inline-block; font-family:'Space Grotesk',sans-serif; font-size:11px; font-weight:800; padding:4px 12px; border-radius:20px; color:#fff; background:var(--accent); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:12px;">01 · EVENT</div>
+    <h2 id="mTitle" style="font-family:'Space Grotesk',sans-serif; color:var(--text-primary); font-size:24px; font-weight:700; margin-bottom:12px; text-transform:uppercase;">TECHNICAL QUIZ</h2>
+    
+    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:16px; margin-bottom:18px; font-size:14px; color:var(--text-muted); line-height:1.6;" id="mDesc">
+      Description here
+    </div>
+
+    <!-- Event Blueprint Details Grid -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:22px; text-align:left;">
+      <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:14px;">
+        <div style="color:var(--accent); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px;">⏱️ Event Schedule</div>
+        <div id="mSchedule" style="color:var(--text-primary); font-weight:600; font-size:13px;">15th September 2026</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:14px;">
+        <div style="color:var(--accent); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px;">👥 Team Structure</div>
+        <div id="mTeam" style="color:var(--text-primary); font-weight:600; font-size:13px;">Individual / Team</div>
+      </div>
+      <div style="grid-column:1 / -1; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:14px;">
+        <div style="color:var(--accent); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">🏆 Event Rounds & Rules</div>
+        <ul id="mRounds" style="color:var(--text-muted); font-size:13px; line-height:1.6; margin:0; padding-left:18px;">
+        </ul>
+      </div>
+    </div>
+
+    <a href="#register" class="btn-view-details" style="display:block; text-align:center; text-decoration:none; background:var(--accent); color:#041220; border-color:var(--accent); font-size:13px; font-weight:800; padding:13px;" onclick="closeModal()">PROCEED TO EVENT REGISTRATION</a>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>© 2026 INNOWAVE-2026 · IEEE Student Branch (STB18301)</p>
+    <p style="font-size:12px; margin-top:4px; color:var(--gold);">POTTI SRIRAMULU CHALAVADI MALLIKARJUNA RAO COLLEGE OF ENGINEERING AND TECHNOLOGY</p>
+  </div>
+</footer>
+
+<script>
+// Professional 3D Engineering Background — Metallic Gears, Hexagonal Lattice & Single-Accent Lighting
+const canvas = document.getElementById('webgl-canvas');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: window.innerWidth > 768, alpha: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 768 ? 1.0 : 1.5));
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(3, 0, 17);
+
+scene.fog = new THREE.FogExp2(0x020204, 0.035);
+
+const accentWhite = new THREE.Color(0xffffff);
+const lineColor = new THREE.Color(0x555555);
+const lineColorDim = new THREE.Color(0x222222);
+
+// Precision gear geometry builder
+function buildGear(radius, teeth, depth, toothDepth) {
+  const shape = new THREE.Shape();
+  const inner = radius - toothDepth;
+  const steps = teeth * 2;
+  for (let i = 0; i <= steps; i++) {
+    const a = (i / steps) * Math.PI * 2;
+    const r = (i % 2 === 0) ? radius : inner;
+    const x = Math.cos(a) * r, y = Math.sin(a) * r;
+    if (i === 0) shape.moveTo(x, y); else shape.lineTo(x, y);
+  }
+  const holeR = radius * 0.3;
+  const hole = new THREE.Path();
+  hole.absarc(0, 0, holeR, 0, Math.PI * 2, true);
+  shape.holes.push(hole);
+  const geo = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.03, bevelSegments: 1, curveSegments: 3 });
+  return new THREE.EdgesGeometry(geo, 1);
+}
+
+// Composition rig anchored on right 2/3 so left 1/3 negative space stays clear
+const rig = new THREE.Group();
+rig.position.x = window.innerWidth < 768 ? 1.5 : 7.5;
+scene.add(rig);
+
+const gearDefs = [
+  { r: 4.2, t: 18, x: 0,    y: 0,    z: -4, speed: 0.02, color: accentWhite, opacity: 0.6 },
+  { r: 2.4, t: 12, x: -3.4, y: 2.6,  z: -2, speed: -0.04, color: lineColor,   opacity: 0.5 },
+  { r: 1.5, t: 9,  x: -3.0, y: -2.8, z: -1, speed: 0.05,  color: accentWhite, opacity: 0.4 },
+  { r: 5.6, t: 22, x: 2.2,  y: -1.2, z: -9, speed: -0.015,color: lineColorDim,opacity: 0.35 },
+  { r: 1.8, t: 10, x: 2.8,  y: 3.2,  z: -3, speed: 0.04,  color: accentWhite, opacity: 0.45 },
+];
+
+const gearMeshes = [];
+gearDefs.forEach(def => {
+  const edges = buildGear(def.r, def.t, 0.28, def.r * 0.13);
+  const mat = new THREE.LineBasicMaterial({ color: def.color, transparent: true, opacity: def.opacity });
+  const line = new THREE.LineSegments(edges, mat);
+  line.position.set(def.x, def.y, def.z);
+  line.userData.speed = def.speed;
+  rig.add(line);
+  gearMeshes.push(line);
+});
+
+// Hexagonal Circuit Lattice Geometry
+const hexNodes = [];
+const hexRings = [2.5, 4.8, 7.2];
+hexRings.forEach(ringR => {
+  for (let i = 0; i < 6; i++) {
+    const a = (i / 6) * Math.PI * 2;
+    hexNodes.push(new THREE.Vector3(
+      Math.cos(a) * ringR + (Math.random() - 0.5) * 0.4,
+      Math.sin(a) * ringR + (Math.random() - 0.5) * 0.4,
+      (Math.random() - 0.5) * 6 - 3
+    ));
+  }
+});
+
+const nodeGeo = new THREE.BufferGeometry().setFromPoints(hexNodes);
+const nodeMat = new THREE.PointsMaterial({ color: accentWhite, size: 0.06, transparent: true, opacity: 0.75 });
+const nodePoints = new THREE.Points(nodeGeo, nodeMat);
+rig.add(nodePoints);
+
+const tracePositions = [];
+for (let i = 0; i < hexNodes.length; i++) {
+  for (let j = i + 1; j < hexNodes.length; j++) {
+    if (hexNodes[i].distanceTo(hexNodes[j]) < 3.8) {
+      tracePositions.push(hexNodes[i].x, hexNodes[i].y, hexNodes[i].z);
+      tracePositions.push(hexNodes[j].x, hexNodes[j].y, hexNodes[j].z);
+    }
+  }
+}
+const traceGeo = new THREE.BufferGeometry();
+traceGeo.setAttribute('position', new THREE.Float32BufferAttribute(tracePositions, 3));
+const traceMat = new THREE.LineBasicMaterial({ color: lineColor, transparent: true, opacity: 0.35 });
+const traceLines = new THREE.LineSegments(traceGeo, traceMat);
+rig.add(traceLines);
+
+// Blueprint grid
+const grid = new THREE.GridHelper(70, 46, 0x333333, 0x111111);
+grid.position.y = -9;
+grid.material.transparent = true;
+grid.material.opacity = 0.2;
+scene.add(grid);
+
+// White rim light
+const pointLight = new THREE.PointLight(0xffffff, 1.2, 30);
+pointLight.position.set(9, 4, 4);
+scene.add(pointLight);
+scene.add(new THREE.AmbientLight(0x222222, 0.8));
+
+let mouseX = 0, mouseY = 0;
+window.addEventListener('mousemove', (e) => {
+  mouseX = (e.clientX / window.innerWidth - 0.5);
+  mouseY = (e.clientY / window.innerHeight - 0.5);
+});
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  rig.position.x = window.innerWidth < 768 ? 1.5 : 7.5;
+});
+
+// Single Orchestrated Motion (smooth gear rotation & gentle Y drift)
+const clock = new THREE.Clock();
+let lastFrameTime = 0;
+function animate(now) {
+  requestAnimationFrame(animate);
+  if (window.innerWidth < 768) {
+    if (now - lastFrameTime < 33) return; // 30 FPS cap on mobile to eliminate scrolling lag/stutter
+    lastFrameTime = now;
+  }
+  const t = clock.getElapsedTime();
+
+  gearMeshes.forEach(g => { g.rotation.z += g.userData.speed * 0.008; });
+  rig.rotation.y = Math.sin(t * 0.04) * 0.05;
+
+  camera.position.x += (3 + mouseX * 1.0 - camera.position.x) * 0.02;
+  camera.position.y += (-mouseY * 0.6 - camera.position.y) * 0.02;
+  camera.lookAt(2, 0, -2);
+
+  renderer.render(scene, camera);
+}
+animate(0);
+
+// Live Countdown Timer JS
+const targetDate = new Date('2026-09-15T09:00:00+05:30').getTime();
+function updateCountdown() {
+  const now = new Date().getTime();
+  const diff = Math.max(0, targetDate - now);
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const secs = Math.floor((diff % (1000 * 60)) / 1000);
+  
+  document.getElementById('cdDays').textContent = String(days).padStart(2, '0');
+  document.getElementById('cdHours').textContent = String(hours).padStart(2, '0');
+  document.getElementById('cdMins').textContent = String(mins).padStart(2, '0');
+  document.getElementById('cdSecs').textContent = String(secs).padStart(2, '0');
+}
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
+// Membership & Fee Selection (Conditional IEEE ID display)
+let selectedMembership = 'IEEE';
+let currentFee = 100;
+
+function selectMembership(type) {
+  selectedMembership = type;
+  const optIeee = document.getElementById('optIeee');
+  const optNonIeee = document.getElementById('optNonIeee');
+  const ieeeIdWrap = document.getElementById('ieeeIdWrap');
+
+  if (type === 'IEEE') {
+    optIeee.classList.add('active');
+    optNonIeee.classList.remove('active');
+    currentFee = 100;
+    ieeeIdWrap.style.display = 'block'; // Show IEEE ID field for IEEE Member
+  } else {
+    optNonIeee.classList.add('active');
+    optIeee.classList.remove('active');
+    currentFee = 200;
+    ieeeIdWrap.style.display = 'none';  // Hide IEEE ID field for Non-IEEE Member
+    document.getElementById('ieeeId').value = '';
+  }
+  document.getElementById('payBtnFee').textContent = '₹' + currentFee;
+}
+
+let currentRegistration = null;
+async function submitRegistration(e) {
+  e.preventDefault();
+
+  const ieeeIdVal = document.getElementById('ieeeId').value.trim();
+  if (selectedMembership === 'IEEE' && !ieeeIdVal) {
+    alert('Please enter your IEEE Membership Number.');
+    return;
+  }
+
+  const payload = {
+    leader_name: document.getElementById('leaderName').value,
+    leader_email: document.getElementById('leaderEmail').value,
+    leader_phone: document.getElementById('leaderPhone').value,
+    college_name: document.getElementById('collegeName').value,
+    branch: document.getElementById('branch').value,
+    year: document.getElementById('year').value,
+    ieee_id: selectedMembership === 'IEEE' ? ieeeIdVal : '',
+    ieee_count: selectedMembership === 'IEEE' ? 1 : 0,
+    non_ieee_count: selectedMembership === 'NON-IEEE' ? 1 : 0,
+    events_selected: ['INNOWAVE-2026 Engineer\'s Day Events']
+  };
+
+  try {
+    const res = await fetch('/api/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (data.ok) {
+      currentRegistration = data;
+      document.getElementById('payAmountDisplay').textContent = '₹' + data.amount;
+      document.getElementById('paymentModal').style.display = 'block';
+    } else {
+      alert('Error: ' + (data.errors ? data.errors.join('\n') : 'Registration failed'));
+    }
+  } catch(err) { alert('Network error.'); }
+}
+
+async function confirmUtr() {
+  const utr = document.getElementById('utrRef').value.trim();
+  if (!utr || utr.length < 6) { alert('Please enter a valid 12-digit UTR / UPI Reference ID.'); return; }
+  try {
+    const res = await fetch(`/api/register/${currentRegistration.id}/confirm`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ payment_ref: utr })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      document.getElementById('paymentModal').style.display = 'none';
+      
+      // Populate Printable Receipt Slip
+      document.getElementById('slipTeamId').textContent = data.team_id;
+      document.getElementById('slipLeader').textContent = data.leader_name;
+      document.getElementById('slipAmount').textContent = '₹' + data.amount;
+      document.getElementById('slipRef').textContent = utr;
+      document.getElementById('slipCategory').textContent = selectedMembership === 'IEEE' ? 'IEEE Member (₹100)' : 'Non-IEEE Member (₹200)';
+      document.getElementById('slipIeeeId').textContent = selectedMembership === 'IEEE' ? (document.getElementById('ieeeId').value.trim() || 'N/A') : 'Non-IEEE Participant';
+
+      const statusEl = document.getElementById('slipStatusBadge');
+      const popStatusEl = document.getElementById('popStatus');
+
+      if (data.payment_status === 'Paid') {
+        statusEl.textContent = '✓ PAID (Auto-Verified)';
+        statusEl.style.background = '#e8f5e9';
+        statusEl.style.color = '#2e7d32';
+        statusEl.style.border = '1px solid #a5d6a7';
+
+        popStatusEl.textContent = '✓ PAID (Auto-Verified)';
+        popStatusEl.style.background = '#e8f5e9';
+        popStatusEl.style.color = '#2e7d32';
+      } else {
+        statusEl.textContent = '⏳ Pending Verification';
+        statusEl.style.background = '#fff8e1';
+        statusEl.style.color = '#f57f17';
+        statusEl.style.border = '1px solid #ffe082';
+
+        popStatusEl.textContent = '⏳ Pending Verification';
+        popStatusEl.style.background = '#fff8e1';
+        popStatusEl.style.color = '#f57f17';
+      }
+
+      document.getElementById('successSlip').style.display = 'block';
+
+      // Populate & Display Congratulations Popup Modal
+      document.getElementById('popTeamId').textContent = data.team_id;
+      document.getElementById('popName').textContent = data.leader_name;
+      document.getElementById('popAmount').textContent = '₹' + data.amount;
+      document.getElementById('popRef').textContent = utr;
+      document.getElementById('congratulationsModal').style.display = 'flex';
+
+      // Trigger Vibrant Full-Screen Confetti Particle Blast Animation
+      triggerConfettiBlast();
+
+    } else {
+      alert('Error: ' + (data.errors ? data.errors.join('\n') : 'Verification failed.'));
+    }
+  } catch(err) { alert('Verification failed.'); }
+}
+
+// Canvas Confetti Blast Animation Engine
+function triggerConfettiBlast() {
+  const c = document.getElementById('confettiCanvas');
+  if (!c) return;
+  c.style.display = 'block';
+  c.width = window.innerWidth;
+  c.height = window.innerHeight;
+  const ctx = c.getContext('2d');
+
+  const colors = ['#ff1744', '#00b0ff', '#ffc400', '#00e676', '#ff9100', '#e040fb', '#ffffff'];
+  const particles = [];
+  const count = 180;
+
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * c.width,
+      y: Math.random() * c.height * 0.4,
+      r: Math.random() * 6 + 4,
+      vx: (Math.random() - 0.5) * 8,
+      vy: Math.random() * 6 + 2,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      tilt: Math.random() * 10,
+      tiltAngleInc: Math.random() * 0.08 + 0.04,
+      tiltAngle: 0,
+      opacity: 1
+    });
+  }
+
+  let animationFrame;
+  let startTime = Date.now();
+
+  function render() {
+    ctx.clearRect(0, 0, c.width, c.height);
+    let alive = false;
+    const elapsed = Date.now() - startTime;
+
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      p.tiltAngle += p.tiltAngleInc;
+      p.y += (Math.cos(p.tiltAngle) + p.vy + 1) * 0.8;
+      p.x += Math.sin(p.tiltAngle) + p.vx * 0.5;
+      p.tilt = Math.sin(p.tiltAngle) * 12;
+
+      if (elapsed > 3500) p.opacity -= 0.02;
+
+      if (p.opacity > 0 && p.y < c.height + 20) {
+        alive = true;
+        ctx.beginPath();
+        ctx.lineWidth = p.r;
+        ctx.strokeStyle = p.color;
+        ctx.globalAlpha = Math.max(0, p.opacity);
+        ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+        ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+        ctx.stroke();
+      }
+    }
+
+    if (alive && elapsed < 6500) {
+      animationFrame = requestAnimationFrame(render);
+    } else {
+      ctx.clearRect(0, 0, c.width, c.height);
+      c.style.display = 'none';
+      cancelAnimationFrame(animationFrame);
+    }
+  }
+
+  render();
+}
+
+function closeCongratulationsModal() {
+  document.getElementById('congratulationsModal').style.display = 'none';
+}
+
+function viewAndPrintReceipt() {
+  closeCongratulationsModal();
+  const slipEl = document.getElementById('successSlip');
+  slipEl.scrollIntoView({ behavior: 'smooth' });
+  setTimeout(() => window.print(), 400);
+}
+
+function resetRegistrationForm() {
+  document.getElementById('mainRegForm').reset();
+  document.getElementById('utrRef').value = '';
+  document.getElementById('paymentModal').style.display = 'none';
+  document.getElementById('successSlip').style.display = 'none';
+  closeCongratulationsModal();
+  selectMembership('IEEE');
+  document.getElementById('register').scrollIntoView({ behavior: 'smooth' });
+}
+
+const eventDetailsData = {
+  'Technical Quiz': {
+    badge: '01 · CORE ENGINEERING',
+    color: '#e53935',
+    schedule: '15 Sept 2026 · Morning Session (10:00 AM)',
+    team: 'Individual or Team (1 - 2 Members)',
+    rounds: [
+      '<b>Round 1: Preliminary Quiz</b> — 30 Multiple Choice Questions covering core engineering, logical reasoning, and tech facts.',
+      '<b>Round 2: Rapid-Fire Stage Finals</b> — Top qualifying teams battle in a live buzzer round evaluated on speed & accuracy.',
+      '<b>Rules:</b> No electronic gadgets or web searches allowed. Decision of judges is final.'
+    ]
+  },
+  'Coding Challenge': {
+    badge: '02 · ALGORITHMIC LOGIC',
+    color: '#8e24aa',
+    schedule: '15 Sept 2026 · Computer Lab 1 (11:30 AM)',
+    team: 'Individual Participant',
+    rounds: [
+      '<b>Round 1: Code Debugging & Logic Fixes</b> — Spot syntax errors and logical bugs within 20 minutes.',
+      '<b>Round 2: Competitive Problem Solving</b> — Solve complex algorithmic challenges with time & memory constraints.',
+      '<b>Languages Supported:</b> C, C++, Java, Python. Standard compilers provided.'
+    ]
+  },
+  'Treasure Hunt': {
+    badge: '03 · TECH PUZZLE & HUNT',
+    color: '#1e88e5',
+    schedule: '15 Sept 2026 · Campus Grounds (01:30 PM)',
+    team: 'Team of 2 to 4 Members',
+    rounds: [
+      '<b>Stage 1: Cryptic Tech Clues</b> — Decode mathematical & engineering riddles to discover initial location coordinates.',
+      '<b>Stage 2: Blueprint Campus Quest</b> — Navigate check-points, solve hardware physical puzzles, and unearth the final treasure.',
+      '<b>Rules:</b> All team members must stay together. First verified team to bring the treasure wins!'
+    ]
+  },
+  'Project Expo': {
+    badge: '04 · INNOVATION & HARDWARE',
+    color: '#ffffff',
+    textColor: '#040406',
+    schedule: '15 Sept 2026 · Central Exhibition Hall (10:00 AM - 03:00 PM)',
+    team: 'Team of 1 to 4 Members',
+    rounds: [
+      '<b>Demonstration & Expo</b> — Display working hardware/software prototypes before attendees and expert jury panels.',
+      '<b>Jury Q&A Evaluation</b> — Present technical architecture, innovation impact, and commercial feasibility.',
+      '<b>Requirements:</b> Working model or software demo required along with poster/PPT summary.'
+    ]
+  },
+  'Prompt Engineering': {
+    badge: '05 · GENERATIVE AI',
+    color: '#f57c00',
+    schedule: '15 Sept 2026 · AI Lab (02:00 PM)',
+    team: 'Individual or Pair (1 - 2 Members)',
+    rounds: [
+      '<b>Round 1: Precision Image & Code Crafting</b> — Recreate complex target images and system code using precise prompts.',
+      '<b>Round 2: Autonomous Agent Prompting</b> — Design system prompts to solve multi-step technical workflows.',
+      '<b>Rules:</b> State-of-the-art LLMs (ChatGPT/Claude) provided on test machines.'
+    ]
+  },
+  'Reels (1 Min)': {
+    badge: '06 · CREATIVE MEDIA',
+    color: '#43a047',
+    schedule: '15 Sept 2026 · Media Desk (Submission by 12:00 PM)',
+    team: 'Individual or Team of 2 Members',
+    rounds: [
+      '<b>Submission & Screening</b> — Create an inspiring 60-second video reel on the theme "Engineers: Architects of Tomorrow".',
+      '<b>Judging Criteria</b> — Evaluated on visual creativity, story impact, technical editing, and thematic relevance.',
+      '<b>Rules:</b> Exactly 60 seconds duration (MP4 format). Original content only.'
+    ]
+  }
+};
+
+function openModal(title, defaultDesc) {
+  const data = eventDetailsData[title] || {
+    badge: 'EVENT DETAILS',
+    color: 'var(--accent)',
+    schedule: '15th September 2026',
+    team: 'Individual / Team',
+    rounds: [`<b>Details:</b> ${defaultDesc}`]
+  };
+
+  const badgeEl = document.getElementById('mBadge');
+  badgeEl.textContent = data.badge;
+  badgeEl.style.background = data.color;
+  if (data.textColor) badgeEl.style.color = data.textColor; else badgeEl.style.color = '#fff';
+
+  document.getElementById('mTitle').textContent = title;
+  document.getElementById('mDesc').textContent = defaultDesc;
+  document.getElementById('mSchedule').textContent = data.schedule;
+  document.getElementById('mTeam').textContent = data.team;
+
+  const roundsEl = document.getElementById('mRounds');
+  roundsEl.innerHTML = data.rounds.map(r => `<li style="margin-bottom:8px;">${r}</li>`).join('');
+
+  document.getElementById('eventModal').style.display = 'flex';
+}
+function closeModal() { document.getElementById('eventModal').style.display = 'none'; }
+</script>
+</body>
+</html>
