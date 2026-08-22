@@ -639,48 +639,42 @@ app.delete('/api/admin/registrations/:id', requireAdmin, (req, res) => {
 
 // ---------- Excel export ----------
 app.get('/api/admin/export.xlsx', requireAdmin, async (req, res) => {
-  const rows = db.prepare(`SELECT * FROM registrations 
-    WHERE ieee_member = 'Yes' 
-       OR payment_status != 'Pending Payment Confirmation' 
-       OR (payment_ref IS NOT NULL AND payment_ref != '')
-       OR (payment_screenshot IS NOT NULL AND payment_screenshot != '')
-    ORDER BY id ASC`).all();
+  const rows = db.prepare(`SELECT * FROM registrations ORDER BY id ASC`).all();
   const wb = new ExcelJS.Workbook();
-  wb.creator = 'InnoWave-2026';
+  wb.creator = 'K. Jaideep Raj (PSCMR IEEE Student Branch)';
+  wb.lastModifiedBy = 'K. Jaideep Raj (InnoWave-2k26 Admin)';
   wb.created = new Date();
-  const ws = wb.addWorksheet('Registrations', { views: [{ state: 'frozen', ySplit: 1 }] });
+  
+  const ws = wb.addWorksheet('InnoWave-2k26 Registrations', { views: [{ state: 'frozen', ySplit: 2 }] });
 
-  ws.columns = [
-    { header: 'S.No', key: 'sno', width: 6 },
-    { header: 'Unique Participant ID', key: 'team_id', width: 22 },
-    { header: 'Payment Status', key: 'payment_status', width: 20 },
-    { header: 'Amount (₹)', key: 'amount', width: 12 },
-    { header: 'Fee Category', key: 'fee_label', width: 30 },
-    { header: 'Payment Ref (UTR)', key: 'payment_ref', width: 22 },
-    { header: 'Participant Name', key: 'leader_name', width: 24 },
-    { header: 'Email Address', key: 'leader_email', width: 28 },
-    { header: 'Mobile Number', key: 'leader_phone', width: 16 },
-    { header: 'College / Institution', key: 'college_name', width: 32 },
-    { header: 'Branch / Dept', key: 'branch', width: 16 },
-    { header: 'Year of Study', key: 'year', width: 14 },
-    { header: 'Roll No', key: 'roll_no', width: 16 },
-    { header: 'IEEE Member', key: 'ieee_member', width: 14 },
-    { header: 'IEEE ID Number', key: 'ieee_id', width: 20 },
-    { header: 'IEEE Card Status', key: 'ieee_verification_status', width: 22 },
-    { header: 'IEEE Card Proof', key: 'ieee_card', width: 18 },
-    { header: 'Selected Events', key: 'events_selected', width: 28 },
-    { header: 'Paid Date & Time', key: 'paid_at', width: 22 },
-    { header: 'Registered Date & Time', key: 'created_at', width: 22 }
+  // Title Row
+  ws.mergeCells('A1:T1');
+  const titleCell = ws.getCell('A1');
+  titleCell.value = 'INNOWAVE-2K26 REGISTRATIONS REPORT · DEVELOPED BY K. JAIDEEP RAJ (PSCMR IEEE STB18301)';
+  titleCell.font = { name: 'Arial', bold: true, color: { argb: 'FFFFFFFF' }, size: 11.5 };
+  titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF002855' } };
+  titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
+  ws.getRow(1).height = 28;
+
+  ws.getRow(2).values = [
+    'S.No', 'Unique Participant ID', 'Payment Status', 'Amount (₹)', 'Fee Category',
+    'Payment Ref (UTR)', 'Participant Name', 'Email Address', 'Mobile Number',
+    'College / Institution', 'Branch / Dept', 'Year of Study', 'Roll No',
+    'IEEE Member', 'IEEE ID Number', 'IEEE Card Status', 'IEEE Card Proof',
+    'Selected Events', 'Paid Date & Time', 'Registered Date & Time'
   ];
 
-  const header = ws.getRow(1);
-  header.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 11 };
+  const header = ws.getRow(2);
+  header.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 10.5 };
   header.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
   header.height = 24;
   header.eachCell((cell) => {
     cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0F2547' } };
     cell.border = { bottom: { style: 'thin', color: { argb: 'FF2FD3EC' } } };
   });
+
+  const columnWidths = [6, 22, 20, 12, 30, 22, 24, 28, 16, 32, 16, 14, 16, 14, 20, 22, 18, 28, 22, 22];
+  columnWidths.forEach((w, idx) => { ws.getColumn(idx + 1).width = w; });
 
   const fmtDate = (s) => { const d = new Date(s); return isNaN(d) ? (s || '') : d.toLocaleString('en-IN'); };
   rows.forEach((r, i) => {
@@ -690,39 +684,40 @@ app.get('/api/admin/export.xlsx', requireAdmin, async (req, res) => {
       if (Array.isArray(parsed)) eventsStr = parsed.join(', ');
     } catch(e) {}
 
-    ws.addRow({
-      sno: i + 1,
-      team_id: r.team_id,
-      payment_status: r.payment_status || 'Pending',
-      amount: r.amount || 0,
-      fee_label: r.fee_label || '',
-      payment_ref: r.payment_ref || '',
-      leader_name: r.leader_name || '',
-      leader_email: r.leader_email || '',
-      leader_phone: r.leader_phone || '',
-      college_name: r.college_name || '',
-      branch: r.branch || '',
-      year: r.year || '',
-      roll_no: r.roll_no || '',
-      ieee_member: r.ieee_member || 'No',
-      ieee_id: r.ieee_id || '',
-      ieee_verification_status: r.ieee_verification_status || (r.ieee_member === 'Yes' ? 'Pending Card Verification' : 'N/A'),
-      ieee_card: r.ieee_card ? 'Uploaded (Base64/File)' : 'Not Uploaded',
-      events_selected: eventsStr,
-      paid_at: fmtDate(r.paid_at),
-      created_at: fmtDate(r.created_at)
-    });
+    ws.addRow([
+      i + 1,
+      r.team_id || '',
+      r.payment_status || 'Pending',
+      r.amount || 0,
+      r.fee_label || '',
+      r.payment_ref || '',
+      r.leader_name || '',
+      r.leader_email || '',
+      r.leader_phone || '',
+      r.college_name || '',
+      r.branch || '',
+      r.year || '',
+      r.roll_no || '',
+      r.ieee_member || 'No',
+      r.ieee_id || '',
+      r.ieee_verification_status || (r.ieee_member === 'Yes' ? 'Pending Card Verification' : 'N/A'),
+      r.ieee_card ? 'Uploaded (Base64/File)' : 'Not Uploaded',
+      eventsStr,
+      fmtDate(r.paid_at),
+      fmtDate(r.created_at)
+    ]);
   });
+
   ws.eachRow((row, n) => {
-    if (n === 1) return;
+    if (n <= 2) return;
     row.alignment = { vertical: 'top', wrapText: true };
-    if (n % 2 === 0) row.eachCell((c) => { c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF2F7FF' } }; });
+    if (n % 2 === 1) row.eachCell((c) => { c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF2F7FF' } }; });
   });
-  ws.autoFilter = { from: 'A1', to: 'R1' };
+  ws.autoFilter = { from: 'A2', to: 'T2' };
 
   const stamp = new Date().toISOString().slice(0, 10);
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-  res.setHeader('Content-Disposition', `attachment; filename="InnoWave-2026_Registrations_${stamp}.xlsx"`);
+  res.setHeader('Content-Disposition', `attachment; filename="InnoWave-2k26_Registrations_${stamp}.xlsx"`);
   await wb.xlsx.write(res);
   res.end();
 });
