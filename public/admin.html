@@ -9,17 +9,73 @@
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
   *{ margin:0; padding:0; box-sizing:border-box; }
   :root {
-    --bg-primary:   #050914;
-    --bg-panel:     #0d1526;
-    --border:       #1a2740;
-    --accent:       #ffffff;
-    --accent-dim:   rgba(255, 255, 255, 0.15);
-    --warn:         #e0e0e0;
+    --bg-primary:   #040406;
+    --bg-panel:     rgba(11, 15, 26, 0.94);
+    --border:       rgba(0, 212, 255, 0.3);
+    --accent:       #00d4ff;
+    --accent-blue:  #0066ff;
+    --gold:         #ffb703;
+    --accent-dim:   rgba(0, 212, 255, 0.15);
+    --warn:         #ffb703;
     --text-primary: #ffffff;
-    --text-muted:   #9fa9b8;
+    --text-muted:   #cbd5e1;
+  }
+  [data-theme="light"] {
+    --bg-primary:   #f8fafc;
+    --bg-panel:     rgba(255, 255, 255, 0.96);
+    --border:       #e2e8f0;
+    --accent:       #002855;
+    --accent-blue:  #1e3a8a;
+    --gold:         #b45309;
+    --accent-dim:   rgba(30, 58, 138, 0.08);
+    --warn:         #b45309;
+    --text-primary: #0f172a;
+    --text-muted:   #475569;
   }
   body{ font-family:'Inter',sans-serif; color:var(--text-primary);
-    background-color: var(--bg-primary); min-height:100vh; overflow-x:hidden; }
+    background-color: var(--bg-primary); min-height:100vh; overflow-x:hidden; transition: background-color 0.3s ease, color 0.3s ease; }
+
+  [data-theme="light"] .login,
+  [data-theme="light"] header.bar,
+  [data-theme="light"] .stat,
+  [data-theme="light"] .table-wrap,
+  [data-theme="light"] .filters,
+  [data-theme="light"] .modal-content {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.02) !important;
+    border-radius: 12px !important;
+  }
+
+  [data-theme="light"] input,
+  [data-theme="light"] select {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+  }
+
+  [data-theme="light"] input:focus,
+  [data-theme="light"] select:focus {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+  }
+
+  [data-theme="light"] table th {
+    background: #f8fafc !important;
+    color: #0f172a !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+  }
+
+  [data-theme="light"] table td {
+    border-bottom: 1px solid #f1f5f9 !important;
+    color: #334155 !important;
+  }
+
+  [data-theme="light"] table tr:hover {
+    background: #f8fafc !important;
+  }
   #admin-webgl-canvas {
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
     z-index: -1; pointer-events: none; opacity: 0.55;
@@ -29,27 +85,27 @@
 
   /* LOGIN */
   .login-wrap{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
-  .login{ width:100%; max-width:400px; background:var(--bg-panel); border:1px solid var(--border); border-radius:12px; padding:36px; text-align:left; }
+  .login{ width:100%; max-width:400px; background:var(--bg-panel); backdrop-filter:blur(14px); border:1.5px solid var(--border); border-radius:12px; padding:36px; text-align:left; box-shadow:0 14px 40px rgba(0,0,0,0.8); }
   .login h1{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:26px; letter-spacing:-0.02em; }
   .login h1 .y{ color:var(--accent); }
   .login p{ color:var(--text-muted); font-size:14px; margin:6px 0 22px; }
-  .login input{ width:100%; background:var(--bg-primary); border:1px solid var(--border); color:var(--text-primary); border-radius:6px; padding:14px; font-size:15px; outline:none; transition:border-color 0.2s; }
-  .login input:focus{ border-color:var(--accent); }
-  .login button{ width:100%; margin-top:14px; background:var(--accent); color:#041220;
-    font-weight:700; font-family:'Space Grotesk',sans-serif; border:none; border-radius:4px; padding:14px; font-size:15px; cursor:pointer; letter-spacing:0.05em; text-transform:uppercase; transition:transform 0.2s; }
-  .login button:hover{ transform:translateY(-2px); }
+  .login input{ width:100%; background:rgba(10,8,22,0.85); border:1px solid var(--border); color:var(--text-primary); border-radius:6px; padding:14px; font-size:15px; outline:none; transition:border-color 0.2s; }
+  .login input:focus{ border-color:var(--accent); box-shadow:0 0 10px rgba(0,212,255,0.3); }
+  .login button{ width:100%; margin-top:14px; background:linear-gradient(135deg, #00d4ff 0%, #0066ff 100%); color:#ffffff;
+    font-weight:700; font-family:'Space Grotesk',sans-serif; border:none; border-radius:6px; padding:14px; font-size:15px; cursor:pointer; letter-spacing:0.05em; text-transform:uppercase; box-shadow:0 6px 20px rgba(0,102,255,0.45); transition:transform 0.2s; }
+  .login button:hover{ transform:translateY(-2px); box-shadow:0 10px 28px rgba(0,102,255,0.65); }
   .login .err{ color:#ff9b9b; font-size:14px; margin-top:12px; min-height:18px; }
 
   /* DASHBOARD */
   .dash{ display:none; }
-  header.bar{ position:sticky; top:0; z-index:20; background:rgba(5,9,20,.92); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); }
+  header.bar{ position:sticky; top:0; z-index:20; background:rgba(14,10,24,.94); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); }
   header.bar .in{ max-width:1400px; margin:0 auto; padding:14px 22px; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
   header.bar .title{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:20px; letter-spacing:-0.01em; }
   header.bar .title .y{ color:var(--accent); }
   .actions{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-  .btn{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:13px; padding:10px 18px; border-radius:4px; cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--text-primary); letter-spacing:0.05em; text-transform:uppercase; transition:all 0.2s; }
-  .btn.primary{ background:var(--accent); color:#041220; border:none; }
-  .btn.gold{ background:var(--warn); color:#241a04; border:none; }
+  .btn{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:13px; padding:10px 18px; border-radius:6px; cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--text-primary); letter-spacing:0.05em; text-transform:uppercase; transition:all 0.2s; }
+  .btn.primary{ background:linear-gradient(135deg, #ff0088 0%, #3b52d4 100%); color:#ffffff; border:none; box-shadow:0 4px 16px rgba(255,0,136,0.4); }
+  .btn.gold{ background:linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color:#ffffff; border:none; box-shadow:0 4px 16px rgba(245,158,11,0.4); }
   .btn:hover{ transform:translateY(-1px); border-color:var(--accent); }
 
   .container{ max-width:1400px; margin:0 auto; padding:22px; }
@@ -84,7 +140,27 @@
   .del{ color:#ff8f8f; cursor:pointer; background:none; border:none; font-size:13px; }
   .empty{ text-align:center; padding:50px; color:var(--text-muted); }
   .muted{ color:var(--text-muted); }
-  @media (max-width:700px){ .stats{ grid-template-columns:repeat(2,1fr); } }
+  @media (max-width: 768px) {
+    html, body { overflow-x: hidden !important; width: 100% !important; }
+    .dash { padding: 8px !important; }
+    header.bar { padding: 10px 12px !important; }
+    header.bar .in { flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
+    header.bar .actions { width: 100% !important; flex-wrap: wrap !important; gap: 6px !important; }
+    header.bar .actions button { flex: 1 1 calc(50% - 6px) !important; font-size: 11px !important; padding: 8px !important; }
+    
+    .stats { grid-template-columns: 1fr !important; gap: 8px !important; }
+    .stat { padding: 12px !important; }
+    
+    .toolbar { flex-direction: column !important; align-items: stretch !important; gap: 8px !important; }
+    .toolbar input, .toolbar select { width: 100% !important; min-width: 100% !important; font-size: 16px !important; }
+    
+    .tablewrap { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; border-radius: 8px !important; }
+    table { min-width: 850px !important; }
+    th, td { padding: 8px 10px !important; font-size: 12px !important; }
+    
+    .login { width: 92% !important; padding: 24px 16px !important; }
+    .login input { font-size: 16px !important; }
+  }
 </style>
 </head>
 <body>
@@ -94,7 +170,7 @@
 <!-- LOGIN -->
 <div class="login-wrap" id="loginWrap">
   <div class="login">
-    <h1>InnoWave<span class="y">2026</span></h1>
+    <h1>InnoWave<span class="y">2k26</span></h1>
     <p>Organizer Dashboard — please sign in</p>
     <input type="password" id="pw" placeholder="Admin password" onkeydown="if(event.key==='Enter')doLogin()">
     <button onclick="doLogin()">Sign In</button>
@@ -106,10 +182,12 @@
 <div class="dash" id="dash">
   <header class="bar">
     <div class="in">
-      <div class="title">InnoWave<span class="y">2026</span> · Registrations</div>
+      <div class="title">InnoWave<span class="y">2k26</span> · Registrations</div>
       <div class="actions">
+        <button class="btn" id="themeToggleBtn" onclick="toggleTheme()" style="padding:6px 14px;">☀️ LIGHT</button>
         <button class="btn" onclick="loadData()">↻ Refresh</button>
         <button class="btn primary" onclick="downloadExcel()">⬇ Download Excel</button>
+        <button class="btn" style="background:#dc2626; color:#ffffff; border:none; font-weight:700;" onclick="deleteAllRegistrations()">🗑️ DELETE ALL</button>
         <button class="btn" onclick="logout()">Logout</button>
       </div>
     </div>
@@ -130,7 +208,8 @@
       <select id="statusFilter" onchange="renderRows()">
         <option value="">All statuses</option>
         <option value="Paid">Paid (verified)</option>
-        <option value="Pending Verification">To verify</option>
+        <option value="Pending Verification">Payment To Verify</option>
+        <option value="IEEE Verification Needed">Pending IEEE Card Verification</option>
       </select>
       <span class="muted" id="countLbl"></span>
     </div>
@@ -139,14 +218,26 @@
       <table>
         <thead>
           <tr>
-            <th>Participant ID</th><th>Payment</th><th>Participant Name</th><th>Contact Details</th>
-            <th>College / Branch</th><th>IEEE Status & ID</th><th>Registered At</th><th>Actions</th>
+            <th>Participant ID</th><th>Payment Status</th><th>Participant Name</th><th>Contact Details</th>
+            <th>College / Branch</th><th>IEEE Status & ID</th><th>Card Proof</th><th>Registered At</th><th>Actions</th>
           </tr>
         </thead>
         <tbody id="tbody"></tbody>
       </table>
-      <div class="empty" id="emptyState" style="display:none">No registrations yet. Share the website link to start collecting entries.</div>
+      <div class="empty" id="emptyState" style="display:none">No registrations match your search filter.</div>
     </div>
+  </div>
+</div>
+
+<!-- Modal for Viewing High-Res Uploaded IEEE Card / Screenshot Proof -->
+<div class="modal-overlay" id="proofModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:1000; align-items:center; justify-content:center; padding:20px;">
+  <div style="background:var(--bg-panel); border:1.5px solid var(--accent); border-radius:12px; max-width:650px; width:100%; padding:24px; text-align:center; position:relative;">
+    <button onclick="closeProofModal()" style="position:absolute; top:16px; right:16px; background:none; border:none; color:#fff; font-size:22px; cursor:pointer;">✕</button>
+    <h3 style="font-family:'Space Grotesk',sans-serif; color:var(--accent); font-size:18px; margin-bottom:14px;" id="proofTitle">IEEE Membership Card Proof</h3>
+    <div style="max-height:70vh; overflow:auto; border-radius:8px; border:1px solid var(--border); background:#000; padding:10px;">
+      <img id="proofImg" src="" style="max-width:100%; height:auto; display:inline-block;" alt="Proof Image">
+    </div>
+    <div style="margin-top:16px; display:flex; gap:10px; justify-content:center;" id="proofModalActions"></div>
   </div>
 </div>
 
@@ -193,13 +284,14 @@
   function esc(s){ return (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
   function payBadge(s){
     if(s==='Paid') return '<span class="badge paid">Paid ✓</span>';
-    if(s==='Pending Verification') return '<span class="badge toverify">To verify</span>';
+    if(s==='Pending Verification') return '<span class="badge toverify">Payment To Verify</span>';
+    if(s==='IEEE Verification Needed') return '<span class="badge toverify" style="border-color:#f59e0b; color:#f59e0b;">IEEE Card Needed</span>';
     return '<span class="badge unpaid">Unpaid</span>';
   }
   function renderRows(){
     const q = (document.getElementById('search').value||'').toLowerCase();
     const sf = document.getElementById('statusFilter').value;
-    let rows = DATA.filter(r=>!q || [r.team_id,r.leader_name,r.leader_email,r.leader_phone,r.branch,r.college_name,r.payment_ref,r.ieee_id].join(' ').toLowerCase().includes(q));
+    let rows = DATA.filter(r=>!q || [r.team_id,r.leader_name,r.leader_email,r.leader_phone,r.branch,r.college_name,r.payment_ref,r.ieee_id,r.ieee_verification_status].join(' ').toLowerCase().includes(q));
     if(sf) rows = rows.filter(r=>(r.payment_status||'Pending')===sf);
     const tb = document.getElementById('tbody');
     document.getElementById('emptyState').style.display = DATA.length?'none':'block';
@@ -207,38 +299,116 @@
     tb.innerHTML = rows.map(r=>{
       const dt=new Date(r.created_at); const when=isNaN(dt)?r.created_at:dt.toLocaleString('en-IN');
       const st = r.payment_status||'Pending';
-      const verifyBtn = st!=='Paid' ? `<button class="verify" onclick="setStatus(${r.id},'Paid')">✓ Verify</button>` :
+      const isIeee = (r.ieee_member === 'Yes');
+      const ieeeStatus = r.ieee_verification_status || (isIeee ? 'Pending Card Verification' : 'N/A');
+
+      const verifyBtn = st!=='Paid' ? `<button class="verify" onclick="setStatus(${r.id},'Paid')">✓ Verify Payment</button>` :
         `<button class="verify" style="background:rgba(149,172,208,.12);color:#c2d2ec;border-color:var(--line)" onclick="setStatus(${r.id},'Pending Verification')">Unverify</button>`;
-      const ieeeLabel = r.ieee_member === 'Yes' ? `<span class="badge yes">IEEE Member</span>` : `<span class="badge no">Non-IEEE</span>`;
+
+      let ieeeActionBtns = '';
+      if (isIeee) {
+        if (ieeeStatus === 'Pending Card Verification' || ieeeStatus === 'Card Rejected') {
+          ieeeActionBtns = `<button class="btn gold" style="padding:4px 10px; font-size:11px; margin-top:4px;" onclick="verifyIeeeCard(${r.id},'approve')">✓ Approve IEEE Card</button>`;
+        } else {
+          ieeeActionBtns = `<span style="font-size:11px; color:#00e676; font-weight:700; display:block; margin-top:3px;">✓ Card Approved</span>`;
+        }
+      }
+
+      const ieeeLabel = isIeee ? `<span class="badge yes">IEEE Member</span>` : `<span class="badge no">Non-IEEE</span>`;
+      const ieeeCardBtn = r.ieee_card ? `<button class="btn" style="padding:4px 10px; font-size:11px;" onclick="viewProofModal('${esc(r.team_id)}','IEEE Card',${r.id})">🪪 View Card</button>` : '<span class="muted" style="font-size:11px;">No File</span>';
+
       return `<tr>
         <td><span class="rid">${esc(r.team_id)}</span></td>
         <td>${payBadge(st)}<br><span class="amt" style="font-size:13px">₹${esc(r.amount||0)}</span>${r.payment_ref?`<br><span class="muted" style="font-size:11px">UTR: ${esc(r.payment_ref)}</span>`:''}</td>
         <td><b>${esc(r.leader_name)}</b></td>
         <td><a href="mailto:${esc(r.leader_email)}">${esc(r.leader_email)}</a><br><span class="muted">${esc(r.leader_phone)}</span></td>
         <td>${esc(r.college_name||'—')}<br><span class="muted">${esc(r.branch||'—')} (${esc(r.year||'')})</span></td>
-        <td>${ieeeLabel}${r.ieee_id?`<br><span class="muted" style="font-size:11px">ID: ${esc(r.ieee_id)}</span>`:''}</td>
+        <td>${ieeeLabel}${r.ieee_id?`<br><span class="muted" style="font-size:11px">ID: ${esc(r.ieee_id)}</span>`:''}<br><span style="font-size:11px; color:var(--accent); font-weight:700;">${esc(ieeeStatus)}</span></td>
+        <td>${ieeeCardBtn}</td>
         <td class="muted" style="font-size:12.5px;white-space:nowrap">${esc(when)}</td>
-        <td style="white-space:nowrap">${verifyBtn}<br><button class="del" style="margin-top:6px" onclick="delRow(${r.id})">Delete</button></td>
+        <td style="white-space:nowrap">${verifyBtn}<br>${ieeeActionBtns}<br><button class="del" style="margin-top:6px" onclick="delRow(${r.id})">Delete</button></td>
       </tr>`;
     }).join('');
   }
+
+  function viewProofModal(teamId, type, id) {
+    const row = DATA.find(r => r.id === id);
+    if (!row || !row.ieee_card) { alert('No card proof uploaded for this participant.'); return; }
+    document.getElementById('proofTitle').textContent = `IEEE Membership Card Proof — ${teamId} (${row.leader_name})`;
+    document.getElementById('proofImg').src = row.ieee_card;
+    document.getElementById('proofModalActions').innerHTML = `
+      <button class="btn gold" onclick="verifyIeeeCard(${id},'approve'); closeProofModal();">✓ Approve IEEE Card & Activate Payment QR</button>
+      <button class="btn" style="border-color:#ff8f8f; color:#ff8f8f;" onclick="verifyIeeeCard(${id},'reject'); closeProofModal();">✕ Reject IEEE Card</button>
+    `;
+    document.getElementById('proofModal').style.display = 'flex';
+  }
+
+  function closeProofModal() {
+    document.getElementById('proofModal').style.display = 'none';
+  }
+
+  async function verifyIeeeCard(id, action) {
+    const res = await fetch('/api/admin/registrations/' + id + '/verify-ieee-card', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
+      body: JSON.stringify({ action })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      if (action === 'approve') {
+        alert('✅ IEEE CARD APPROVED!\n\nPayment Link Email sent to participant:\n' + data.payment_url);
+      } else {
+        alert('❌ IEEE Card Rejected.');
+      }
+    } else {
+      alert(data.error || 'Failed to update IEEE card verification status.');
+    }
+    loadData();
+  }
+
   async function setStatus(id,status){
     await fetch('/api/admin/registrations/'+id+'/status',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},body:JSON.stringify({status})});
     loadData();
   }
+
   async function delRow(id){
     if(!confirm('Delete this registration? This cannot be undone.')) return;
     await fetch('/api/admin/registrations/'+id,{method:'DELETE',headers:{'Authorization':'Bearer '+TOKEN}});
     loadData();
   }
+
   async function downloadExcel(){
     const r = await fetch('/api/admin/export.xlsx',{headers:{'Authorization':'Bearer '+TOKEN}});
     if(r.status===401){ logout(); return; }
     const blob = await r.blob();
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href=url; a.download='InnoWave-2026_Registrations.xlsx'; a.click();
+    a.href=url; a.download='InnoWave-2k26_Registrations.xlsx'; a.click();
     URL.revokeObjectURL(url);
+  }
+  async function deleteAllRegistrations() {
+    const confirmText = prompt("⚠️ CRITICAL WARNING: You are about to PERMANENTLY DELETE ALL REGISTRATIONS from the database.\n\nType 'DELETE ALL' below to confirm:");
+    if (confirmText !== 'DELETE ALL') {
+      alert('Deletion cancelled. Input did not match "DELETE ALL".');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/admin/registrations/all', {
+        method: 'DELETE',
+        headers: { 'Authorization': 'Bearer ' + TOKEN }
+      });
+      const data = await res.json();
+      if (data.ok) {
+        alert(`✅ Success: All ${data.deleted || 0} registration records have been deleted.`);
+        loadData();
+      } else {
+        alert('Failed to delete registrations: ' + (data.error || 'Unknown error'));
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Network error while deleting registrations.');
+    }
   }
 
   // auto-login if token present
@@ -304,6 +474,41 @@
       renderer.render(scene, camera);
     }
     animate();
+
+    window.updateAdminWebGLColors = function(theme) {
+      if (theme === 'light') {
+        g1.material.color.setHex(0x0f2942);
+        g2.material.color.setHex(0x1d4ed8);
+      } else {
+        g1.material.color.setHex(0x00d4ff);
+        g2.material.color.setHex(0x0066ff);
+      }
+    };
+  })();
+
+  function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    const next = current === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.body.setAttribute('data-theme', theme);
+    if (theme === 'light') {
+      document.body.classList.add('light-theme');
+    } else {
+      document.body.classList.remove('light-theme');
+    }
+    localStorage.setItem('admin_innowave_theme', theme);
+    const btn = document.getElementById('themeToggleBtn');
+    if (btn) btn.innerHTML = theme === 'dark' ? '☀️ ADMIN LIGHT' : '🌙 ADMIN DARK';
+    if (window.updateAdminWebGLColors) window.updateAdminWebGLColors(theme);
+  }
+
+  (function initTheme() {
+    const saved = localStorage.getItem('admin_innowave_theme') || 'dark';
+    applyTheme(saved);
   })();
 </script>
 </body>

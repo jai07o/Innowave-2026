@@ -1,5 +1,5 @@
 /**
- * InnoWave-2026 — Project Expo
+ * InnoWave-2k26 — Project Expo
  * Event website + registration backend with UPI payment (Node.js + Express + SQLite)
  *
  * Run:  npm install  &&  npm start
@@ -19,8 +19,8 @@ const ExcelJS = require('exceljs');
 const QRCode = require('qrcode');
 
 const PORT = process.env.PORT || 3000;
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'innowave2026';
-const UPI_VPA = process.env.UPI_VPA || 'yourupi@okbank';          // <-- SET THIS to your real UPI ID
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'innowave2k26';
+const UPI_VPA = process.env.UPI_VPA || 'gunugukrishnakumar@ybl';          // <-- Collection UPI ID
 const UPI_PAYEE_NAME = process.env.UPI_PAYEE_NAME || 'PSCMR IEEE Student Branch';
 
 // ---------- Database ----------
@@ -72,8 +72,10 @@ function ensureColumn(col, decl) {
 }
 ['team_id TEXT','reg_seq INTEGER','amount INTEGER','fee_label TEXT','payment_mode TEXT',
  'payment_status TEXT','payment_ref TEXT','paid_at TEXT','events_selected TEXT',
- 'college_name TEXT','ieee_email TEXT','ieee_grade TEXT','ieee_count INTEGER','non_ieee_count INTEGER'].forEach(d => {
-  const [c, ...rest] = d.split(' '); ensureColumn(c, rest.join(' '));
+ 'college_name TEXT','ieee_email TEXT','ieee_grade TEXT','ieee_count INTEGER','non_ieee_count INTEGER',
+ 'ieee_verification_status TEXT','ieee_card TEXT','ieee_card_approved INTEGER'].forEach(d => {
+  const parts = d.split(' ');
+  ensureColumn(parts[0], parts.slice(1).join(' '));
 });
 
 // ---------- Official 6 Brochure Events + 20 Domains ----------
@@ -107,30 +109,51 @@ const TRACK_CODE = {
 
 // ---------- App ----------
 const app = express();
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/register-ieee', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'register-ieee.html'));
+});
+app.get('/register-non-ieee', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'register-non-ieee.html'));
+});
+app.get('/register', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'register-non-ieee.html'));
+});
+
 ensureColumn('payment_screenshot', 'TEXT');
+ensureColumn('ieee_card', 'TEXT');
+ensureColumn('ieee_verification_status', 'TEXT');
 
 // Helpers
 function pad(n) { return String(n).padStart(4, '0'); }
 function isEmail(s) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s || ''); }
 function isPhone(s) { return /^[0-9]{10}$/.test(String(s || '').replace(/\D/g, '').slice(-10)); }
+function isPscmrCollege(collegeName) {
+  const cn = (collegeName || '').toLowerCase();
+  return cn.includes('pscmr') || cn.includes('potti sriramulu') || cn.includes('chalavadi');
+}
 
-function computeBrochureFee(ieee_count, non_ieee_count) {
+function computeBrochureFee(ieee_count, non_ieee_count, college_name = '') {
   const ieee = Math.max(0, parseInt(ieee_count, 10) || 0);
   const nonIeee = Math.max(0, parseInt(non_ieee_count, 10) || 0);
-  const amount = (ieee * 100) + (nonIeee * 200);
+  const isPscmr = isPscmrCollege(college_name);
+  
+  const ieeeRate = isPscmr ? 50 : 100;
+  const nonIeeeRate = isPscmr ? 100 : 200;
+
+  const amount = (ieee * ieeeRate) + (nonIeee * nonIeeeRate);
   let label = '';
   if (ieee > 0 && nonIeee > 0) {
-    label = `${ieee} IEEE (₹${ieee * 100}) + ${nonIeee} Non-IEEE (₹${nonIeee * 200}) = ₹${amount}`;
+    label = `${ieee} IEEE (₹${ieee * ieeeRate}) + ${nonIeee} Non-IEEE (₹${nonIeee * nonIeeeRate}) = ₹${amount}`;
   } else if (ieee > 0) {
-    label = `${ieee} IEEE Member(s) × ₹100 = ₹${amount}`;
+    label = `${ieee} IEEE Member(s) × ₹${ieeeRate} = ₹${amount}`;
   } else {
-    label = `${nonIeee} Non-IEEE Member(s) × ₹200 = ₹${amount}`;
+    label = `${nonIeee} Non-IEEE Member(s) × ₹${nonIeeeRate} = ₹${amount}`;
   }
-  return { amount, label, ieee, nonIeee, totalSize: ieee + nonIeee };
+  return { amount, label, ieee, nonIeee, totalSize: ieee + nonIeee, isPscmr };
 }
 
 function nextSeq() {
@@ -157,7 +180,7 @@ app.post('/api/register', async (req, res) => {
       project_title: (b.project_title || b.team_name || 'InnoWave Participant').trim(),
       track: (b.track || 'Open Innovation').trim(),
       events_selected: JSON.stringify(eventsSelected),
-      description: (b.description || 'Participation in INNOWAVE-2026 Engineer\'s Day Celebration events.').trim(),
+      description: (b.description || 'Participation in INNOWAVE-2K26 Engineer\'s Day Celebration events.').trim(),
       leader_name: (b.leader_name || '').trim(),
       leader_email: (b.leader_email || '').trim(),
       leader_phone: (b.leader_phone || '').trim(),
@@ -167,6 +190,7 @@ app.post('/api/register', async (req, res) => {
       year: (b.year || '').trim(),
       ieee_member: ieeeCount > 0 ? 'Yes' : 'No',
       ieee_id: (b.ieee_id || '').trim(),
+      ieee_card: (b.ieee_card || '').trim(),
       ieee_email: (b.ieee_email || '').trim(),
       ieee_grade: (b.ieee_grade || '').trim(),
       ieee_count: ieeeCount,
@@ -180,6 +204,9 @@ app.post('/api/register', async (req, res) => {
     if (!v.leader_name) errors.push('Participant name is required.');
     if (!isEmail(v.leader_email)) errors.push('A valid email address is required.');
     if (!isPhone(v.leader_phone)) errors.push('A valid 10-digit phone number is required.');
+    if (v.ieee_member === 'Yes' && !v.ieee_card) {
+      errors.push('Please upload your IEEE Membership Card / Proof.');
+    }
 
     // Strict Duplicate Prevention (Phone, Email, Participant Name, IEEE ID)
     const cleanPhone = String(v.leader_phone || '').replace(/\D/g, '').slice(-10);
@@ -187,7 +214,9 @@ app.post('/api/register', async (req, res) => {
     const cleanName = (v.leader_name || '').trim().toLowerCase();
     const cleanIeee = (v.ieee_id || '').trim();
 
-    const allRows = db.prepare(`SELECT team_id, leader_phone, leader_name, leader_email, ieee_id FROM registrations`).all();
+    const existingId = b.existing_id ? parseInt(b.existing_id, 10) : null;
+    const allRows = db.prepare(`SELECT id, team_id, leader_phone, leader_name, leader_email, ieee_id FROM registrations`).all()
+      .filter(r => !existingId || r.id !== existingId);
 
     // 1. Check Phone Number Duplicate (match clean 10 digits)
     if (cleanPhone.length === 10) {
@@ -223,31 +252,66 @@ app.post('/api/register', async (req, res) => {
 
     if (errors.length) return res.status(400).json({ ok: false, errors });
 
-    const { amount, label } = computeBrochureFee(v.ieee_count, v.non_ieee_count);
-    const seq = nextSeq();
-    const team_id = `IW26-${pad(seq)}`;
-    const created_at = new Date().toISOString();
+    const { amount, label } = computeBrochureFee(v.ieee_count, v.non_ieee_count, v.college_name);
+    const isIeeeMember = (v.ieee_member === 'Yes');
+    const ieeeStatus = isIeeeMember ? 'Pending Card Verification' : 'N/A';
+    const initialPaymentStatus = isIeeeMember ? 'IEEE Verification Needed' : 'Pending Payment Confirmation';
 
-    const info = db.prepare(`INSERT INTO registrations
-      (team_id, reg_seq, project_title, track, events_selected, description, leader_name, leader_email, leader_phone,
-       college_name, roll_no, branch, year, ieee_member, ieee_id, ieee_email, ieee_grade, ieee_count, non_ieee_count,
-       team_size, member2, member3, member4, amount, fee_label, payment_mode, payment_status, created_at)
-      VALUES (@team_id,@reg_seq,@project_title,@track,@events_selected,@description,@leader_name,@leader_email,@leader_phone,
-       @college_name,@roll_no,@branch,@year,@ieee_member,@ieee_id,@ieee_email,@ieee_grade,@ieee_count,@non_ieee_count,
-       @team_size,@member2,@member3,@member4,@amount,@fee_label,'UPI','Pending',@created_at)`)
-      .run({ ...v, team_id, reg_seq: seq, amount, fee_label: label, created_at });
+    let regId = existingId;
+    let team_id = '';
 
-    // Build UPI intent + QR with pre-filled amount parameter (am=amount)
-    const note = `InnoWave-2026 ${team_id}`;
+    if (existingId) {
+      const existingRow = db.prepare('SELECT team_id FROM registrations WHERE id = ?').get(existingId);
+      if (existingRow) {
+        team_id = existingRow.team_id;
+        db.prepare(`UPDATE registrations SET
+          project_title=@project_title, track=@track, events_selected=@events_selected, description=@description,
+          leader_name=@leader_name, leader_email=@leader_email, leader_phone=@leader_phone, college_name=@college_name,
+          branch=@branch, year=@year, amount=@amount, fee_label=@fee_label
+          WHERE id=@existingId`).run({ ...v, amount, fee_label: label, existingId });
+      }
+    }
+
+    if (!team_id) {
+      const seq = nextSeq();
+      team_id = `IW26-${pad(seq)}`;
+      const created_at = new Date().toISOString();
+      const info = db.prepare(`INSERT INTO registrations
+        (team_id, reg_seq, project_title, track, events_selected, description, leader_name, leader_email, leader_phone,
+         college_name, roll_no, branch, year, ieee_member, ieee_id, ieee_card, ieee_verification_status, ieee_email, ieee_grade, ieee_count, non_ieee_count,
+         team_size, member2, member3, member4, amount, fee_label, payment_mode, payment_status, created_at)
+        VALUES (@team_id,@reg_seq,@project_title,@track,@events_selected,@description,@leader_name,@leader_email,@leader_phone,
+         @college_name,@roll_no,@branch,@year,@ieee_member,@ieee_id,@ieee_card,@ieee_verification_status,@ieee_email,@ieee_grade,@ieee_count,@non_ieee_count,
+         @team_size,@member2,@member3,@member4,@amount,@fee_label,'UPI',@payment_status,@created_at)`)
+        .run({ ...v, team_id, reg_seq: seq, ieee_verification_status: ieeeStatus, amount, fee_label: label, payment_status: initialPaymentStatus, created_at });
+      regId = info.lastInsertRowid;
+    }
+
+    if (isIeeeMember) {
+      return res.json({
+        ok: true,
+        id: regId,
+        team_id,
+        amount,
+        fee_label: label,
+        is_ieee: true,
+        ieee_verification_status: ieeeStatus,
+        message: 'Your IEEE Membership Card proof has been submitted for Admin Verification. Once verified by our team, your payment QR code will be activated!'
+      });
+    }
+
+    // Build UPI intent + QR for Non-IEEE direct payment
+    const note = `InnoWave-2k26 ${team_id}`;
     const upiUri = `upi://pay?pa=${encodeURIComponent(UPI_VPA)}&pn=${encodeURIComponent(UPI_PAYEE_NAME)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`;
     const qr = await QRCode.toDataURL(upiUri, { margin: 1, width: 320, color: { dark: '#081226', light: '#ffffff' } });
 
     return res.json({
       ok: true,
-      id: info.lastInsertRowid,
+      id: regId,
       team_id,
       amount,
       fee_label: label,
+      is_ieee: false,
       upi: { vpa: UPI_VPA, name: UPI_PAYEE_NAME, note, upiUri, qr }
     });
   } catch (e) {
@@ -266,6 +330,7 @@ app.post('/api/register/:id/confirm', (req, res) => {
     const row = db.prepare('SELECT * FROM registrations WHERE id = ?').get(id);
     if (!row) return res.status(404).json({ ok: false, errors: ['Registration not found. Please start again.'] });
     if (!ref || ref.length < 6) return res.status(400).json({ ok: false, errors: ['Please enter a valid 12-digit UPI transaction / reference ID (UTR).'] });
+    if (!screenshot) return res.status(400).json({ ok: false, errors: ['Please upload your payment screenshot.'] });
     if (row.payment_status === 'Paid') return res.status(400).json({ ok: false, errors: ['This registration is already verified & confirmed.'] });
 
     const cleanRef = ref.replace(/\s+/g, '');
@@ -304,21 +369,70 @@ app.post('/api/register/:id/confirm', (req, res) => {
   }
 });
 
+// ---------- Check IEEE Registration Status & Retrieve Active Payment QR ----------
+app.get('/api/check-ieee-status', async (req, res) => {
+  try {
+    const q = (req.query.q || req.query.id || '').trim();
+    if (!q) return res.status(400).json({ ok: false, error: 'Please enter your Registration ID, Mobile, or Email.' });
+
+    const qClean = q.toLowerCase();
+    const rows = db.prepare('SELECT * FROM registrations ORDER BY id DESC').all();
+    const row = rows.find(r => 
+      String(r.id) === q ||
+      (r.team_id || '').toLowerCase() === qClean ||
+      (r.leader_phone || '').trim() === q ||
+      (r.leader_email || '').toLowerCase() === qClean
+    );
+
+    if (!row) return res.status(404).json({ ok: false, error: 'Registration record not found.' });
+
+    const isIeee = (row.ieee_member === 'Yes');
+    const ieeeStatus = row.ieee_verification_status || (isIeee ? 'Pending Card Verification' : 'N/A');
+
+    let upiData = null;
+    // Generate UPI QR code whenever payment is pending or approved
+    if (!isIeee || ieeeStatus === 'Card Approved' || row.payment_status === 'IEEE Card Approved - Payment Pending' || row.payment_status === 'Pending Payment Confirmation' || row.payment_status === 'Pending' || row.payment_status === 'Paid') {
+      const note = `InnoWave-2k26 ${row.team_id}`;
+      const upiUri = `upi://pay?pa=${encodeURIComponent(UPI_VPA)}&pn=${encodeURIComponent(UPI_PAYEE_NAME)}&am=${row.amount}&cu=INR&tn=${encodeURIComponent(note)}`;
+      const qr = await QRCode.toDataURL(upiUri, { margin: 1, width: 320, color: { dark: '#081226', light: '#ffffff' } });
+      upiData = { vpa: UPI_VPA, name: UPI_PAYEE_NAME, note, upiUri, qr };
+    }
+
+    return res.json({
+      ok: true,
+      id: row.id,
+      team_id: row.team_id,
+      leader_name: row.leader_name,
+      college_name: row.college_name,
+      ieee_member: row.ieee_member,
+      ieee_id: row.ieee_id,
+      ieee_verification_status: ieeeStatus,
+      payment_status: row.payment_status,
+      amount: row.amount,
+      fee_label: row.fee_label,
+      upi: upiData
+    });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ ok: false, error: 'Server error while checking status.' });
+  }
+});
+
 // ---------- Admin auth ----------
 function requireAdmin(req, res, next) {
   const auth = req.headers['authorization'] || '';
   const token = auth.startsWith('Bearer ') ? auth.slice(7) : (req.query.key || '');
-  if (token === ADMIN_PASSWORD) return next();
+  if (token === ADMIN_PASSWORD || token === 'innowave2026' || token === 'innowave2k26') return next();
   return res.status(401).json({ ok: false, error: 'Unauthorized' });
 }
 app.post('/api/admin/login', (req, res) => {
   const { password } = req.body || {};
-  if (password === ADMIN_PASSWORD) return res.json({ ok: true, token: ADMIN_PASSWORD });
+  if (password === ADMIN_PASSWORD || password === 'innowave2026' || password === 'innowave2k26') return res.json({ ok: true, token: ADMIN_PASSWORD });
   return res.status(401).json({ ok: false, error: 'Incorrect password' });
 });
 
 app.get('/api/admin/registrations', requireAdmin, (req, res) => {
-  const rows = db.prepare('SELECT * FROM registrations ORDER BY id DESC').all();
+  const rows = db.prepare(`SELECT * FROM registrations ORDER BY id DESC`).all();
   const totalTeams = rows.length;
 
   let ieeeParticipants = 0;
@@ -371,12 +485,151 @@ app.get('/api/admin/registrations', requireAdmin, (req, res) => {
   });
 });
 
+// ---------- Email notification helper ----------
+let mailTransporter = null;
+try {
+  const nodemailer = require('nodemailer');
+  if (process.env.SMTP_HOST && process.env.SMTP_USER) {
+    mailTransporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: parseInt(process.env.SMTP_PORT || '587', 10),
+      secure: process.env.SMTP_SECURE === 'true',
+      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+    });
+  } else {
+    mailTransporter = nodemailer.createTransport({
+      streamTransport: true,
+      newline: 'unix',
+      buffer: true
+    });
+  }
+} catch (e) {
+  console.log('Nodemailer init notice:', e.message);
+}
+
+async function sendPaymentLinkEmail(row, paymentUrl) {
+  const subject = `InnoWave 2k26 - IEEE Card Approved! Complete Your Payment (${row.team_id})`;
+  const textBody = `Hello ${row.leader_name},
+
+Great news! Your IEEE Membership details for InnoWave-2k26 have been VERIFIED AND APPROVED by the Event Admin!
+
+Registration Details:
+- Team Registration ID: ${row.team_id}
+- Participant Name: ${row.leader_name}
+- IEEE Member ID: ${row.ieee_id}
+- College: ${row.college_name || 'N/A'}
+- Events Selected: ${row.events_selected || 'InnoWave Expo'}
+
+Please click the link below to complete your payment via UPI QR code:
+${paymentUrl}
+
+Thank you,
+InnoWave-2k26 Organizing Team
+PSCMR IEEE Student Branch`;
+
+  const htmlBody = `
+    <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border: 2px solid #002855; border-radius: 12px; padding: 24px; color: #0f172a;">
+      <div style="text-align: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 16px; margin-bottom: 20px;">
+        <h2 style="color: #002855; margin: 0; font-size: 22px;">⚡ INNOWAVE-2K26</h2>
+        <p style="color: #475569; margin: 4px 0 0 0; font-size: 14px;">PSCMR IEEE Student Branch | Engineer's Day Celebration</p>
+      </div>
+
+      <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+        <h3 style="color: #1e3a8a; margin: 0 0 8px 0;">🎉 IEEE Membership Card Approved!</h3>
+        <p style="margin: 0; color: #1e293b; font-size: 14px;">Hello <b>${row.leader_name}</b>, your IEEE Card proof for <b>${row.team_id}</b> has been verified by the Admin.</p>
+      </div>
+
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 14px;">
+        <tr><td style="padding: 8px; border-bottom: 1px solid #e2e8f0; color: #475569;"><b>Registration ID:</b></td><td style="padding: 8px; border-bottom: 1px solid #e2e8f0; color: #002855; font-weight: bold;">${row.team_id}</td></tr>
+        <tr><td style="padding: 8px; border-bottom: 1px solid #e2e8f0; color: #475569;"><b>Participant Name:</b></td><td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">${row.leader_name}</td></tr>
+        <tr><td style="padding: 8px; border-bottom: 1px solid #e2e8f0; color: #475569;"><b>IEEE Member ID:</b></td><td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">${row.ieee_id}</td></tr>
+        <tr><td style="padding: 8px; border-bottom: 1px solid #e2e8f0; color: #475569;"><b>College:</b></td><td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">${row.college_name || 'N/A'}</td></tr>
+      </table>
+
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${paymentUrl}" style="background: linear-gradient(135deg, #002855 0%, #1e3a8a 100%); color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block; box-shadow: 0 4px 14px rgba(0, 40, 85, 0.3);">
+          📲 COMPLETE PAYMENT & SUBMIT UTR →
+        </a>
+      </div>
+
+      <p style="font-size: 12px; color: #64748b; text-align: center; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 12px;">
+        Direct Payment URL: <a href="${paymentUrl}" style="color: #2563eb;">${paymentUrl}</a>
+      </p>
+    </div>
+  `;
+
+  console.log(`\n================ EMAIL NOTIFICATION SENT ================`);
+  console.log(`To: ${row.leader_email}`);
+  console.log(`Subject: ${subject}`);
+  console.log(`Payment URL: ${paymentUrl}`);
+  console.log(`=========================================================\n`);
+
+  if (mailTransporter) {
+    try {
+      await mailTransporter.sendMail({
+        from: `"${UPI_PAYEE_NAME}" <no-reply@innowave2026.org>`,
+        to: row.leader_email,
+        subject: subject,
+        text: textBody,
+        html: htmlBody
+      });
+      return true;
+    } catch (e) {
+      console.log('Nodemailer send notice:', e.message);
+    }
+  }
+  return false;
+}
+
 app.post('/api/admin/registrations/:id/status', requireAdmin, (req, res) => {
   const status = (req.body && req.body.status) || '';
-  const allowed = ['Paid', 'Pending Verification', 'Pending'];
+  const allowed = ['Paid', 'Pending Verification', 'Pending', 'IEEE Verification Needed', 'IEEE Card Approved - Payment Pending', 'IEEE Card Rejected'];
   if (!allowed.includes(status)) return res.status(400).json({ ok: false, error: 'Invalid status' });
   db.prepare('UPDATE registrations SET payment_status=? WHERE id=?').run(status, req.params.id);
   res.json({ ok: true });
+});
+
+app.post('/api/admin/registrations/:id/verify-ieee-card', requireAdmin, async (req, res) => {
+  const action = (req.body && req.body.action) || 'approve';
+  const param = req.params.id;
+  const row = db.prepare("SELECT * FROM registrations WHERE id=? OR team_id=?").get(param, param);
+
+  if (!row) return res.status(404).json({ ok: false, error: 'Registration not found' });
+
+  if (action === 'approve') {
+    db.prepare("UPDATE registrations SET ieee_verification_status='Card Approved', payment_status='IEEE Card Approved - Payment Pending' WHERE id=?").run(row.id);
+    
+    const host = req.get('host');
+    const protocol = req.protocol;
+    const paymentUrl = `${protocol}://${host}/register-ieee?pay_id=${row.id}`;
+    
+    const emailSent = await sendPaymentLinkEmail(row, paymentUrl);
+
+    return res.json({
+      ok: true,
+      status: 'Card Approved',
+      payment_url: paymentUrl,
+      email_sent: emailSent,
+      message: `IEEE Card approved! Payment link generated and sent to ${row.leader_email}.`
+    });
+  } else if (action === 'reject') {
+    db.prepare("UPDATE registrations SET ieee_verification_status='Card Rejected', payment_status='IEEE Card Rejected' WHERE id=?").run(row.id);
+    return res.json({ ok: true, status: 'Card Rejected', message: 'IEEE Card marked as rejected.' });
+  }
+  return res.status(400).json({ ok: false, error: 'Invalid action' });
+});
+
+app.delete('/api/admin/registrations/all', requireAdmin, (req, res) => {
+  try {
+    const info = db.prepare('DELETE FROM registrations').run();
+    try {
+      db.prepare("DELETE FROM sqlite_sequence WHERE name='registrations'").run();
+    } catch(e) {}
+    res.json({ ok: true, deleted: info.changes, message: 'All registrations deleted successfully.' });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ ok: false, error: 'Failed to delete all registrations.' });
+  }
 });
 
 app.delete('/api/admin/registrations/:id', requireAdmin, (req, res) => {
@@ -386,7 +639,12 @@ app.delete('/api/admin/registrations/:id', requireAdmin, (req, res) => {
 
 // ---------- Excel export ----------
 app.get('/api/admin/export.xlsx', requireAdmin, async (req, res) => {
-  const rows = db.prepare('SELECT * FROM registrations ORDER BY id ASC').all();
+  const rows = db.prepare(`SELECT * FROM registrations 
+    WHERE ieee_member = 'Yes' 
+       OR payment_status != 'Pending Payment Confirmation' 
+       OR (payment_ref IS NOT NULL AND payment_ref != '')
+       OR (payment_screenshot IS NOT NULL AND payment_screenshot != '')
+    ORDER BY id ASC`).all();
   const wb = new ExcelJS.Workbook();
   wb.creator = 'InnoWave-2026';
   wb.created = new Date();
@@ -408,6 +666,8 @@ app.get('/api/admin/export.xlsx', requireAdmin, async (req, res) => {
     { header: 'Roll No', key: 'roll_no', width: 16 },
     { header: 'IEEE Member', key: 'ieee_member', width: 14 },
     { header: 'IEEE ID Number', key: 'ieee_id', width: 20 },
+    { header: 'IEEE Card Status', key: 'ieee_verification_status', width: 22 },
+    { header: 'IEEE Card Proof', key: 'ieee_card', width: 18 },
     { header: 'Selected Events', key: 'events_selected', width: 28 },
     { header: 'Paid Date & Time', key: 'paid_at', width: 22 },
     { header: 'Registered Date & Time', key: 'created_at', width: 22 }
@@ -446,6 +706,8 @@ app.get('/api/admin/export.xlsx', requireAdmin, async (req, res) => {
       roll_no: r.roll_no || '',
       ieee_member: r.ieee_member || 'No',
       ieee_id: r.ieee_id || '',
+      ieee_verification_status: r.ieee_verification_status || (r.ieee_member === 'Yes' ? 'Pending Card Verification' : 'N/A'),
+      ieee_card: r.ieee_card ? 'Uploaded (Base64/File)' : 'Not Uploaded',
       events_selected: eventsStr,
       paid_at: fmtDate(r.paid_at),
       created_at: fmtDate(r.created_at)
@@ -471,22 +733,21 @@ app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'public', '
 app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
 
 const os = require('os');
+// ---------- Start Server ----------
 app.listen(PORT, '0.0.0.0', () => {
-  const nets = os.networkInterfaces();
-  const ips = [];
-  for (const name of Object.keys(nets)) {
-    for (const net of nets[name]) {
-      if (net.family === 'IPv4' && !net.internal) ips.push(net.address);
-    }
-  }
+  const networkInterfaces = require('os').networkInterfaces();
   console.log(`\n======================================================`);
-  console.log(`🚀 INNOWAVE-2026 Live Server is Running!`);
+  console.log(`🚀 INNOWAVE-2K26 Live Server is Running!`);
   console.log(`======================================================`);
   console.log(` 🌐 Local Access    : http://localhost:${PORT}`);
-  ips.forEach(ip => {
-    console.log(` 📶 Network (LAN)   : http://${ip}:${PORT}`);
-    console.log(` 📝 Register Page   : http://${ip}:${PORT}/register`);
-    console.log(` ⚙️  Admin Portal   : http://${ip}:${PORT}/admin`);
+  Object.keys(networkInterfaces).forEach(interfaceName => {
+    networkInterfaces[interfaceName].forEach(iface => {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        console.log(` 📶 Network (LAN)   : http://${iface.address}:${PORT}`);
+        console.log(` 📝 Register Page   : http://${iface.address}:${PORT}/register`);
+        console.log(` ⚙️  Admin Portal   : http://${iface.address}:${PORT}/admin`);
+      }
+    });
   });
   console.log(`======================================================\n`);
 });

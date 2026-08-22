@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Non-IEEE Registration · INNOWAVE-2K26</title>
+<meta name="description" content="Non-IEEE Student Registration for INNOWAVE-2K26 National-Level Technical Event.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Arvo:wght@700&family=Fredoka:wght@700&family=Montserrat:wght@700;800;900&family=Space+Grotesk:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<style>
+:root {
+  --bg-primary:   #040406;
+  --bg-panel:     rgba(11, 15, 26, 0.94);
+  --border:       rgba(0, 212, 255, 0.35);
+  --accent:       #00d4ff;
+  --accent-blue:  #0066ff;
+  --gold:         #fbbf24;
+  --accent-dim:   rgba(0, 212, 255, 0.18);
+  --warn:         #f59e0b;
+  --text-primary: #ffffff;
+  --text-muted:   #cbd5e1;
+}
+
+[data-theme="light"] {
+  --bg-primary:   #f8fafc;
+  --bg-panel:     rgba(255, 255, 255, 0.96);
+  --border:       #e2e8f0;
+  --accent:       #002855;
+  --accent-blue:  #1e3a8a;
+  --gold:         #b45309;
+  --accent-dim:   rgba(30, 58, 138, 0.08);
+  --warn:         #b45309;
+  --text-primary: #0f172a;
+  --text-muted:   #475569;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  line-height: 1.6;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+html[data-theme="light"], body.light-theme {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] body,
+body.light-theme {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .accreditation-wrapper,
+body.light-theme .accreditation-wrapper {
+  background: #ffffff !important;
+  border-bottom: 1px solid #cbd5e1 !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="light"] .navbar,
+body.light-theme .navbar {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border-bottom: 1px solid #cbd5e1 !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06) !important;
+}
+
+[data-theme="light"] .nav-links a,
+body.light-theme .nav-links a {
+  color: #1e293b !important;
+  font-weight: 600 !important;
+}
+[data-theme="light"] .nav-links a:hover,
+body.light-theme .nav-links a:hover {
+  color: #002855 !important;
+}
+
+[data-theme="light"] .btn-primary-lg,
+[data-theme="light"] .btn.primary,
+body.light-theme .btn-primary-lg,
+body.light-theme .btn.primary {
+  background: linear-gradient(135deg, #002855 0%, #1e3a8a 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(0, 40, 85, 0.25) !important;
+}
+
+[data-theme="light"] .theme-toggle-btn,
+body.light-theme .theme-toggle-btn {
+  background: #f1f5f9 !important;
+  border: 1px solid #94a3b8 !important;
+  color: #0f172a !important;
+}
+[data-theme="light"] .theme-toggle-btn:hover,
+body.light-theme .theme-toggle-btn:hover {
+  background: #e2e8f0 !important;
+  color: #002855 !important;
+}
+
+[data-theme="light"] .reg-card,
+[data-theme="light"] #paymentModal,
+body.light-theme .reg-card,
+body.light-theme #paymentModal {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1.5px solid #1e293b !important;
+  border-top: 5px solid #1e293b !important;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08) !important;
+  border-radius: 12px !important;
+}
+
+[data-theme="light"] .reg-card h2,
+[data-theme="light"] #paymentModal h3,
+body.light-theme .reg-card h2,
+body.light-theme #paymentModal h3 {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .form-section,
+body.light-theme .form-section {
+  background: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 10px !important;
+}
+
+[data-theme="light"] .form-section-title,
+body.light-theme .form-section-title {
+  color: #0f172a !important;
+  border-bottom: 2px solid #cbd5e1 !important;
+  padding-bottom: 6px !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] label,
+[data-theme="light"] .form-label,
+body.light-theme label,
+body.light-theme .form-label {
+  color: #1e293b !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] input[type="text"],
+[data-theme="light"] input[type="email"],
+[data-theme="light"] input[type="tel"],
+[data-theme="light"] select,
+[data-theme="light"] textarea,
+[data-theme="light"] input[type="file"],
+body.light-theme input[type="text"],
+body.light-theme input[type="email"],
+body.light-theme input[type="tel"],
+body.light-theme select,
+body.light-theme textarea,
+body.light-theme input[type="file"] {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1.5px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.03) !important;
+}
+
+[data-theme="light"] input:focus,
+[data-theme="light"] select:focus,
+[data-theme="light"] textarea:focus,
+body.light-theme input:focus,
+body.light-theme select:focus,
+body.light-theme textarea:focus {
+  border-color: #1e293b !important;
+  box-shadow: 0 0 0 3px rgba(30, 41, 59, 0.15) !important;
+}
+
+[data-theme="light"] footer,
+body.light-theme footer {
+  background: #ffffff !important;
+  border-top: 1px solid #cbd5e1 !important;
+  color: #475569 !important;
+}
+
+.theme-toggle-btn {
+  background: var(--accent-dim);
+  border: 1px solid var(--accent);
+  color: var(--text-primary);
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 11.5px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.theme-toggle-btn:hover {
+  transform: translateY(-1px);
+  background: var(--accent);
+  color: #041220;
+}
+
+#webgl-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.font-space { font-family: 'Space Grotesk', sans-serif; }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 4vw; }
+
+/* Top Accreditation Header */
+.accreditation-wrapper {
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  margin: 0;
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+  overflow: hidden;
+}
+.official-header-img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  object-fit: fill;
+}
+
+/* Sticky Navbar */
+nav.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(4, 4, 6, 0.94);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+nav .nav-in {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 50px;
+}
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+.brand-logo .accent-text { color: var(--accent); }
+.brand-logo .dot {
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--accent);
+}
+.nav-links { display: flex; gap: 24px; align-items: center; }
+.nav-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--accent); }
+
+/* Registration Header */
+.reg-hero {
+  padding: 45px 0 25px;
+  text-align: left;
+}
+.reg-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 212, 255, 0.15);
+  border: 1px solid var(--accent);
+  padding: 6px 18px;
+  border-radius: 4px;
+  color: var(--accent);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.35em;
+  margin-bottom: 16px;
+}
+.reg-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: clamp(2.2rem, 4.5vw, 3.6rem);
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+.reg-title .accent { color: var(--accent); }
+
+/* Registration Panel */
+.registration-panel { background: rgba(11, 15, 26, 0.92); backdrop-filter: blur(14px); border: 1.5px solid var(--border); border-radius: 12px; padding: 36px; margin-bottom: 50px; box-shadow: 0 14px 40px rgba(0, 0, 0, 0.8); }
+
+.fee-slot-card {
+  background: rgba(10, 8, 22, 0.85);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 28px;
+  text-align: center;
+}
+.fee-slot-title { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: var(--accent); margin-bottom: 10px; letter-spacing: 0.05em; text-transform: uppercase; }
+.fee-note { color: var(--text-muted); font-size: 13px; font-weight: 600; line-height: 1.6; }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { margin-bottom: 16px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group label { display: block; font-weight: 600; font-size: 13.5px; margin-bottom: 6px; color: var(--text-primary); }
+.form-group input, .form-group select { width: 100%; background: rgba(10, 8, 22, 0.85); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; color: var(--text-primary); font-family: inherit; font-size: 14.5px; outline: none; transition: border-color 0.2s; }
+.form-group input:focus, .form-group select:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(0, 212, 255, 0.3); }
+
+.btn-primary-lg {
+  background: linear-gradient(135deg, #00d4ff 0%, #0066ff 100%);
+  color: #041220;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 15px 36px;
+  border-radius: 6px;
+  text-decoration: none;
+  box-shadow: 0 6px 24px rgba(0, 212, 255, 0.45);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+.btn-primary-lg:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(0, 212, 255, 0.65); }
+
+.btn-secondary-lg {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 15px 32px;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.btn-secondary-lg:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Modal */
+.modal-overlay { position: fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(5,9,20,0.88); backdrop-filter:blur(12px); z-index:1000; display:none; align-items:center; justify-content:center; padding:20px; }
+.modal-content { background:var(--bg-panel); border:1px solid var(--accent); border-radius:12px; max-width:600px; width:100%; padding:34px; position:relative; }
+.modal-close { position:absolute; top:20px; right:20px; background:none; border:none; color:var(--text-muted); font-size:24px; cursor:pointer; }
+.modal-close:hover { color:var(--accent); }
+
+footer { border-top: 1px solid var(--border); padding: 36px 0; text-align: center; color: var(--text-muted); font-size: 14px; background: var(--bg-primary); }
+
+@media (max-width: 768px) {
+  html, body { overflow-x: hidden !important; width: 100% !important; }
+  .wrap { padding: 0 2.5vw !important; width: 100% !important; max-width: 100% !important; }
+  nav .nav-in { padding: 0 10px !important; height: 48px !important; }
+  .brand-logo { font-size: 13.5px !important; }
+  .brand-logo img { height: 26px !important; }
+  .nav-links { display: none !important; }
+  
+  .reg-hero { padding: 16px 8px 10px !important; text-align: center !important; }
+  .reg-title { font-size: clamp(1.5rem, 5.5vw, 2.2rem) !important; line-height: 1.25 !important; }
+  .reg-badge { font-size: 10px !important; letter-spacing: 0.08em !important; }
+  
+  .registration-panel { padding: 14px 10px !important; border-radius: 12px !important; margin-bottom: 20px !important; }
+  .fee-slot-card { padding: 10px 8px !important; margin-bottom: 14px !important; }
+  
+  /* Preserve exact 2-column laptop structure on mobile fitted to screen */
+  .form-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px 10px !important;
+    width: 100% !important;
+  }
+  .form-group.full {
+    grid-column: 1 / -1 !important;
+  }
+  .form-group label {
+    font-size: 11.5px !important;
+    margin-bottom: 3px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  
+  input[type="text"], input[type="email"], input[type="tel"], select, textarea {
+    font-size: 13px !important;
+    padding: 8px 10px !important;
+    min-height: 38px !important;
+    border-radius: 6px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  
+  .btn-primary-lg, .btn-secondary-lg {
+    width: 100% !important;
+    padding: 12px 14px !important;
+    font-size: 13.5px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    border-radius: 6px !important;
+  }
+  
+  #paymentModal {
+    padding: 14px 10px !important;
+    border-radius: 12px !important;
+  }
+  #paymentModal img#qrImgDisplay {
+    max-width: 180px !important;
+    height: 180px !important;
+  }
+  #successSlip {
+    padding: 14px 10px !important;
+    border-radius: 10px !important;
+    font-size: 12.5px !important;
+    overflow-x: auto !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<canvas id="webgl-canvas"></canvas>
+
+<!-- Top Accreditation Header Banner Image -->
+<div class="accreditation-wrapper">
+  <img src="assets/official_header_banner.png" alt="Official Accreditation Header Banner" class="official-header-img">
+</div>
+
+<!-- Sticky Navbar -->
+<nav class="navbar">
+  <div class="wrap nav-in">
+    <a href="index.html" class="brand-logo">
+      <img src="assets/logo_college.png" alt="PSCMRCET Logo" style="height:32px; width:auto; object-fit:contain;">
+      <span class="dot"></span>INNOWAVE<span class="accent-text">2K26</span>
+    </a>
+    <div class="nav-actions" style="display:flex; align-items:center; gap:8px;">
+      <a href="register-ieee.html" class="btn-nav-sub" style="font-size:11.5px; padding:5px 12px; background:rgba(0, 212, 255, 0.15); color:var(--accent); border:1px solid var(--accent); border-radius:18px; text-decoration:none; font-weight:700; white-space:nowrap;">🎓 IEEE Member →</a>
+      <button id="themeToggleBtn" onclick="toggleTheme()" class="theme-toggle-btn" style="font-size:11px; padding:5px 10px;">☀️ LIGHT</button>
+    </div>
+    <div class="nav-links desktop-only" style="display:flex; align-items:center; gap:16px;">
+      <a href="index.html">Home</a>
+      <a href="index.html#about">About</a>
+      <a href="index.html#events">Events</a>
+      <a href="index.html#contacts">Co-ordinators</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Container -->
+<div class="wrap">
+  <div class="reg-hero">
+    <div class="reg-badge">🚀 NON-IEEE PARTICIPANT REGISTRATION</div>
+    <h1 class="reg-title">Non-IEEE Student <span class="accent">Instant Registration & Payment</span></h1>
+    <p style="color:var(--text-muted); font-size:15.5px; max-width:650px;">
+      Register individually for technical events at INNOWAVE-2026. Complete instant UPI payment via PhonePe / GPay / Paytm to generate your official receipt slip!
+    </p>
+  </div>
+
+  <div class="registration-panel">
+    
+    <div class="fee-slot-card">
+      <div class="fee-slot-title">⚡ DIRECT INSTANT PAYMENT WORKFLOW</div>
+      <div class="fee-note">
+        Fill in your participant details below to generate your direct PhonePe / UPI QR code immediately!
+      </div>
+    </div>
+
+    <!-- Registration Form -->
+    <form id="mainRegForm" onsubmit="submitRegistration(event)">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Participant Full Name *</label>
+          <input type="text" id="leaderName" required placeholder="Enter your full name">
+        </div>
+        <div class="form-group">
+          <label>Email Address *</label>
+          <input type="email" id="leaderEmail" required placeholder="email@example.com">
+        </div>
+        <div class="form-group">
+          <label>Mobile Number *</label>
+          <input type="tel" id="leaderPhone" required placeholder="10-digit mobile number">
+        </div>
+        <div class="form-group">
+          <label>College / Institution *</label>
+          <input type="text" id="collegeName" required placeholder="Enter your college / institution name" oninput="updateDynamicFee()">
+        </div>
+        <div class="form-group">
+          <label>Branch / Department</label>
+          <input type="text" id="branch" placeholder="e.g. CSE, ECE, EEE, MECH...">
+        </div>
+        <div class="form-group">
+          <label>Year of Study</label>
+          <select id="year">
+            <option value="1st Year">1st Year</option>
+            <option value="2nd Year">2nd Year</option>
+            <option value="3rd Year">3rd Year</option>
+            <option value="4th Year">4th Year</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="text-align:center; margin-top:24px;">
+        <button type="submit" class="btn-primary-lg" id="submitBtn">
+          PROCEED TO INSTANT PAYMENT →
+        </button>
+      </div>
+    </form>
+
+    <!-- Status Lookup Box -->
+    <div id="statusBox" style="margin-top:36px; background:rgba(10,8,22,0.85); border:1px solid var(--border); border-radius:12px; padding:28px; text-align:center;">
+      <h3 style="font-family:'Space Grotesk',sans-serif; color:var(--accent); font-size:20px; font-weight:700; margin-bottom:6px;">🔍 CHECK REGISTRATION STATUS & PAY</h3>
+      <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">Already registered? Enter your Registration ID (e.g. IW26-0005), Mobile, or Email to check status and access your Payment QR.</p>
+      
+      <div style="max-width:550px; margin:0 auto 24px; text-align:left;">
+        <label for="statusQueryInput" style="display:block; font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:700; color:var(--accent); margin-bottom:8px;">
+          🔑 Registration ID / Phone / Email *
+        </label>
+        <input type="text" id="statusQueryInput" placeholder="Enter Registration ID (e.g. IW26-0005), Phone, or Email" style="width:100%; box-sizing:border-box; background:rgba(10,8,22,0.95); border:2px solid var(--accent); border-radius:10px; padding:16px 20px; color:var(--text-primary); font-size:18px; font-weight:600; outline:none; box-shadow:0 4px 16px rgba(0,212,255,0.12);">
+        
+        <button type="button" class="btn-primary-lg" style="width:100%; margin-top:14px; padding:16px 24px; font-size:16px; font-weight:800; border-radius:10px; box-shadow:0 6px 20px rgba(0,212,255,0.3); text-align:center; justify-content:center;" onclick="performStatusCheck()">
+          🔍 CHECK STATUS & OPEN PAYMENT QR →
+        </button>
+      </div>
+
+      <div id="statusResultWrap" style="display:none; max-width:580px; margin:0 auto; text-align:left; background:rgba(18,14,32,0.95); border:1px solid var(--border); border-radius:10px; padding:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <span style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:18px; color:var(--accent);" id="resTeamId">IW26-XXXX</span>
+          <span id="resStatusBadge" style="font-size:12px; font-weight:800; padding:4px 12px; border-radius:20px;"></span>
+        </div>
+        <div style="font-size:13.5px; color:var(--text-primary); margin-bottom:14px; line-height:1.6;" id="resDetailsText"></div>
+        <div id="resActionWrap" style="text-align:center; margin-top:14px;"></div>
+      </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" style="display:none; margin-top:24px; background:var(--bg-primary); border:1px solid var(--accent); padding:28px; border-radius:12px; text-align:center;">
+      <h3 class="font-space" style="color:var(--accent); font-size:20px; font-weight:700;">SCAN TO PAY VIA PhonePe / UPI</h3>
+      <p style="color:var(--text-muted); font-size:13.5px; margin:6px 0 16px;">Scan the official payment QR code below to complete payment:</p>
+
+      <div style="background:#ffffff; display:inline-block; padding:16px; border-radius:16px; border:2px solid var(--accent); margin-bottom:16px; box-shadow: 0 0 24px rgba(0, 212, 255, 0.3);">
+        <img id="qrImgDisplay" src="" style="width:240px; height:240px; display:block;" alt="Payment QR Code">
+        <div style="font-size:11px; font-weight:800; color:#000; margin-top:6px; letter-spacing:0.05em; font-family:'Space Grotesk',sans-serif;">Scan with PhonePe / GPay / Paytm</div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:8px; padding:10px 16px; display:inline-flex; align-items:center; gap:10px; margin-bottom:20px;">
+        <span style="font-size:12.5px; color:var(--text-muted);">UPI ID:</span>
+        <strong style="color:var(--accent); font-family:monospace; font-size:14px;" id="displayUpiVpa">gunugukrishnakumar@ybl</strong>
+      </div>
+
+      <div style="text-align:left; max-width:480px; margin:0 auto; background:rgba(10,8,22,0.9); border:1px solid var(--border); border-radius:10px; padding:20px;">
+        <h4 class="font-space" style="color:var(--accent); font-size:15px; margin-bottom:12px;">COMPLETE YOUR PAYMENT CONFIRMATION</h4>
+        <div style="margin-bottom:14px;">
+          <label style="display:block; font-size:12.5px; font-weight:600; margin-bottom:4px;">1. Enter 12-Digit UPI Transaction Reference ID (UTR) *</label>
+          <input type="text" id="utrRef" placeholder="e.g. 425819034123" style="width:100%; background:var(--bg-primary); border:1px solid var(--border); border-radius:6px; padding:10px; color:#fff; font-family:monospace; outline:none;">
+        </div>
+        <div style="margin-bottom:16px;">
+          <label style="display:block; font-size:12.5px; font-weight:600; margin-bottom:4px;">2. Upload Payment Screenshot Proof *</label>
+          <input type="file" accept="image/*" onchange="previewScreenshot(this)" style="width:100%; background:var(--bg-primary); border:1px solid var(--border); border-radius:6px; padding:8px; color:#fff; font-size:12px;">
+          <div id="screenshotPreviewWrap" style="display:none; margin-top:8px;">
+            <img id="screenshotPreviewImg" style="max-width:120px; max-height:120px; border-radius:6px; border:1px solid var(--accent);" alt="Screenshot Preview">
+          </div>
+        </div>
+        <button type="button" class="btn-primary-lg" style="width:100%;" onclick="confirmUtr()">VERIFY & SUBMIT PAYMENT →</button>
+        <button type="button" class="btn-secondary-lg" style="width:100%; margin-top:12px; cursor:pointer; font-size:13px;" onclick="returnToEditForm()">✏️ EDIT / CHANGE REGISTRATION DETAILS</button>
+      </div>
+    </div>
+
+    <!-- Official Printable Receipt Slip -->
+    <div id="successSlip" style="display:none; margin-top:24px; background:#fff; color:#000; border-radius:12px; padding:28px; text-align:left;">
+      <div style="text-align:center; margin-bottom:12px;">
+        <h2 class="font-space" style="color:#000; font-size:22px; font-weight:700; margin-bottom:4px;">INNOWAVE-2K26 REGISTRATION SLIP</h2>
+        <div style="font-size:13px; font-weight:700; color:#333;">POTTI SRIRAMULU CHALAVADI MALLIKARJUNA RAO COLLEGE OF ENGINEERING & TECHNOLOGY</div>
+        <div style="font-size:12px; color:#666;">IEEE Student Branch (STB18301) · Engineer's Day Celebration</div>
+      </div>
+      <hr style="margin:14px 0; border-top:2px dashed #ccc;">
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px; font-size:14px; margin-bottom:14px;">
+        <div><b>Registration ID:</b> <br><span id="slipTeamId" style="color:#00796b; font-size:22px; font-weight:900;"></span></div>
+        <div><b>Amount Paid:</b> <br><span id="slipAmount" style="font-size:18px; font-weight:800; color:#2e7d32;"></span></div>
+        <div><b>Participant Name:</b> <br><span id="slipLeader" style="font-size:15px; font-weight:700;"></span></div>
+        <div><b>Payment Reference (UTR):</b> <br><span id="slipRef" style="font-size:15px; font-weight:700;"></span></div>
+      </div>
+      <div style="text-align:center; margin-top:20px;">
+        <button onclick="window.print()" class="btn-download-receipt">🖨️ PRINT / SAVE OFFICIAL RECEIPT</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>© 2026 INNOWAVE-2K26 · IEEE Student Branch (STB18301)</p>
+    <p style="font-size:12px; margin-top:4px; color:var(--warn);">POTTI SRIRAMULU CHALAVADI MALLIKARJUNA RAO COLLEGE OF ENGINEERING AND TECHNOLOGY</p>
+  </div>
+</footer>
+
+<script>
+// 3D Canvas Background
+const canvas = document.getElementById('webgl-canvas');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: window.innerWidth > 768, alpha: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.set(0, 0, 26);
+
+const NODE_COUNT = 90;
+const nodes = []; const positions = new Float32Array(NODE_COUNT * 3);
+for (let i = 0; i < NODE_COUNT; i++) {
+  const x = (Math.random() - 0.5) * 42; const y = (Math.random() - 0.5) * 32; const z = (Math.random() - 0.5) * 30;
+  positions[i*3] = x; positions[i*3+1] = y; positions[i*3+2] = z;
+  nodes.push({ x, y, z, vx: (Math.random()-0.5)*0.02, vy: (Math.random()-0.5)*0.02, vz: (Math.random()-0.5)*0.02 });
+}
+const nodeGeo = new THREE.BufferGeometry(); nodeGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+const pointCloud = new THREE.Points(nodeGeo, new THREE.PointsMaterial({ size: 0.8, color: 0x00d4ff, transparent: true, opacity: 0.9 }));
+scene.add(pointCloud);
+
+function animate() {
+  requestAnimationFrame(animate);
+  scene.rotation.y += 0.002;
+  renderer.render(scene, camera);
+}
+animate();
+
+// Form & Dynamic Fee
+let currentFee = 100;
+let pendingRegId = null;
+let uploadedScreenshotBase64 = '';
+
+function isPscmrCollegeName(name) {
+  const cn = (name || '').toLowerCase();
+  return cn.includes('pscmr') || cn.includes('potti sriramulu') || cn.includes('chalavadi');
+}
+
+function updateDynamicFee() {
+  const collegeInput = document.getElementById('collegeName')?.value || '';
+  const isPscmr = isPscmrCollegeName(collegeInput);
+  currentFee = isPscmr ? 100 : 200;
+  const payBtnFee = document.getElementById('payBtnFee');
+  if (payBtnFee) payBtnFee.textContent = `₹${currentFee}`;
+}
+
+function returnToEditForm() {
+  document.getElementById('paymentModal').style.display = 'none';
+  document.getElementById('mainRegForm').style.display = 'block';
+  document.getElementById('mainRegForm').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function submitRegistration(e) {
+  e.preventDefault();
+  const leaderName = document.getElementById('leaderName').value.trim();
+  const leaderEmail = document.getElementById('leaderEmail').value.trim();
+  const leaderPhone = document.getElementById('leaderPhone').value.trim();
+  const collegeName = document.getElementById('collegeName').value.trim();
+  const branch = document.getElementById('branch').value.trim();
+  const year = document.getElementById('year').value;
+
+  const payload = {
+    existing_id: pendingRegId,
+    project_title: 'InnoWave Registration',
+    track: 'Open Innovation',
+    events_selected: ['Technical Quiz', 'Coding', 'Treasure Hunt', 'Project Expo', 'Prompt Engineering', 'Reels (1 Min)'],
+    description: 'Participation in INNOWAVE-2026 Engineer\'s Day Celebration.',
+    leader_name: leaderName,
+    leader_email: leaderEmail,
+    leader_phone: leaderPhone,
+    college_name: collegeName,
+    branch: branch,
+    year: year,
+    ieee_member: 'No',
+    ieee_id: '',
+    ieee_card: '',
+    ieee_count: 0,
+    non_ieee_count: 1,
+    team_size: 1
+  };
+
+  try {
+    const res = await fetch('/api/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!data.ok) {
+      alert(data.errors ? data.errors.join('\n') : 'Registration failed.');
+      return;
+    }
+    pendingRegId = data.id;
+    if (document.getElementById('payAmountDisplay')) document.getElementById('payAmountDisplay').textContent = `₹${data.amount}`;
+    if (data.upi) {
+      if (data.upi.qr) document.getElementById('qrImgDisplay').src = data.upi.qr;
+      if (data.upi.vpa) document.getElementById('displayUpiVpa').textContent = data.upi.vpa;
+    }
+    document.getElementById('mainRegForm').style.display = 'none';
+    document.getElementById('paymentModal').style.display = 'block';
+    document.getElementById('paymentModal').scrollIntoView({ behavior: 'smooth' });
+  } catch (err) {
+    console.error(err);
+    alert('Network error. Please try again.');
+  }
+}
+
+function previewScreenshot(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      uploadedScreenshotBase64 = e.target.result;
+      document.getElementById('screenshotPreviewImg').src = e.target.result;
+      document.getElementById('screenshotPreviewWrap').style.display = 'block';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+async function confirmUtr() {
+  const ref = document.getElementById('utrRef').value.trim();
+  if (!ref || ref.length < 6 || !uploadedScreenshotBase64) {
+    alert('Please enter valid UTR and upload payment screenshot.'); return;
+  }
+  try {
+    const res = await fetch(`/api/register/${pendingRegId}/confirm`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ payment_ref: ref, payment_screenshot: uploadedScreenshotBase64 })
+    });
+    const data = await res.json();
+    if (!data.ok) { alert(data.errors.join('\n')); return; }
+    document.getElementById('paymentModal').style.display = 'none';
+    if (document.getElementById('slipTeamId')) document.getElementById('slipTeamId').textContent = data.team_id;
+    if (document.getElementById('slipAmount')) document.getElementById('slipAmount').textContent = `✓ Payment Submitted`;
+    if (document.getElementById('slipLeader')) document.getElementById('slipLeader').textContent = data.leader_name;
+    if (document.getElementById('slipRef')) document.getElementById('slipRef').textContent = ref;
+    document.getElementById('successSlip').style.display = 'block';
+    document.getElementById('successSlip').scrollIntoView({ behavior: 'smooth' });
+  } catch(e) { alert('Confirmation error.'); }
+}
+
+async function performStatusCheck() {
+  const query = document.getElementById('statusQueryInput').value.trim();
+  if (!query) {
+    alert('Please enter your Registration ID, Mobile, or Email.');
+    return;
+  }
+  try {
+    const res = await fetch(`/api/check-ieee-status?q=${encodeURIComponent(query)}`);
+    const data = await res.json();
+    if (!data.ok) {
+      alert(data.error || 'Registration record not found.');
+      return;
+    }
+
+    document.getElementById('statusResultWrap').style.display = 'block';
+    document.getElementById('resTeamId').textContent = `${data.team_id} (ID: ${data.id})`;
+    document.getElementById('resDetailsText').innerHTML = `
+      <strong>Participant:</strong> ${data.leader_name}<br>
+      <strong>College:</strong> ${data.college_name}<br>
+      <strong>Registration Fee:</strong> ₹${data.amount} (${data.fee_label})
+    `;
+
+    const badge = document.getElementById('resStatusBadge');
+    const actWrap = document.getElementById('resActionWrap');
+    lastStatusData = data;
+
+    if (data.payment_status === 'Paid') {
+      badge.textContent = '🟢 PAID & CONFIRMED';
+      badge.style.color = '#00e676';
+      actWrap.innerHTML = `<div style="font-size:14px; color:#00e676; font-weight:700;">✓ Registration & Payment Verified & Confirmed!</div>`;
+    } else {
+      badge.textContent = data.payment_status === 'Pending Payment Confirmation' ? '🟡 UTR SUBMITTED — ADMIN CONFIRMATION PENDING' : '🟡 PAYMENT PENDING';
+      badge.style.color = '#f59e0b';
+
+      if (data.upi) {
+        actWrap.innerHTML = `
+          <div style="font-size:13px; color:var(--text-muted); margin-bottom:8px;">
+            ${data.payment_status === 'Pending Payment Confirmation' ? 'UTR submitted & under verification. You can re-view your Payment QR code anytime below:' : 'Scan QR code to complete payment and submit UTR:'}
+          </div>
+          <button type="button" class="btn-primary-lg" style="margin-top:4px; width:100%;" onclick="openPaymentModalWithData()">
+            📲 OPEN PAYMENT QR CODE & SUBMIT UTR →
+          </button>
+        `;
+      } else {
+        actWrap.innerHTML = `<div style="font-size:13px; color:var(--accent); font-weight:700;">✓ Registration Status: ${data.payment_status}</div>`;
+      }
+    }
+  } catch(err) {
+    console.error(err);
+    alert('Failed to check status.');
+  }
+}
+
+let lastStatusData = null;
+function openPaymentModalWithData() {
+  const data = lastStatusData;
+  if (!data) return;
+  pendingRegId = data.id;
+  if (document.getElementById('payAmountDisplay')) document.getElementById('payAmountDisplay').textContent = `₹${data.amount}`;
+  if (data.upi) {
+    if (data.upi.qr) document.getElementById('qrImgDisplay').src = data.upi.qr;
+    if (data.upi.vpa) document.getElementById('displayUpiVpa').textContent = data.upi.vpa;
+  }
+  document.getElementById('paymentModal').style.display = 'block';
+  document.getElementById('paymentModal').scrollIntoView({ behavior: 'smooth' });
+}
+
+(function checkUrlParams() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const payId = urlParams.get('pay_id') || urlParams.get('id');
+  if (payId) {
+    document.getElementById('statusQueryInput').value = payId;
+    performStatusCheck();
+    setTimeout(() => {
+      openPaymentModalWithData();
+    }, 400);
+  }
+})();
+
+function updateWebGLColors(theme) {
+  if (!scene || !pointCloud) return;
+  if (theme === 'light') {
+    pointCloud.material.color.setHex(0x1e3a8a);
+  } else {
+    pointCloud.material.color.setHex(0x00d4ff);
+  }
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = current === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.body.setAttribute('data-theme', theme);
+  if (theme === 'light') {
+    document.body.classList.add('light-theme');
+  } else {
+    document.body.classList.remove('light-theme');
+  }
+  localStorage.setItem('user_innowave_theme', theme);
+  const btn = document.getElementById('themeToggleBtn');
+  if (btn) btn.innerHTML = theme === 'dark' ? '☀️ LIGHT' : '🌙 DARK';
+  updateWebGLColors(theme);
+}
+
+(function initTheme() {
+  const saved = localStorage.getItem('user_innowave_theme') || 'dark';
+  applyTheme(saved);
+})();
+</script>
+</body>
+</html>

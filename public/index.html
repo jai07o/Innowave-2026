@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>INNOWAVE-2026 · Engineer's Day Celebration · PSCMR CET</title>
-<meta name="description" content="INNOWAVE-2026 National-Level Engineer's Day Celebration. Register for technical events across engineering domains.">
+<title>INNOWAVE-2K26 · Engineer's Day Celebration · PSCMR CET</title>
+<meta name="description" content="INNOWAVE-2K26 National-Level Engineer's Day Celebration. Register for technical events across engineering domains.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Arvo:wght@700&family=Fredoka:wght@700&family=Montserrat:wght@700;800;900&family=Bebas+Neue&family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,13 +14,34 @@
 <style>
 :root {
   --bg-primary:   #040406;
-  --bg-panel:     #0b0c10;
-  --border:       #1f242d;
-  --accent:       #ffffff;
-  --accent-dim:   rgba(255, 255, 255, 0.15);
-  --warn:         #e0e0e0;
+  --bg-panel:     rgba(11, 15, 26, 0.94);
+  --border:       rgba(0, 212, 255, 0.3);
+  --accent:       #00d4ff;
+  --accent-blue:  #0066ff;
+  --gold:         #ffb703;
+  --accent-dim:   rgba(0, 212, 255, 0.15);
+  --warn:         #ffb703;
   --text-primary: #ffffff;
   --text-muted:   #9fa9b8;
+  --card-bg:      rgba(10, 8, 22, 0.85);
+  --input-bg:     rgba(10, 8, 22, 0.85);
+  --input-text:   #ffffff;
+}
+
+[data-theme="light"] {
+  --bg-primary:   #f8fafc;
+  --bg-panel:     rgba(255, 255, 255, 0.96);
+  --border:       #e2e8f0;
+  --accent:       #002855;
+  --accent-blue:  #1e3a8a;
+  --gold:         #b45309;
+  --accent-dim:   rgba(30, 58, 138, 0.08);
+  --warn:         #b45309;
+  --text-primary: #0f172a;
+  --text-muted:   #475569;
+  --card-bg:      #ffffff;
+  --input-bg:     #ffffff;
+  --input-text:   #0f172a;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -31,6 +52,197 @@ body {
   color: var(--text-primary);
   overflow-x: hidden;
   line-height: 1.6;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+html[data-theme="light"], body.light-theme {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] body,
+body.light-theme {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .accreditation-wrapper,
+body.light-theme .accreditation-wrapper {
+  background: #ffffff !important;
+  border-bottom: 1px solid #cbd5e1 !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="light"] .navbar,
+body.light-theme .navbar {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border-bottom: 1px solid #cbd5e1 !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06) !important;
+}
+
+[data-theme="light"] .nav-links a,
+body.light-theme .nav-links a {
+  color: #1e293b !important;
+  font-weight: 600 !important;
+}
+[data-theme="light"] .nav-links a:hover,
+body.light-theme .nav-links a:hover {
+  color: #002855 !important;
+}
+
+[data-theme="light"] .nav-cta,
+[data-theme="light"] .btn-primary-lg,
+[data-theme="light"] .btn.primary,
+body.light-theme .nav-cta,
+body.light-theme .btn-primary-lg,
+body.light-theme .btn.primary {
+  background: linear-gradient(135deg, #002855 0%, #1e3a8a 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(0, 40, 85, 0.25) !important;
+}
+
+[data-theme="light"] .theme-toggle-btn,
+body.light-theme .theme-toggle-btn {
+  background: #f1f5f9 !important;
+  border: 1px solid #94a3b8 !important;
+  color: #0f172a !important;
+}
+[data-theme="light"] .theme-toggle-btn:hover,
+body.light-theme .theme-toggle-btn:hover {
+  background: #e2e8f0 !important;
+  color: #002855 !important;
+}
+
+[data-theme="light"] .hero-badge,
+[data-theme="light"] .sub-badge,
+[data-theme="light"] .event-tag,
+[data-theme="light"] .accreditation-badge,
+body.light-theme .hero-badge,
+body.light-theme .sub-badge,
+body.light-theme .event-tag,
+body.light-theme .accreditation-badge {
+  background: #eff6ff !important;
+  color: #1e3a8a !important;
+  border: 1px solid #bfdbfe !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] .event-card,
+[data-theme="light"] .coord-card,
+[data-theme="light"] .about-card,
+[data-theme="light"] .timeline-item,
+[data-theme="light"] .chooser-card,
+[data-theme="light"] .modal-content,
+[data-theme="light"] .modal-body,
+[data-theme="light"] .reg-card,
+[data-theme="light"] .form-section,
+[data-theme="light"] .status-card,
+[data-theme="light"] .login,
+[data-theme="light"] .stat,
+[data-theme="light"] .table-wrap,
+[data-theme="light"] #ieeeSuccessBox,
+[data-theme="light"] #ieeeStatusBox,
+[data-theme="light"] #paymentModal,
+[data-theme="light"] #statusResultWrap,
+body.light-theme .event-card,
+body.light-theme .coord-card,
+body.light-theme .about-card,
+body.light-theme .timeline-item,
+body.light-theme .chooser-card,
+body.light-theme .modal-content,
+body.light-theme .modal-body,
+body.light-theme .reg-card,
+body.light-theme .form-section,
+body.light-theme .status-card,
+body.light-theme .login,
+body.light-theme .stat,
+body.light-theme .table-wrap,
+body.light-theme #ieeeSuccessBox,
+body.light-theme #ieeeStatusBox,
+body.light-theme #paymentModal,
+body.light-theme #statusResultWrap {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1.5px solid #cbd5e1 !important;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.02) !important;
+  border-radius: 12px !important;
+}
+
+/* Executive Color-Coded Event Frames in Light Theme */
+[data-theme="light"] .event-card:nth-child(1), body.light-theme .event-card:nth-child(1) { border-top: 4px solid #1e40af !important; }
+[data-theme="light"] .event-card:nth-child(1) .event-tag, body.light-theme .event-card:nth-child(1) .event-tag { background: #eff6ff !important; color: #1e40af !important; border: 1px solid #bfdbfe !important; }
+
+[data-theme="light"] .event-card:nth-child(2), body.light-theme .event-card:nth-child(2) { border-top: 4px solid #047857 !important; }
+[data-theme="light"] .event-card:nth-child(2) .event-tag, body.light-theme .event-card:nth-child(2) .event-tag { background: #ecfdf5 !important; color: #047857 !important; border: 1px solid #a7f3d0 !important; }
+
+[data-theme="light"] .event-card:nth-child(3), body.light-theme .event-card:nth-child(3) { border-top: 4px solid #b45309 !important; }
+[data-theme="light"] .event-card:nth-child(3) .event-tag, body.light-theme .event-card:nth-child(3) .event-tag { background: #fffbeb !important; color: #b45309 !important; border: 1px solid #fde68a !important; }
+
+[data-theme="light"] .event-card:nth-child(4), body.light-theme .event-card:nth-child(4) { border-top: 4px solid #7e22ce !important; }
+[data-theme="light"] .event-card:nth-child(4) .event-tag, body.light-theme .event-card:nth-child(4) .event-tag { background: #fdf4ff !important; color: #7e22ce !important; border: 1px solid #f5d0fe !important; }
+
+[data-theme="light"] .event-card:nth-child(5), body.light-theme .event-card:nth-child(5) { border-top: 4px solid #0f766e !important; }
+[data-theme="light"] .event-card:nth-child(5) .event-tag, body.light-theme .event-card:nth-child(5) .event-tag { background: #f0fdfa !important; color: #0f766e !important; border: 1px solid #99f6e4 !important; }
+
+[data-theme="light"] .event-card:nth-child(6), body.light-theme .event-card:nth-child(6) { border-top: 4px solid #4338ca !important; }
+[data-theme="light"] .event-card:nth-child(6) .event-tag, body.light-theme .event-card:nth-child(6) .event-tag { background: #eef2ff !important; color: #4338ca !important; border: 1px solid #c7d2fe !important; }
+
+[data-theme="light"] .event-title,
+[data-theme="light"] .coord-name,
+[data-theme="light"] .section-title,
+[data-theme="light"] .hero-title,
+[data-theme="light"] h1, [data-theme="light"] h2, [data-theme="light"] h3, [data-theme="light"] h4,
+body.light-theme .event-title,
+body.light-theme .coord-name,
+body.light-theme .section-title,
+body.light-theme .hero-title,
+body.light-theme h1, body.light-theme h2, body.light-theme h3, body.light-theme h4 {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] p,
+[data-theme="light"] .event-desc,
+[data-theme="light"] .coord-role,
+[data-theme="light"] .hero-subtitle,
+[data-theme="light"] label,
+[data-theme="light"] .form-label,
+body.light-theme p,
+body.light-theme .event-desc,
+body.light-theme .coord-role,
+body.light-theme .hero-subtitle,
+body.light-theme label,
+body.light-theme .form-label {
+  color: #334155 !important;
+}
+
+[data-theme="light"] footer,
+body.light-theme footer {
+  background: #ffffff !important;
+  border-top: 1px solid #cbd5e1 !important;
+  color: #475569 !important;
+}
+
+.theme-toggle-btn {
+  background: var(--accent-dim);
+  border: 1px solid var(--accent);
+  color: var(--text-primary);
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 11.5px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.theme-toggle-btn:hover {
+  transform: translateY(-1px);
+  background: var(--accent);
+  color: #041220;
 }
 
 #webgl-canvas {
@@ -226,7 +438,7 @@ header.hero {
 .hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin: 0 auto 24px; text-align: center; }
 
 .btn-primary-lg {
-  background: var(--accent);
+  background: linear-gradient(135deg, #00d4ff 0%, #0066ff 100%);
   color: #041220;
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
@@ -234,13 +446,14 @@ header.hero {
   letter-spacing: 0.05em;
   text-transform: uppercase;
   padding: 15px 36px;
-  border-radius: 4px;
+  border-radius: 6px;
   text-decoration: none;
+  box-shadow: 0 6px 24px rgba(0, 212, 255, 0.45);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   border: none;
   cursor: pointer;
 }
-.btn-primary-lg:hover { transform: translateY(-2px); box-shadow: 0 10px 30px var(--accent-dim); }
+.btn-primary-lg:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(0, 212, 255, 0.65); }
 
 .btn-secondary-lg {
   background: transparent;
@@ -936,16 +1149,20 @@ footer { border-top: 1px solid var(--border); padding: 36px 0; text-align: cente
 <nav class="navbar">
   <div class="wrap nav-in">
     <a href="#top" class="brand-logo">
-      <img src="assets/logo_college.png" alt="PSCMRCET Logo" style="height:36px; width:auto; object-fit:contain; filter:drop-shadow(0 0 6px rgba(0,212,255,0.3));">
-      <span class="dot"></span>INNOWAVE<span class="accent-text">2026</span>
+      <img src="assets/logo_college.png" alt="PSCMRCET Logo" style="height:32px; width:auto; object-fit:contain; filter:drop-shadow(0 0 6px rgba(0,212,255,0.3));">
+      <span class="dot"></span>INNOWAVE<span class="accent-text">2K26</span>
     </a>
-    <div class="nav-links">
+    <div class="nav-actions" style="display:flex; align-items:center; gap:8px;">
+      <a href="javascript:void(0)" onclick="openCategoryModal()" class="btn-nav-sub" style="font-size:11.5px; padding:5px 12px; background:linear-gradient(135deg, #00d4ff 0%, #0066ff 100%); color:#041220; border-radius:18px; text-decoration:none; font-weight:800; white-space:nowrap;">🚀 Register →</a>
+      <button id="themeToggleBtn" onclick="toggleTheme()" class="theme-toggle-btn" style="font-size:11px; padding:5px 10px;">☀️ LIGHT</button>
+    </div>
+    <div class="nav-links desktop-only" style="display:flex; align-items:center; gap:16px;">
       <a href="#about">About</a>
       <a href="#events">Events</a>
       <a href="#contacts">Co-ordinators</a>
-      <a href="register.html">Register</a>
+      <a href="register-ieee.html" style="color:var(--accent);">IEEE Reg</a>
+      <a href="register-non-ieee.html" style="color:var(--gold);">Non-IEEE Reg</a>
     </div>
-    <a href="register.html" class="nav-cta">REGISTER NOW</a>
   </div>
 </nav>
 
@@ -954,7 +1171,7 @@ footer { border-top: 1px solid var(--border); padding: 36px 0; text-align: cente
 <header class="hero">
   <div class="wrap">
     <div class="hero-badge">IEEE Student Branch · National Level Fest</div>
-    <h1 class="hero-title">INNOWAVE-2026</h1>
+    <h1 class="hero-title">INNOWAVE-2K26</h1>
     <div class="hero-subtitle">ENGINEER'S DAY CELEBRATION</div>
 
     <!-- Live Countdown Timer -->
@@ -982,7 +1199,7 @@ footer { border-top: 1px solid var(--border); padding: 36px 0; text-align: cente
     </div>
 
     <div class="hero-actions">
-      <a href="register.html" class="btn-primary-lg">REGISTER NOW</a>
+      <button type="button" class="btn-primary-lg" onclick="openCategoryModal()">REGISTER NOW →</button>
       <a href="#events" class="btn-secondary-lg">EXPLORE EVENTS</a>
     </div>
   </div>
@@ -993,7 +1210,7 @@ footer { border-top: 1px solid var(--border); padding: 36px 0; text-align: cente
   <div class="wrap">
     <div class="sec-title-wrap" style="margin-bottom:22px; text-align:center;">
       <div class="sec-tag" style="display:inline-block; background:rgba(0, 212, 255, 0.12); border:1px solid var(--accent); padding:4px 16px; border-radius:20px; font-size:11px; letter-spacing:0.25em; font-weight:700; color:var(--accent); margin-bottom:8px;">ENGINEERS' DAY TRIBUTE</div>
-      <h2 class="sec-title" style="margin-top:2px;">Saluting Bharat Ratna Sir M. Visvesvaraya</h2>
+      <h2 class="sec-title" style="margin-top:2px;">Saluting Bharat Ratna Sri Mokshagundam Visvesvaraya</h2>
     </div>
 
     <div style="display:flex; align-items:center; gap:28px; flex-wrap:wrap; justify-content:center; max-width:840px; margin:0 auto; background:var(--bg-panel); border:1px solid var(--border); border-radius:16px; padding:24px 28px;">
@@ -1009,12 +1226,12 @@ footer { border-top: 1px solid var(--border); padding: 36px 0; text-align: cente
             <div class="tech-corner bottom-right"></div>
             <div class="laser-scan-line"></div>
             <div class="portrait-img-box">
-              <img src="assets/visvesvaraya.png" alt="Bharat Ratna Sir M. Visvesvaraya Sketch Portrait">
+              <img src="assets/visvesvaraya.png" alt="Bharat Ratna Sri Mokshagundam Visvesvaraya Sketch Portrait">
             </div>
           </div>
         </div>
         <div style="margin-top:6px; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:13px; color:var(--text-primary); letter-spacing:0.05em; text-transform:uppercase;">
-          Sir M. Visvesvaraya
+          Sri Mokshagundam Visvesvaraya
         </div>
         <div style="font-size:11px; color:var(--text-muted); font-weight:600;">(1861 – 1962) · Bharat Ratna</div>
       </div>
@@ -1022,13 +1239,13 @@ footer { border-top: 1px solid var(--border); padding: 36px 0; text-align: cente
       <!-- Biography & Formula Details -->
       <div style="flex:1; min-width:260px; font-size:13.5px; color:var(--text-primary); line-height:1.55;">
         <p style="margin-bottom:12px; color:var(--text-primary);">
-          Engineers’ Day is celebrated in India on <strong>September 15</strong> to honor engineers and their contributions to the nation. The day marks the birth anniversary of <strong>Sir M. Visvesvaraya</strong>, born in 1861 in Karnataka. A renowned civil engineer and statesman, he contributed to water management, dams, irrigation and flood control, including the KRS Dam and automatic water-control gates. He served as the Dewan of Mysore from 1912–1918 and received the Bharat Ratna in 1955.
+          Engineers’ Day is celebrated in India on <strong>September 15</strong> to honor engineers and their contributions to the nation. The day marks the birth anniversary of <strong>Sri Mokshagundam Visvesvaraya</strong>, born in 1861 in Karnataka. A renowned civil engineer and statesman, he contributed to water management, dams, irrigation and flood control, including the KRS Dam and automatic water-control gates. He served as the Dewan of Mysore from 1912–1918 and received the Bharat Ratna in 1955.
         </p>
 
         <!-- Legacy Formula Box -->
         <div style="background:rgba(255,255,255,0.05); border:1px solid var(--border); border-left:3px solid #ffffff; border-radius:8px; padding:12px 16px; margin:14px 0;">
           <div style="font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:700; color:var(--text-primary); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">
-            Sir M. Visvesvaraya's Life Represents:
+            Sri Mokshagundam Visvesvaraya's Life Represents:
           </div>
           <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:13px; color:#ffffff; line-height:1.4;">
             Knowledge + Discipline + Innovation + Problem-Solving + Service = Nation Building
@@ -1235,16 +1452,6 @@ footer { border-top: 1px solid var(--border); padding: 36px 0; text-align: cente
     <div class="contacts-grid">
       <div class="contact-card">
         <div class="contact-role">Co-ordinator</div>
-        <div class="contact-name">Mr. SK. SUBHANI</div>
-        <div style="color:var(--text-primary); font-weight:700;">📱 9177713984</div>
-      </div>
-      <div class="contact-card">
-        <div class="contact-role">Co-ordinator</div>
-        <div class="contact-name">Mr. G SATYA SAI</div>
-        <div style="color:var(--text-primary); font-weight:700;">📱 8888635822</div>
-      </div>
-      <div class="contact-card">
-        <div class="contact-role">Co-ordinator</div>
         <div class="contact-name">Mr. G. AAKASH</div>
         <div style="color:var(--text-primary); font-weight:700;">📱 8121296346</div>
       </div>
@@ -1252,6 +1459,16 @@ footer { border-top: 1px solid var(--border); padding: 36px 0; text-align: cente
         <div class="contact-role">Co-ordinator</div>
         <div class="contact-name">Ms. MD. RAZIYA</div>
         <div style="color:var(--text-primary); font-weight:700;">📱 9390946598</div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-role">Co-ordinator</div>
+        <div class="contact-name">Mr. SK. SUBHANI</div>
+        <div style="color:var(--text-primary); font-weight:700;">📱 9177713984</div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-role">Co-ordinator</div>
+        <div class="contact-name">Mr. G SATYA SAI</div>
+        <div style="color:var(--text-primary); font-weight:700;">📱 8888635822</div>
       </div>
     </div>
   </div>
@@ -1370,7 +1587,40 @@ footer { border-top: 1px solid var(--border); padding: 36px 0; text-align: cente
       </div>
     </div>
 
-    <a href="#register" class="btn-view-details" style="display:block; text-align:center; text-decoration:none; background:var(--accent); color:#041220; border-color:var(--accent); font-size:13px; font-weight:800; padding:13px;" onclick="closeModal()">PROCEED TO EVENT REGISTRATION</a>
+    <button type="button" class="btn-view-details" style="display:block; width:100%; text-align:center; background:var(--accent); color:#041220; border-color:var(--accent); font-size:13px; font-weight:800; padding:13px; cursor:pointer;" onclick="closeModal(); openCategoryModal();">PROCEED TO EVENT REGISTRATION →</button>
+  </div>
+</div>
+
+<!-- Category Choice Popup Modal (2 Options Only: IEEE Register & Non-IEEE Register) -->
+<div class="modal-overlay" id="categoryChooserModal" onclick="closeCategoryModal()">
+  <div class="modal-content" style="max-width:650px; text-align:center; padding:32px; background:rgba(11, 15, 26, 0.98); border:1.5px solid var(--accent); border-radius:16px;" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeCategoryModal()">✕</button>
+    <div style="font-size:12px; font-weight:800; color:var(--accent); letter-spacing:0.2em; text-transform:uppercase; margin-bottom:8px;">INNOWAVE-2K26 REGISTRATION</div>
+    <h2 class="font-space" style="color:var(--text-primary); font-size:24px; font-weight:700; margin-bottom:20px;">CHOOSE REGISTRATION CATEGORY</h2>
+    
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:10px;">
+      <!-- Option 1: IEEE Member -->
+      <a href="register-ieee.html" style="text-decoration:none; background:rgba(10,8,22,0.9); border:1.5px solid var(--gold); border-radius:12px; padding:24px 18px; display:flex; flex-direction:column; align-items:center; transition:transform 0.2s, box-shadow 0.2s; cursor:pointer;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+        <div style="font-size:48px; margin-bottom:12px;">🎓</div>
+        <h3 class="font-space" style="color:var(--gold); font-size:18px; font-weight:700; margin-bottom:6px;">IEEE MEMBER</h3>
+        <p style="color:var(--text-muted); font-size:12.5px; line-height:1.5; margin-bottom:18px;">
+          For active IEEE Student Branch Members.<br>
+          <strong style="color:var(--text-primary);">Requires IEEE ID & Card Upload</strong>
+        </p>
+        <span class="btn-primary-lg" style="font-size:12px; padding:12px 14px; width:100%; border-radius:6px; background:linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color:#ffffff;">REGISTER AS IEEE MEMBER →</span>
+      </a>
+
+      <!-- Option 2: Non-IEEE Member -->
+      <a href="register-non-ieee.html" style="text-decoration:none; background:rgba(10,8,22,0.9); border:1.5px solid var(--accent); border-radius:12px; padding:24px 18px; display:flex; flex-direction:column; align-items:center; transition:transform 0.2s, box-shadow 0.2s; cursor:pointer;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+        <div style="font-size:48px; margin-bottom:12px;">🚀</div>
+        <h3 class="font-space" style="color:var(--accent); font-size:18px; font-weight:700; margin-bottom:6px;">NON-IEEE MEMBER</h3>
+        <p style="color:var(--text-muted); font-size:12.5px; line-height:1.5; margin-bottom:18px;">
+          For non-IEEE student participants.<br>
+          <strong style="color:var(--text-primary);">Direct Instant Payment & Receipt</strong>
+        </p>
+        <span class="btn-primary-lg" style="font-size:12px; padding:12px 14px; width:100%; border-radius:6px;">REGISTER AS NON-IEEE →</span>
+      </a>
+    </div>
   </div>
 </div>
 
@@ -1382,111 +1632,114 @@ footer { border-top: 1px solid var(--border); padding: 36px 0; text-align: cente
 </footer>
 
 <script>
-// Professional 3D Engineering Background — Metallic Gears, Hexagonal Lattice & Single-Accent Lighting
+// 3D Animated Tech Network Constellation (Black & Electric Blue Theme)
 const canvas = document.getElementById('webgl-canvas');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: window.innerWidth > 768, alpha: true, powerPreference: 'high-performance' });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 768 ? 1.0 : 1.5));
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 100);
-camera.position.set(3, 0, 17);
+scene.fog = new THREE.FogExp2(0x040406, 0.02);
 
-scene.fog = new THREE.FogExp2(0x020204, 0.035);
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.set(0, 0, 26);
 
-const accentWhite = new THREE.Color(0xffffff);
-const lineColor = new THREE.Color(0x555555);
-const lineColorDim = new THREE.Color(0x222222);
+// 3D Nodes setup
+const NODE_COUNT = window.innerWidth < 768 ? 95 : 180;
+const DIST_THRESHOLD = 7.5;
 
-// Precision gear geometry builder
-function buildGear(radius, teeth, depth, toothDepth) {
-  const shape = new THREE.Shape();
-  const inner = radius - toothDepth;
-  const steps = teeth * 2;
-  for (let i = 0; i <= steps; i++) {
-    const a = (i / steps) * Math.PI * 2;
-    const r = (i % 2 === 0) ? radius : inner;
-    const x = Math.cos(a) * r, y = Math.sin(a) * r;
-    if (i === 0) shape.moveTo(x, y); else shape.lineTo(x, y);
-  }
-  const holeR = radius * 0.3;
-  const hole = new THREE.Path();
-  hole.absarc(0, 0, holeR, 0, Math.PI * 2, true);
-  shape.holes.push(hole);
-  const geo = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.03, bevelSegments: 1, curveSegments: 3 });
-  return new THREE.EdgesGeometry(geo, 1);
+const nodes = [];
+const positions = new Float32Array(NODE_COUNT * 3);
+
+for (let i = 0; i < NODE_COUNT; i++) {
+  const x = (Math.random() - 0.5) * 42;
+  const y = (Math.random() - 0.5) * 32;
+  const z = (Math.random() - 0.5) * 30;
+  
+  positions[i * 3] = x;
+  positions[i * 3 + 1] = y;
+  positions[i * 3 + 2] = z;
+
+  nodes.push({
+    x, y, z,
+    vx: (Math.random() - 0.5) * 0.022,
+    vy: (Math.random() - 0.5) * 0.022,
+    vz: (Math.random() - 0.5) * 0.022
+  });
 }
 
-// Composition rig anchored on right 2/3 so left 1/3 negative space stays clear
-const rig = new THREE.Group();
-rig.position.x = window.innerWidth < 768 ? 1.5 : 7.5;
-scene.add(rig);
+// Node Points Geometry & Electric Blue Radial Sprite
+const nodeGeo = new THREE.BufferGeometry();
+nodeGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
-const gearDefs = [
-  { r: 4.2, t: 18, x: 0,    y: 0,    z: -4, speed: 0.02, color: accentWhite, opacity: 0.6 },
-  { r: 2.4, t: 12, x: -3.4, y: 2.6,  z: -2, speed: -0.04, color: lineColor,   opacity: 0.5 },
-  { r: 1.5, t: 9,  x: -3.0, y: -2.8, z: -1, speed: 0.05,  color: accentWhite, opacity: 0.4 },
-  { r: 5.6, t: 22, x: 2.2,  y: -1.2, z: -9, speed: -0.015,color: lineColorDim,opacity: 0.35 },
-  { r: 1.8, t: 10, x: 2.8,  y: 3.2,  z: -3, speed: 0.04,  color: accentWhite, opacity: 0.45 },
-];
-
-const gearMeshes = [];
-gearDefs.forEach(def => {
-  const edges = buildGear(def.r, def.t, 0.28, def.r * 0.13);
-  const mat = new THREE.LineBasicMaterial({ color: def.color, transparent: true, opacity: def.opacity });
-  const line = new THREE.LineSegments(edges, mat);
-  line.position.set(def.x, def.y, def.z);
-  line.userData.speed = def.speed;
-  rig.add(line);
-  gearMeshes.push(line);
-});
-
-// Hexagonal Circuit Lattice Geometry
-const hexNodes = [];
-const hexRings = [2.5, 4.8, 7.2];
-hexRings.forEach(ringR => {
-  for (let i = 0; i < 6; i++) {
-    const a = (i / 6) * Math.PI * 2;
-    hexNodes.push(new THREE.Vector3(
-      Math.cos(a) * ringR + (Math.random() - 0.5) * 0.4,
-      Math.sin(a) * ringR + (Math.random() - 0.5) * 0.4,
-      (Math.random() - 0.5) * 6 - 3
-    ));
-  }
-});
-
-const nodeGeo = new THREE.BufferGeometry().setFromPoints(hexNodes);
-const nodeMat = new THREE.PointsMaterial({ color: accentWhite, size: 0.06, transparent: true, opacity: 0.75 });
-const nodePoints = new THREE.Points(nodeGeo, nodeMat);
-rig.add(nodePoints);
-
-const tracePositions = [];
-for (let i = 0; i < hexNodes.length; i++) {
-  for (let j = i + 1; j < hexNodes.length; j++) {
-    if (hexNodes[i].distanceTo(hexNodes[j]) < 3.8) {
-      tracePositions.push(hexNodes[i].x, hexNodes[i].y, hexNodes[i].z);
-      tracePositions.push(hexNodes[j].x, hexNodes[j].y, hexNodes[j].z);
-    }
-  }
+function createBlueNodeTexture() {
+  const c = document.createElement('canvas');
+  c.width = 64; c.height = 64;
+  const ctx = c.getContext('2d');
+  const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+  g.addColorStop(0, 'rgba(255, 255, 255, 1)');
+  g.addColorStop(0.25, 'rgba(0, 212, 255, 0.95)');
+  g.addColorStop(0.65, 'rgba(0, 102, 255, 0.35)');
+  g.addColorStop(1, 'rgba(0, 0, 0, 0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, 64, 64);
+  return new THREE.CanvasTexture(c);
 }
-const traceGeo = new THREE.BufferGeometry();
-traceGeo.setAttribute('position', new THREE.Float32BufferAttribute(tracePositions, 3));
-const traceMat = new THREE.LineBasicMaterial({ color: lineColor, transparent: true, opacity: 0.35 });
-const traceLines = new THREE.LineSegments(traceGeo, traceMat);
-rig.add(traceLines);
 
-// Blueprint grid
-const grid = new THREE.GridHelper(70, 46, 0x333333, 0x111111);
-grid.position.y = -9;
+const nodeMat = new THREE.PointsMaterial({
+  size: 0.85,
+  map: createBlueNodeTexture(),
+  transparent: true,
+  opacity: 0.95,
+  depthWrite: false,
+  blending: THREE.AdditiveBlending
+});
+const pointCloud = new THREE.Points(nodeGeo, nodeMat);
+scene.add(pointCloud);
+
+// Dynamic Electric Blue Connecting Lines Geometry
+const MAX_LINES = NODE_COUNT * 15;
+const linePositions = new Float32Array(MAX_LINES * 6);
+const lineColors = new Float32Array(MAX_LINES * 6);
+
+const lineGeo = new THREE.BufferGeometry();
+lineGeo.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
+lineGeo.setAttribute('color', new THREE.BufferAttribute(lineColors, 3));
+
+const lineMat = new THREE.LineBasicMaterial({
+  vertexColors: true,
+  transparent: true,
+  opacity: 0.85,
+  blending: THREE.AdditiveBlending
+});
+const linesMesh = new THREE.LineSegments(lineGeo, lineMat);
+scene.add(linesMesh);
+
+// Polygonal Mesh Triangles (Facets) between close 3-node clusters in Translucent Electric Blue
+const MAX_TRIANGLES = 220;
+const triPositions = new Float32Array(MAX_TRIANGLES * 9);
+const triColors = new Float32Array(MAX_TRIANGLES * 9);
+
+const triGeo = new THREE.BufferGeometry();
+triGeo.setAttribute('position', new THREE.BufferAttribute(triPositions, 3));
+triGeo.setAttribute('color', new THREE.BufferAttribute(triColors, 3));
+
+const triMat = new THREE.MeshBasicMaterial({
+  vertexColors: true,
+  transparent: true,
+  opacity: 0.12,
+  side: THREE.DoubleSide,
+  blending: THREE.AdditiveBlending
+});
+const triMesh = new THREE.Mesh(triGeo, triMat);
+scene.add(triMesh);
+
+// Floor blueprint grid in deep electric blue
+const grid = new THREE.GridHelper(90, 60, 0x0f3b66, 0x05182d);
+grid.position.y = -16;
 grid.material.transparent = true;
-grid.material.opacity = 0.2;
+grid.material.opacity = 0.3;
 scene.add(grid);
-
-// White rim light
-const pointLight = new THREE.PointLight(0xffffff, 1.2, 30);
-pointLight.position.set(9, 4, 4);
-scene.add(pointLight);
-scene.add(new THREE.AmbientLight(0x222222, 0.8));
 
 let mouseX = 0, mouseY = 0;
 window.addEventListener('mousemove', (e) => {
@@ -1498,26 +1751,98 @@ window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
-  rig.position.x = window.innerWidth < 768 ? 1.5 : 7.5;
 });
 
-// Single Orchestrated Motion (smooth gear rotation & gentle Y drift)
+// Animation Loop for Black & Blue Node Motion & Geometric Lines/Facets
 const clock = new THREE.Clock();
 let lastFrameTime = 0;
+
 function animate(now) {
   requestAnimationFrame(animate);
   if (window.innerWidth < 768) {
-    if (now - lastFrameTime < 33) return; // 30 FPS cap on mobile to eliminate scrolling lag/stutter
+    if (now - lastFrameTime < 33) return;
     lastFrameTime = now;
   }
+
+  const posAttr = nodeGeo.attributes.position;
+  const posArray = posAttr.array;
+
+  for (let i = 0; i < NODE_COUNT; i++) {
+    const nd = nodes[i];
+    nd.x += nd.vx; nd.y += nd.vy; nd.z += nd.vz;
+
+    if (Math.abs(nd.x) > 21) nd.vx *= -1;
+    if (Math.abs(nd.y) > 16) nd.vy *= -1;
+    if (Math.abs(nd.z) > 15) nd.vz *= -1;
+
+    posArray[i * 3] = nd.x;
+    posArray[i * 3 + 1] = nd.y;
+    posArray[i * 3 + 2] = nd.z;
+  }
+  posAttr.needsUpdate = true;
+
+  let vIdx = 0; let cIdx = 0; let lineCount = 0;
+  let tIdx = 0; let tcIdx = 0; let triCount = 0;
+
+  for (let i = 0; i < NODE_COUNT; i++) {
+    for (let j = i + 1; j < NODE_COUNT; j++) {
+      const dx = nodes[i].x - nodes[j].x;
+      const dy = nodes[i].y - nodes[j].y;
+      const dz = nodes[i].z - nodes[j].z;
+      const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+      if (dist < DIST_THRESHOLD) {
+        const alpha = Math.pow(1 - dist / DIST_THRESHOLD, 1.1) * 0.75;
+
+        linePositions[vIdx++] = nodes[i].x; linePositions[vIdx++] = nodes[i].y; linePositions[vIdx++] = nodes[i].z;
+        linePositions[vIdx++] = nodes[j].x; linePositions[vIdx++] = nodes[j].y; linePositions[vIdx++] = nodes[j].z;
+
+        // Electric Cyan / Blue lines
+        const r = 0.0;
+        const g = (0.4 + alpha * 0.5);
+        const b = (0.8 + alpha * 0.2);
+
+        lineColors[cIdx++] = r; lineColors[cIdx++] = g; lineColors[cIdx++] = b;
+        lineColors[cIdx++] = r; lineColors[cIdx++] = g; lineColors[cIdx++] = b;
+
+        lineCount++;
+
+        if (triCount < MAX_TRIANGLES) {
+          for (let k = j + 1; k < NODE_COUNT; k++) {
+            const d2 = Math.hypot(nodes[i].x - nodes[k].x, nodes[i].y - nodes[k].y, nodes[i].z - nodes[k].z);
+            const d3 = Math.hypot(nodes[j].x - nodes[k].x, nodes[j].y - nodes[k].y, nodes[j].z - nodes[k].z);
+            if (d2 < DIST_THRESHOLD * 0.75 && d3 < DIST_THRESHOLD * 0.75) {
+              triPositions[tIdx++] = nodes[i].x; triPositions[tIdx++] = nodes[i].y; triPositions[tIdx++] = nodes[i].z;
+              triPositions[tIdx++] = nodes[j].x; triPositions[tIdx++] = nodes[j].y; triPositions[tIdx++] = nodes[j].z;
+              triPositions[tIdx++] = nodes[k].x; triPositions[tIdx++] = nodes[k].y; triPositions[tIdx++] = nodes[k].z;
+
+              for (let n = 0; n < 3; n++) {
+                triColors[tcIdx++] = 0.0; triColors[tcIdx++] = 0.35; triColors[tcIdx++] = 0.75;
+              }
+              triCount++;
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  lineGeo.attributes.position.needsUpdate = true;
+  lineGeo.attributes.color.needsUpdate = true;
+  lineGeo.setDrawRange(0, lineCount * 2);
+
+  triGeo.attributes.position.needsUpdate = true;
+  triGeo.attributes.color.needsUpdate = true;
+  triGeo.setDrawRange(0, triCount * 3);
+
   const t = clock.getElapsedTime();
+  scene.rotation.y = t * 0.02;
+  scene.rotation.x = Math.sin(t * 0.01) * 0.02;
 
-  gearMeshes.forEach(g => { g.rotation.z += g.userData.speed * 0.008; });
-  rig.rotation.y = Math.sin(t * 0.04) * 0.05;
-
-  camera.position.x += (3 + mouseX * 1.0 - camera.position.x) * 0.02;
-  camera.position.y += (-mouseY * 0.6 - camera.position.y) * 0.02;
-  camera.lookAt(2, 0, -2);
+  camera.position.x += (mouseX * 3.0 - camera.position.x) * 0.03;
+  camera.position.y += (-mouseY * 2.2 - camera.position.y) * 0.03;
+  camera.lookAt(0, 0, 0);
 
   renderer.render(scene, camera);
 }
@@ -1586,7 +1911,7 @@ async function submitRegistration(e) {
     ieee_id: selectedMembership === 'IEEE' ? ieeeIdVal : '',
     ieee_count: selectedMembership === 'IEEE' ? 1 : 0,
     non_ieee_count: selectedMembership === 'NON-IEEE' ? 1 : 0,
-    events_selected: ['INNOWAVE-2026 Engineer\'s Day Events']
+    events_selected: ['INNOWAVE-2K26 Engineer\'s Day Events']
   };
 
   try {
@@ -1853,6 +2178,51 @@ function openModal(title, defaultDesc) {
   document.getElementById('eventModal').style.display = 'flex';
 }
 function closeModal() { document.getElementById('eventModal').style.display = 'none'; }
+
+function openCategoryModal() {
+  document.getElementById('categoryChooserModal').style.display = 'flex';
+}
+function closeCategoryModal() {
+  document.getElementById('categoryChooserModal').style.display = 'none';
+}
+
+function updateWebGLColors(theme) {
+  if (!scene || !pointCloud) return;
+  if (theme === 'light') {
+    scene.fog.color.setHex(0xf8fafc);
+    pointCloud.material.color.setHex(0x1e3a8a);
+    if (typeof lineMesh !== 'undefined' && lineMesh) lineMesh.material.color.setHex(0x3b82f6);
+  } else {
+    scene.fog.color.setHex(0x040406);
+    pointCloud.material.color.setHex(0x00d4ff);
+    if (typeof lineMesh !== 'undefined' && lineMesh) lineMesh.material.color.setHex(0x0066ff);
+  }
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = current === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.body.setAttribute('data-theme', theme);
+  if (theme === 'light') {
+    document.body.classList.add('light-theme');
+  } else {
+    document.body.classList.remove('light-theme');
+  }
+  localStorage.setItem('user_innowave_theme', theme);
+  const btn = document.getElementById('themeToggleBtn');
+  if (btn) btn.innerHTML = theme === 'dark' ? '☀️ LIGHT' : '🌙 DARK';
+  updateWebGLColors(theme);
+}
+
+(function initTheme() {
+  const saved = localStorage.getItem('user_innowave_theme') || 'dark';
+  applyTheme(saved);
+})();
 </script>
 </body>
 </html>
