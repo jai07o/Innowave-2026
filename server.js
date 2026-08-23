@@ -11,12 +11,47 @@
  *   UPI_VPA="yourupi@bank"   UPI_PAYEE_NAME="PSCMR IEEE Student Branch"
  */
 
+try { require('dotenv').config(); } catch(e) {}
+
 const path = require('path');
 const fs = require('fs');
 const express = require('express');
 const Database = require('better-sqlite3');
 const ExcelJS = require('exceljs');
 const QRCode = require('qrcode');
+
+const os = require('os');
+function getPrimaryLanIp() {
+  const interfaces = os.networkInterfaces();
+  for (const name of Object.keys(interfaces)) {
+    for (const iface of interfaces[name]) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        return iface.address;
+      }
+    }
+  }
+  return 'localhost';
+}
+
+function getBaseUrl(req) {
+  if (process.env.BASE_URL) {
+    return process.env.BASE_URL.replace(/\/+$/, '');
+  }
+  
+  const forwardedProto = req ? req.headers['x-forwarded-proto'] : null;
+  const protocol = forwardedProto ? forwardedProto.split(',')[0].trim() : (req && req.protocol ? req.protocol : 'http');
+  
+  const forwardedHost = req ? req.headers['x-forwarded-host'] : null;
+  let host = forwardedHost ? forwardedHost.split(',')[0].trim() : (req ? (req.get('host') || req.headers.host || '') : '');
+  
+  if (!host || host.includes('localhost') || host.includes('127.0.0.1')) {
+    const lanIp = getPrimaryLanIp();
+    const port = PORT || 3000;
+    host = `${lanIp}:${port}`;
+  }
+  
+  return `${protocol}://${host}`;
+}
 
 const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'innowave2k26';
@@ -109,9 +144,15 @@ const TRACK_CODE = {
 
 // ---------- App ----------
 const app = express();
+app.use((req, res, next) => {
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+});
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), { etag: false }));
 
 app.get('/register-ieee', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'register-ieee.html'));
@@ -726,11 +767,83 @@ app.get('/api/tracks', (req, res) => res.json({ tracks: TRACKS }));
 app.get('/api/events', (req, res) => res.json({ events: EVENTS }));
 app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'public', 'register.html')));
 app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
+app.get('/verify', (req, res) => res.sendFile(path.join(__dirname, 'public', 'verify-id.html')));
+app.get('/verify-id', (req, res) => res.sendFile(path.join(__dirname, 'public', 'verify-id.html')));
+app.get('/verify-id.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'verify-id.html')));
+app.get('/id-card', (req, res) => res.sendFile(path.join(__dirname, 'public', 'verify-id.html')));
+app.get('/id', (req, res) => res.sendFile(path.join(__dirname, 'public', 'verify-id.html')));
+app.get('/participant-id', (req, res) => res.sendFile(path.join(__dirname, 'public', 'verify-id.html')));
+app.get('/id-generator', (req, res) => res.sendFile(path.join(__dirname, 'public', 'verify-id.html')));
 
-const os = require('os');
+app.get('/api/id-card-data/:id', async (req, res) => {
+  try {
+    const q = (req.params.id || req.query.q || req.query.id || '').trim();
+    if (q === 'all' || req.query.all === 'true') {
+      const rows = db.prepare('SELECT * FROM registrations ORDER BY id ASC').all();
+      return res.json({ ok: true, count: rows.length, participants: rows, all_events: EVENTS });
+    }
+    
+    if (!q) return res.status(400).json({ ok: false, error: 'Participant ID or Registration ID required' });
+    const qClean = q.toLowerCase();
+    const rows = db.prepare('SELECT * FROM registrations ORDER BY id DESC').all();
+    const row = rows.find(r => 
+      String(r.id) === q ||
+      (r.team_id || '').toLowerCase() === qClean ||
+      (r.leader_phone || '').trim() === q ||
+      (r.leader_email || '').toLowerCase() === qClean
+    );
+
+    if (!row) {
+      return res.status(404).json({ ok: false, error: 'Participant record not found in Admin database.' });
+    }
+
+    const baseUrl = getBaseUrl(req);
+    const verifyUrl = `${baseUrl}/verify-id.html?id=${row.team_id || row.id}`;
+    const qrDataUrl = await QRCode.toDataURL(verifyUrl, { margin: 1, width: 300, color: { dark: '#002855', light: '#ffffff' } });
+
+    let parsedEvents = [];
+    try {
+      if (typeof row.events_selected === 'string') {
+        parsedEvents = JSON.parse(row.events_selected);
+      } else if (Array.isArray(row.events_selected)) {
+        parsedEvents = row.events_selected;
+      }
+    } catch(e) {
+      if (row.events_selected) parsedEvents = row.events_selected.split(',').map(s=>s.trim()).filter(Boolean);
+    }
+
+    return res.json({
+      ok: true,
+      participant: {
+        id: row.id,
+        team_id: row.team_id || `IW26-${String(row.id).padStart(4, '0')}`,
+        leader_name: row.leader_name,
+        leader_phone: row.leader_phone || 'N/A',
+        leader_email: row.leader_email || 'N/A',
+        roll_no: row.roll_no || 'N/A',
+        branch: row.branch || 'N/A',
+        year: row.year || 'N/A',
+        college_name: row.college_name || 'PSCMR College of Engineering & Technology',
+        track: row.track || 'Open Innovation',
+        project_title: row.project_title || 'InnoWave Participant',
+        ieee_member: row.ieee_member || 'No',
+        ieee_id: row.ieee_id || '',
+        payment_status: row.payment_status || 'Paid',
+        payment_ref: row.payment_ref || '',
+        events_selected: parsedEvents,
+        qr_code: qrDataUrl,
+        all_events: EVENTS
+      }
+    });
+  } catch (e) {
+    console.error('ID Card Data Error:', e);
+    return res.status(500).json({ ok: false, error: 'Server error retrieving ID card data.' });
+  }
+});
+
 // ---------- Start Server ----------
 app.listen(PORT, '0.0.0.0', () => {
-  const networkInterfaces = require('os').networkInterfaces();
+  const networkInterfaces = os.networkInterfaces();
   console.log(`\n======================================================`);
   console.log(`🚀 INNOWAVE-2K26 Live Server is Running!`);
   console.log(`======================================================`);

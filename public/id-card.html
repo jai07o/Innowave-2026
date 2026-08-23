@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="refresh" content="0; url=/admin.html">
+  <script>window.location.href = "/admin.html";</script>
+</head>
+<body>
+  <p>Redirecting to Admin Dashboard… <a href="/admin.html">Click here</a></p>
+</body>
+</html>
+      gap: 8px;
+    }
+
+    .brand-title span.highlight {
+      color: #00d4ff;
+      text-shadow: 0 0 12px rgba(0, 212, 255, 0.6);
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 4px 8px 4px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 212, 255, 0.25);
+    }
+
+    .search-box input {
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      font-size: 14px;
+      outline: none;
+      width: 180px;
+    }
+
+    .search-box button {
+      background: linear-gradient(135deg, #00d4ff 0%, #0066ff 100%);
+      color: #ffffff;
+      border: none;
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 13px;
+      box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+    }
+
+    .search-box button:hover {
+      filter: brightness(1.15);
+    }
+
+    .action-buttons {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 20px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+    }
+
+    .btn-download {
+      background: linear-gradient(135deg, #ffb703 0%, #ff8c00 100%);
+      color: #001a38;
+      box-shadow: 0 4px 16px rgba(255, 183, 3, 0.4);
+    }
+
+    .btn-print {
+      background: #0f172a;
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-sample {
+      background: rgba(0, 212, 255, 0.15);
+      color: #00d4ff;
+      border: 1px solid rgba(0, 212, 255, 0.4);
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* CARD WRAPPER */
+    .card-wrapper {
+      max-width: 550px;
+      margin: 35px auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ULTRA-EXECUTIVE FUTURISTIC ID CARD BADGE */
+    .executive-id-card {
+      width: 490px;
+      background: #ffffff;
+      background-image: 
+        radial-gradient(circle at 100% 0%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 0% 100%, rgba(255, 183, 3, 0.08) 0%, transparent 50%),
+        linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      border-radius: 26px;
+      overflow: hidden;
+      box-shadow: 
+        0 30px 80px rgba(0, 0, 0, 0.8),
+        0 0 50px rgba(0, 212, 255, 0.35),
+        inset 0 0 0 2px rgba(255, 255, 255, 0.8);
+      border: 3.5px solid #002855;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Metallic Silver Grommet Lanyard Slot */
+    .lanyard-slot-bar {
+      width: 100%;
+      background: #010a17;
+      padding: 11px 0 7px 0;
+      display: flex;
+      justify-content: center;
+      border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+    }
+
+    .lanyard-grommet {
+      width: 52px;
+      height: 13px;
+      background: #051424;
+      border-radius: 12px;
+      border: 2.5px solid #ffb703;
+      box-shadow: 0 0 10px rgba(255, 183, 3, 0.5);
+    }
+
+    /* DEEP METALLIC HEADER BANNER */
+    .card-header-banner {
+      background: linear-gradient(135deg, #010a17 0%, #001e47 45%, #003b80 100%);
+      color: #ffffff;
+      padding: 24px 24px 28px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-header-banner::before {
+      content: 'INNOWAVE';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 76px;
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.03);
+      letter-spacing: 0.1em;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .header-top-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 183, 3, 0.18);
+      border: 1px solid #ffb703;
+      color: #ffb703;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .header-main-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      background: linear-gradient(135deg, #ffffff 20%, #00d4ff 70%, #99ebff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 3px;
+      text-shadow: 0 4px 16px rgba(0, 212, 255, 0.4);
+    }
+
+    .header-sub-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #ffb703;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 3px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .header-fest-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: #cbd5e1;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    /* GOLD & NEON DUAL ACCENT LINE */
+    .header-accent-line {
+      height: 6px;
+      background: linear-gradient(90deg, #ffb703 0%, #00d4ff 50%, #0066ff 100%);
+      width: 100%;
+    }
+
+    /* FLOATING ID NUMBER BADGE PILL */
+    .id-badge-container {
+      text-align: center;
+      margin-top: -20px;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 5;
+    }
+
+    .id-badge-pill {
+      background: linear-gradient(135deg, #010a17 0%, #00224d 100%);
+      color: #ffffff;
+      padding: 7px 24px;
+      border-radius: 50px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 8px 24px rgba(0, 10, 23, 0.5), 0 0 15px rgba(255, 183, 3, 0.4);
+      border: 2.5px solid #ffb703;
+    }
+
+    .id-badge-pill span.lbl {
+      font-size: 10.5px;
+      color: #00d4ff;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    /* PARTICIPANT DETAILS SECTION */
+    .details-section {
+      padding: 0 24px 14px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .detail-card-row {
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-left: 4.5px solid #0066ff;
+      border-radius: 12px;
+      padding: 10px 16px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    .detail-card-row.name-row {
+      border-left-color: #ffb703;
+      background: linear-gradient(135deg, #fffcf0 0%, #fef3c7 100%);
+      border-color: #fde68a;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15);
+    }
+
+    .detail-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .detail-label {
+      font-size: 9.5px;
+      font-weight: 800;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .detail-value {
+      font-size: 15px;
+      font-weight: 800;
+      color: #001a38;
+      line-height: 1.2;
+    }
+
+    .detail-value.name-val {
+      font-size: 19px;
+      color: #78350f;
+      text-transform: uppercase;
+      font-weight: 900;
+      letter-spacing: -0.01em;
+    }
+
+    /* EVENTS CHECKLIST TABLE SECTION */
+    .events-checklist-section {
+      padding: 0 24px 16px 24px;
+    }
+
+    .checklist-title-bar {
+      background: linear-gradient(135deg, #010a17 0%, #002855 100%);
+      color: #ffffff;
+      padding: 8px 14px;
+      border-radius: 10px 10px 0 0;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #00d4ff;
+    }
+
+    .checklist-title-bar span.accent {
+      color: #ffb703;
+    }
+
+    .events-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1.5px solid #cbd5e1;
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .events-table th {
+      background: #f1f5f9;
+      color: #002855;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 8px 10px;
+      text-align: left;
+      border-bottom: 2px solid #cbd5e1;
+      letter-spacing: 0.04em;
+    }
+
+    .events-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 12.5px;
+      color: #0f172a;
+      vertical-align: middle;
+    }
+
+    .events-table tr:nth-child(even) {
+      background: #f8fafc;
+    }
+
+    .evt-cell {
+      font-weight: 700;
+    }
+
+    .mark-box {
+      width: 20px;
+      height: 20px;
+      border: 2.5px solid #002855;
+      border-radius: 4px;
+      margin: 0 auto;
+      background: #ffffff;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .event-head-sign-line {
+      width: 95px;
+      border-bottom: 1.5px solid #475569;
+      height: 18px;
+      margin: 0 auto;
+    }
+
+    /* CARD FOOTER WITH HOLOGRAPHIC QR & GOLD SIGNATURE */
+    .card-footer-bar {
+      background: linear-gradient(135deg, #010a17 0%, #001a38 100%);
+      color: #ffffff;
+      padding: 14px 24px 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+      border-top: 3px solid #00d4ff;
+    }
+
+    .qr-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .qr-box img {
+      width: 52px;
+      height: 52px;
+      border-radius: 8px;
+      border: 2px solid #00d4ff;
+      background: #ffffff;
+      padding: 2px;
+      box-shadow: 0 0 12px rgba(0, 212, 255, 0.4);
+    }
+
+    .qr-lbl {
+      font-size: 9px;
+      color: #cbd5e1;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .qr-lbl b {
+      color: #00d4ff;
+      letter-spacing: 0.05em;
+    }
+
+    .registration-sig-block {
+      text-align: center;
+      width: 170px;
+    }
+
+    .registration-sig-line {
+      border-bottom: 2px solid #ffffff;
+      height: 26px;
+      margin-bottom: 4px;
+    }
+
+    .registration-sig-label {
+      font-size: 10px;
+      font-weight: 800;
+      color: #ffb703;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* BOTTOM DUAL RIBBON */
+    .bottom-accent-ribbon {
+      height: 6px;
+      background: linear-gradient(90deg, #ffb703 0%, #00d4ff 50%, #0066ff 100%);
+      width: 100%;
+    }
+
+    /* PRINT STYLES */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        padding: 0 !important;
+      }
+
+      .controls-toolbar {
+        display: none !important;
+      }
+
+      .card-wrapper {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      .executive-id-card {
+        box-shadow: none !important;
+        border: 2px solid #000000 !important;
+        margin: 10px auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating UI Controls Bar -->
+  <header class="controls-toolbar">
+    <div class="brand-title">
+      ⚡ INNOWAVE-2K26 <span class="highlight">| EXECUTIVE ID CARD</span>
+    </div>
+
+    <!-- Live Participant Search -->
+    <div class="search-box">
+      <input type="text" id="participant-search-input" placeholder="Enter ID (e.g. IW26-0001)..." />
+      <button onclick="searchParticipant()">Lookup</button>
+    </div>
+
+    <div class="action-buttons">
+      <button class="btn-sample" onclick="loadSampleData(1)">Sample 1</button>
+      <button class="btn-sample" onclick="loadSampleData(2)">Sample 2</button>
+
+      <button class="btn-action btn-download" onclick="downloadIDCardPNG()">
+        📥 Download ID Card PNG
+      </button>
+
+      <button class="btn-action btn-print" onclick="window.print()">
+        🖨️ Print / Save PDF
+      </button>
+    </div>
+  </header>
+
+  <!-- CARD WRAPPER -->
+  <main class="card-wrapper">
+
+    <!-- ULTRA-EXECUTIVE FUTURISTIC ID CARD -->
+    <div class="executive-id-card" id="target-id-card">
+      
+      <!-- Top Lanyard Slot Grommet Bar -->
+      <div class="lanyard-slot-bar">
+        <div class="lanyard-grommet"></div>
+      </div>
+
+      <!-- Modern Deep Metallic Header Banner -->
+      <div class="card-header-banner">
+        <div class="header-top-badge">👑 OFFICIAL DELEGATE PASS</div>
+        <h1 class="header-main-title">INNOWAVE-2K26</h1>
+        <div class="header-sub-title">ENGINEER'S DAY CELEBRATION</div>
+        <div class="header-fest-tag">National Level Fest</div>
+      </div>
+
+      <!-- Gold & Neon Accent Line -->
+      <div class="header-accent-line"></div>
+
+      <!-- ID Number Floating Pill Badge -->
+      <div class="id-badge-container">
+        <div class="id-badge-pill">
+          <span class="lbl">ID NO:</span><span id="card-id-number">IW26-0001</span>
+        </div>
+      </div>
+
+      <!-- Participant Details Section -->
+      <div class="details-section">
+        <div class="detail-card-row name-row">
+          <span class="detail-label">👤 REGISTERED PARTICIPANT NAME</span>
+          <span class="detail-value name-val" id="card-name">PARTICIPANT NAME</span>
+        </div>
+
+        <div class="detail-card-row">
+          <span class="detail-label">🏫 COLLEGE / INSTITUTION NAME</span>
+          <span class="detail-value" id="card-college">PSCMR College of Engineering & Tech</span>
+        </div>
+
+        <div class="detail-grid-2">
+          <div class="detail-card-row">
+            <span class="detail-label">🎓 BRANCH</span>
+            <span class="detail-value" id="card-branch">CSE</span>
+          </div>
+
+          <div class="detail-card-row">
+            <span class="detail-label">📅 YEAR OF STUDY</span>
+            <span class="detail-value" id="card-year">III Year</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Events Evaluation Checklist Section -->
+      <div class="events-checklist-section">
+        <div class="checklist-title-bar">
+          <span>📋 EVENTS EVALUATION CHECKLIST</span>
+          <span class="accent">INNOWAVE-2K26</span>
+        </div>
+
+        <table class="events-table">
+          <thead>
+            <tr>
+              <th style="width: 48%;">Brochure Event Name</th>
+              <th style="width: 18%; text-align: center;">Mark [✓]</th>
+              <th style="width: 34%; text-align: center;">Event Head Sign</th>
+            </tr>
+          </thead>
+          <tbody id="events-tbody">
+            <tr>
+              <td class="evt-cell">🧠 Technical Quiz</td>
+              <td><div class="mark-box"></div></td>
+              <td><div class="event-head-sign-line"></div></td>
+            </tr>
+            <tr>
+              <td class="evt-cell">💻 Coding Challenge</td>
+              <td><div class="mark-box"></div></td>
+              <td><div class="event-head-sign-line"></div></td>
+            </tr>
+            <tr>
+              <td class="evt-cell">🗺️ Tech Treasure Hunt</td>
+              <td><div class="mark-box"></div></td>
+              <td><div class="event-head-sign-line"></div></td>
+            </tr>
+            <tr>
+              <td class="evt-cell">🚀 Project Expo</td>
+              <td><div class="mark-box"></div></td>
+              <td><div class="event-head-sign-line"></div></td>
+            </tr>
+            <tr>
+              <td class="evt-cell">🤖 Prompt Engineering</td>
+              <td><div class="mark-box"></div></td>
+              <td><div class="event-head-sign-line"></div></td>
+            </tr>
+            <tr>
+              <td class="evt-cell">🎬 Reels (1 Min)</td>
+              <td><div class="mark-box"></div></td>
+              <td><div class="event-head-sign-line"></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Card Footer with QR Code & Gold Registration Signature -->
+      <div class="card-footer-bar">
+        <div class="qr-box">
+          <img id="card-qr-code" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50'><rect width='50' height='50' fill='%23002855'/></svg>" alt="QR Code" />
+          <div class="qr-lbl">
+            <b>SCAN TO VERIFY</b><br>
+            Official Pass<br>
+            InnoWave-2k26
+          </div>
+        </div>
+
+        <div class="registration-sig-block">
+          <div class="registration-sig-line"></div>
+          <div class="registration-sig-label">Registration Signature</div>
+        </div>
+      </div>
+
+      <!-- Bottom Dual Ribbon -->
+      <div class="bottom-accent-ribbon"></div>
+
+    </div>
+
+  </main>
+
+  <script>
+    const DEFAULT_EVENTS = [
+      { id: '01', name: 'Technical Quiz', icon: '🧠' },
+      { id: '02', name: 'Coding Challenge', icon: '💻' },
+      { id: '03', name: 'Tech Treasure Hunt', icon: '🗺️' },
+      { id: '04', name: 'Project Expo', icon: '🚀' },
+      { id: '05', name: 'Prompt Engineering', icon: '🤖' },
+      { id: '06', name: 'Reels (1 Min)', icon: '🎬' }
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const participantId = urlParams.get('id') || urlParams.get('q');
+      
+      if (participantId) {
+        document.getElementById('participant-search-input').value = participantId;
+        fetchParticipantData(participantId);
+      } else {
+        loadSampleData(1);
+      }
+    });
+
+    function searchParticipant() {
+      const q = document.getElementById('participant-search-input').value.trim();
+      if (!q) {
+        alert('Please enter a Registration ID, Participant Name, Phone or Email.');
+        return;
+      }
+      fetchParticipantData(q);
+    }
+
+    async function fetchParticipantData(query) {
+      try {
+        const res = await fetch(`/api/id-card-data/${encodeURIComponent(query)}`);
+        const data = await res.json();
+        
+        if (!data.ok || !data.participant) {
+          alert(data.error || 'Participant record not found in database.');
+          return;
+        }
+
+        renderParticipantCard(data.participant);
+      } catch (err) {
+        console.error(err);
+        alert('Failed to fetch participant details. Showing sample preview.');
+      }
+    }
+
+    function renderParticipantCard(p) {
+      const teamId = p.team_id || `IW26-${String(p.id).padStart(4, '0')}`;
+      const name = p.leader_name || 'REGISTERED PARTICIPANT';
+      const college = p.college_name || 'PSCMR College of Engineering & Tech';
+      const branch = p.branch || 'CSE';
+      const year = p.year || 'III Year';
+
+      document.getElementById('card-id-number').textContent = teamId;
+      document.getElementById('card-name').textContent = name;
+      document.getElementById('card-college').textContent = college;
+      document.getElementById('card-branch').textContent = branch;
+      document.getElementById('card-year').textContent = year;
+
+      if (p.qr_code) {
+        document.getElementById('card-qr-code').src = p.qr_code;
+      }
+
+      renderEventsList(p.events_selected);
+    }
+
+    function renderEventsList(selectedEvents) {
+      const tbody = document.getElementById('events-tbody');
+      tbody.innerHTML = '';
+
+      DEFAULT_EVENTS.forEach((evt) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="evt-cell">
+            ${evt.icon} ${evt.name}
+          </td>
+          <td><div class="mark-box"></div></td>
+          <td><div class="event-head-sign-line"></div></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function loadSampleData(type) {
+      if (type === 1) {
+        renderParticipantCard({
+          id: 1,
+          team_id: 'IW26-0042',
+          leader_name: 'K. JAIDEEP RAJ',
+          college_name: 'PSCMR College of Engg & Tech',
+          branch: 'CSE',
+          year: 'III Year',
+          events_selected: ['Technical Quiz', 'Project Expo', 'Coding Challenge']
+        });
+      } else {
+        renderParticipantCard({
+          id: 2,
+          team_id: 'IW26-0108',
+          leader_name: 'PRIYA SHARMA',
+          college_name: 'VNR Vignana Jyothi Institute',
+          branch: 'ECE',
+          year: 'IV Year',
+          events_selected: ['Project Expo', 'Prompt Engineering', 'Reels (1 Min)']
+        });
+      }
+    }
+
+    function downloadIDCardPNG() {
+      const cardElement = document.getElementById('target-id-card');
+      html2canvas(cardElement, {
+        scale: 3,
+        useCORS: true,
+        backgroundColor: '#ffffff'
+      }).then(canvas => {
+        const link = document.createElement('a');
+        const participantId = document.getElementById('card-id-number').textContent || 'ID_Card';
+        const name = document.getElementById('card-name').textContent.replace(/\s+/g, '_');
+        link.download = `InnoWave2k26_ExecutiveIDCard_${participantId}_${name}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+    }
+  </script>
+</body>
+</html>

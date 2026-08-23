@@ -5,6 +5,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Three.js for subtle 3D Blueprint background -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  @media print {
+    body * {
+      visibility: hidden !important;
+    }
+    #adminIdCardBody, #adminIdCardBody *, .delegate-pass-card, .delegate-pass-card * {
+      visibility: visible !important;
+    }
+    #adminIdCardBody, .delegate-pass-card {
+      position: absolute !important;
+      left: 50% !important;
+      top: 0 !important;
+      transform: translateX(-50%) !important;
+      width: 100% !important;
+      max-width: 440px !important;
+      margin: 0 auto !important;
+      padding: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+    .modal-overlay, .no-print, button {
+      display: none !important;
+    }
+  }
+</style>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
   *{ margin:0; padding:0; box-sizing:border-box; }
@@ -21,55 +47,125 @@
     --text-muted:   #cbd5e1;
   }
   [data-theme="light"] {
-    --bg-primary:   #f8fafc;
-    --bg-panel:     rgba(255, 255, 255, 0.96);
-    --border:       #e2e8f0;
-    --accent:       #002855;
-    --accent-blue:  #1e3a8a;
-    --gold:         #b45309;
-    --accent-dim:   rgba(30, 58, 138, 0.08);
-    --warn:         #b45309;
+    --bg-primary:   #f3f4f6;
+    --bg-panel:     rgba(255, 255, 255, 0.98);
+    --border:       #cbd5e1;
+    --accent:       #0d9488;
+    --accent-blue:  #0f766e;
+    --gold:         #e11d48;
+    --accent-dim:   rgba(13, 148, 136, 0.08);
+    --warn:         #e11d48;
     --text-primary: #0f172a;
-    --text-muted:   #475569;
+    --text-muted:   #334155;
   }
-  body{ font-family:'Inter',sans-serif; color:var(--text-primary);
-    background-color: var(--bg-primary); min-height:100vh; overflow-x:hidden; transition: background-color 0.3s ease, color 0.3s ease; }
+html { scroll-behavior: smooth; background: #040406; }
+html[data-theme="light"] { background: #f4f6fc !important; }
+html[data-theme="dark"] { background: #040406 !important; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: transparent !important;
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: color 0.3s ease;
+}
+
+html[data-theme="light"] body, body.light-theme {
+  background: transparent !important;
+  color: #0f172a !important;
+}
+
+/* Overall Full-Screen Light Mode Backdrop (Entire Website Viewport) */
+.overall-screen-bg-light {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .light-mode-only { display: none !important; }
+[data-theme="light"] .light-mode-only { display: block !important; }
+
+.overall-screen-bg-img {
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.22;
+  filter: saturate(1.18) brightness(1.02);
+  transform: scale(1.02);
+}
+
+.login-wrap, header.bar, .wrap, main, section, footer {
+  position: relative;
+  z-index: 1;
+}
 
   [data-theme="light"] .login,
   [data-theme="light"] header.bar,
   [data-theme="light"] .stat,
   [data-theme="light"] .table-wrap,
   [data-theme="light"] .filters,
-  [data-theme="light"] .modal-content {
+  [data-theme="light"] .modal-content,
+  body.light-theme .login,
+  body.light-theme header.bar,
+  body.light-theme .stat,
+  body.light-theme .table-wrap,
+  body.light-theme .filters,
+  body.light-theme .modal-content {
     background: #ffffff !important;
     color: #0f172a !important;
-    border: 1px solid #e2e8f0 !important;
-    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.02) !important;
-    border-radius: 12px !important;
+    border: 1.5px solid #e2e8f0 !important;
+    box-shadow: 0 14px 40px rgba(15, 23, 42, 0.07) !important;
+    border-radius: 20px !important;
+  }
+
+  [data-theme="light"] .btn.gold,
+  body.light-theme .btn.gold {
+    background: linear-gradient(135deg, #e11d48 0%, #be123c 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    box-shadow: 0 8px 24px rgba(225, 29, 72, 0.35) !important;
+    font-weight: 800 !important;
+  }
+
+  [data-theme="light"] .btn.primary,
+  body.light-theme .btn.primary {
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    box-shadow: 0 8px 24px rgba(13, 148, 136, 0.3) !important;
+    font-weight: 800 !important;
   }
 
   [data-theme="light"] input,
   [data-theme="light"] select {
     background: #ffffff !important;
     color: #0f172a !important;
-    border: 1px solid #cbd5e1 !important;
-    border-radius: 8px !important;
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 10px !important;
   }
 
   [data-theme="light"] input:focus,
   [data-theme="light"] select:focus {
-    border-color: #2563eb !important;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+    border-color: #0d9488 !important;
+    box-shadow: 0 0 0 3.5px rgba(13, 148, 136, 0.2) !important;
   }
 
   [data-theme="light"] table th {
-    background: #f8fafc !important;
+    background: #f1f5f9 !important;
     color: #0f172a !important;
-    border-bottom: 2px solid #e2e8f0 !important;
+    border-bottom: 2px solid #cbd5e1 !important;
+    font-weight: 700 !important;
   }
 
   [data-theme="light"] table td {
-    border-bottom: 1px solid #f1f5f9 !important;
+    border-bottom: 1px solid #e2e8f0 !important;
     color: #334155 !important;
   }
 
@@ -158,9 +254,25 @@
     table { min-width: 850px !important; }
     th, td { padding: 8px 10px !important; font-size: 12px !important; }
     
-    .login { width: 92% !important; padding: 24px 16px !important; }
     .login input { font-size: 16px !important; }
   }
+/* ========================================================
+   LIGHT MODE CONTRAST & READABILITY OVERRIDES (100% Crisp)
+   ======================================================== */
+html[data-theme="light"], body.light-theme, [data-theme="light"] body {
+  --bg-primary: #f4f6fc !important;
+  --bg-panel: #ffffff !important;
+  --border: #cbd5e1 !important;
+  --accent: #0284c7 !important;
+  --text-primary: #0f172a !important;
+  --text-muted: #334155 !important;
+}
+[data-theme="light"] body, body.light-theme { background-color: #f4f6fc !important; color: #0f172a !important; }
+[data-theme="light"] .login, [data-theme="light"] .stat, [data-theme="light"] .tablewrap, [data-theme="light"] header.bar, body.light-theme .login, body.light-theme .stat, body.light-theme .tablewrap, body.light-theme header.bar { background: #ffffff !important; border: 1.5px solid #cbd5e1 !important; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08) !important; color: #0f172a !important; }
+[data-theme="light"] th, body.light-theme th { background: #f1f5f9 !important; color: #0f172a !important; font-weight: 800 !important; }
+[data-theme="light"] td, body.light-theme td { color: #1e293b !important; border-bottom: 1px solid #e2e8f0 !important; }
+[data-theme="light"] tr:hover td, body.light-theme tr:hover td { background: #e0f2fe !important; }
+[data-theme="light"] input, [data-theme="light"] select, body.light-theme input, body.light-theme select { background: #ffffff !important; color: #0f172a !important; border: 1.5px solid #94a3b8 !important; }
 </style>
 </head>
 <body>
@@ -238,6 +350,19 @@
       <img id="proofImg" src="" style="max-width:100%; height:auto; display:inline-block;" alt="Proof Image">
     </div>
     <div style="margin-top:16px; display:flex; gap:10px; justify-content:center;" id="proofModalActions"></div>
+  </div>
+</div>
+
+<!-- Modal for Admin Participant ID Card View & Print -->
+<div class="modal-overlay" id="adminIdModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:1000; align-items:center; justify-content:center; padding:20px; overflow-y:auto;">
+  <div style="background:var(--bg-panel); border:1.5px solid var(--accent); border-radius:20px; max-width:480px; width:100%; padding:24px; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.8);">
+    <button onclick="closeAdminIdModal()" style="position:absolute; top:16px; right:16px; background:none; border:none; color:#fff; font-size:24px; cursor:pointer;">✕</button>
+    
+    <div id="adminIdCardBody"></div>
+
+    <div style="margin-top:20px; text-align:center;" class="no-print">
+      <button class="btn gold" onclick="downloadIdCardPng('adminIdCardBody')" style="padding:12px 28px; font-weight:800; font-size:14px; width:100%; border-radius:12px; box-shadow:0 8px 24px rgba(255,183,3,0.3);">📥 DOWNLOAD 4K ID CARD PASS (PNG IMAGE)</button>
+    </div>
   </div>
 </div>
 
@@ -326,7 +451,12 @@
         <td>${ieeeLabel}${r.ieee_id?`<br><span class="muted" style="font-size:11px">ID: ${esc(r.ieee_id)}</span>`:''}<br><span style="font-size:11px; color:var(--accent); font-weight:700;">${esc(ieeeStatus)}</span></td>
         <td>${ieeeCardBtn}</td>
         <td class="muted" style="font-size:12.5px;white-space:nowrap">${esc(when)}</td>
-        <td style="white-space:nowrap">${verifyBtn}<br>${ieeeActionBtns}<br><button class="del" style="margin-top:6px" onclick="delRow(${r.id})">Delete</button></td>
+        <td style="white-space:nowrap">
+          ${verifyBtn}<br>
+          ${ieeeActionBtns}<br>
+          <button class="btn" style="padding:4px 10px; font-size:11px; margin-top:4px; border-color:var(--accent); color:var(--accent);" onclick="openAdminIdCard(${r.id})">🪪 ID Card</button><br>
+          <button class="del" style="margin-top:6px" onclick="delRow(${r.id})">Delete</button>
+        </td>
       </tr>`;
     }).join('');
   }
@@ -345,6 +475,188 @@
 
   function closeProofModal() {
     document.getElementById('proofModal').style.display = 'none';
+  }
+
+  async function openAdminIdCard(id) {
+    const row = DATA.find(r => r.id === id);
+    if (!row) { alert('Participant details not found.'); return; }
+
+    const body = document.getElementById('adminIdCardBody');
+    body.innerHTML = '<div style="text-align:center; padding:20px; color:var(--accent);">⌛ Generating Participant ID Card & QR Code…</div>';
+    document.getElementById('adminIdModal').style.display = 'flex';
+
+    currentParticipantTeamId = row.team_id || row.id;
+    try {
+      const res = await fetch(`/api/id-card-data/${encodeURIComponent(row.team_id || row.id)}`);
+      const data = await res.json();
+      if (data.ok && data.participant) {
+        const p = data.participant;
+        body.innerHTML = `
+          <div class="delegate-pass-card" style="max-width:440px; margin:0 auto; background:#031527; border:2.5px solid #00d4ff; border-radius:24px; color:#fff; text-align:center; overflow:hidden; font-family:'Inter', sans-serif; box-shadow:0 20px 50px rgba(0,0,0,0.6);">
+            <!-- TOP NAVY HEADER -->
+            <div style="background:#03182e; padding:22px 16px 16px; position:relative; border-bottom:3px solid #f59e0b; text-align:center;">
+              <div style="display:inline-block; background:#0a2540; border:1.5px solid #f59e0b; color:#fbbf24; padding:5px 18px; border-radius:20px; font-size:11px; font-weight:800; letter-spacing:1.5px; margin-bottom:8px;">
+                👑 OFFICIAL DELEGATE PASS
+              </div>
+              <div style="color:#ffffff; text-shadow:0 0 12px rgba(0,212,255,0.8), 0 2px 4px rgba(0,0,0,0.9); font-family:'Space Grotesk',sans-serif; font-size:28px; font-weight:900; letter-spacing:1.5px; line-height:1.1; margin:6px 0;">
+                INNOWAVE-2K26
+              </div>
+              <div style="color:#f59e0b; font-weight:800; font-size:12px; letter-spacing:1.5px; margin-top:4px;">
+                ENGINEER'S DAY CELEBRATION
+              </div>
+              <div style="color:#cbd5e1; font-size:10px; font-weight:700; letter-spacing:2px; margin-top:2px;">
+                NATIONAL LEVEL FEST
+              </div>
+              <div style="display:inline-block; background:#082a4a; border:1.5px solid #00d4ff; color:#00d4ff; padding:6px 22px; border-radius:20px; font-size:13px; font-weight:900; letter-spacing:1.5px; margin-top:10px;">
+                🆔 PARTICIPANT ID: ${esc(p.team_id)}
+              </div>
+            </div>
+
+            <!-- MIDDLE LIGHT BODY -->
+            <div style="background:#ffffff; color:#0f172a; padding:18px; text-align:left;">
+              <!-- Participant Name Box -->
+              <div style="background:#fefce8; border:1.5px solid #fef08a; border-radius:12px; padding:10px 14px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                <div>
+                  <div style="font-size:10px; font-weight:800; color:#854d0e; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">
+                    👤 REGISTERED PARTICIPANT NAME
+                  </div>
+                  <div style="font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:800; color:#1e1b4b; line-height:1.2;">
+                    ${esc(p.leader_name)}
+                  </div>
+                </div>
+                <div style="background:#03182e; border:1.5px solid #00d4ff; color:#00d4ff; font-weight:900; font-size:12px; padding:4px 12px; border-radius:8px;">
+                  ID: ${esc(p.team_id)}
+                </div>
+              </div>
+
+              <!-- College Name Box -->
+              <div style="background:#ffffff; border:1.5px solid #e2e8f0; border-left:4px solid #0284c7; border-radius:10px; padding:10px 14px; margin-bottom:10px;">
+                <div style="font-size:10px; font-weight:800; color:#0369a1; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">
+                  🏫 COLLEGE / INSTITUTION NAME
+                </div>
+                <div style="font-size:14px; font-weight:700; color:#0f172a; line-height:1.3;">
+                  ${esc(p.college_name)}
+                </div>
+              </div>
+
+              <!-- Branch & Year Row -->
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+                <div style="background:#ffffff; border:1.5px solid #e2e8f0; border-left:4px solid #0284c7; border-radius:10px; padding:8px 12px;">
+                  <div style="font-size:9.5px; font-weight:800; color:#0369a1; text-transform:uppercase;">🎓 BRANCH</div>
+                  <div style="font-size:14px; font-weight:800; color:#0f172a; margin-top:2px;">${esc(p.branch)}</div>
+                </div>
+                <div style="background:#ffffff; border:1.5px solid #e2e8f0; border-left:4px solid #0284c7; border-radius:10px; padding:8px 12px;">
+                  <div style="font-size:9.5px; font-weight:800; color:#0369a1; text-transform:uppercase;">📅 YEAR OF STUDY</div>
+                  <div style="font-size:14px; font-weight:800; color:#0f172a; margin-top:2px;">${esc(p.year)}</div>
+                </div>
+              </div>
+
+              <!-- EVENTS EVALUATION CHECKLIST TABLE -->
+              <div style="border:1.5px solid #cbd5e1; border-radius:10px; overflow:hidden; margin-bottom:4px;">
+                <div style="background:#03182e; color:#ffffff; padding:8px 12px; font-size:11px; font-weight:800; display:flex; justify-content:space-between; align-items:center;">
+                  <span>📋 EVENTS EVALUATION CHECKLIST</span>
+                  <span style="color:#00d4ff; font-size:10px;">INNOWAVE-2K26</span>
+                </div>
+
+                <div style="background:#f8fafc; border-bottom:1.5px solid #cbd5e1; padding:6px 10px; font-size:9.5px; font-weight:800; color:#475569; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; text-align:left;">
+                  <div>BROCHURE EVENT NAME</div>
+                  <div style="text-align:center;">MARK [✓]</div>
+                  <div style="text-align:right;">EVENT HEAD SIGN</div>
+                </div>
+
+                <div style="font-size:11px; color:#0f172a; font-weight:700;">
+                  <div style="border-bottom:1px solid #f1f5f9; padding:7px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
+                    <div>🧠 Technical Quiz</div>
+                    <div style="text-align:center;"><span style="display:inline-block; width:16px; height:16px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
+                    <div style="text-align:right; color:#cbd5e1; font-size:10px;">__________________</div>
+                  </div>
+                  <div style="border-bottom:1px solid #f1f5f9; padding:7px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
+                    <div>💻 Coding Challenge</div>
+                    <div style="text-align:center;"><span style="display:inline-block; width:16px; height:16px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
+                    <div style="text-align:right; color:#cbd5e1; font-size:10px;">__________________</div>
+                  </div>
+                  <div style="border-bottom:1px solid #f1f5f9; padding:7px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
+                    <div>🗺️ Tech Treasure Hunt</div>
+                    <div style="text-align:center;"><span style="display:inline-block; width:16px; height:16px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
+                    <div style="text-align:right; color:#cbd5e1; font-size:10px;">__________________</div>
+                  </div>
+                  <div style="border-bottom:1px solid #f1f5f9; padding:7px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
+                    <div>🚀 Project Expo</div>
+                    <div style="text-align:center;"><span style="display:inline-block; width:16px; height:16px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
+                    <div style="text-align:right; color:#cbd5e1; font-size:10px;">__________________</div>
+                  </div>
+                  <div style="border-bottom:1px solid #f1f5f9; padding:7px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
+                    <div>🤖 Prompt Engineering</div>
+                    <div style="text-align:center;"><span style="display:inline-block; width:16px; height:16px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
+                    <div style="text-align:right; color:#cbd5e1; font-size:10px;">__________________</div>
+                  </div>
+                  <div style="padding:7px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
+                    <div>🎬 Reels (1 Min)</div>
+                    <div style="text-align:center;"><span style="display:inline-block; width:16px; height:16px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
+                    <div style="text-align:right; color:#cbd5e1; font-size:10px;">__________________</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- BOTTOM NAVY FOOTER WITH QR & SIGNATURE -->
+            <div style="background:#021224; padding:14px 18px; color:#ffffff; border-top:2px solid #00d4ff; display:flex; align-items:center; justify-content:space-between;">
+              <!-- Left QR Container -->
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div style="background:#ffffff; padding:4px; border-radius:10px; border:2px solid #00d4ff; display:inline-block;">
+                  <img src="${p.qr_code}" style="width:68px; height:68px; display:block;" alt="Scan QR Code">
+                </div>
+                <div style="text-align:left;">
+                  <div style="font-size:11px; font-weight:900; color:#00d4ff; letter-spacing:0.5px;">SCAN TO VERIFY</div>
+                  <div style="font-size:9.5px; color:#94a3b8; margin-top:2px; line-height:1.2;">Official Pass<br>InnoWave-2k26</div>
+                </div>
+              </div>
+
+              <!-- Right Signature Area -->
+              <div style="text-align:right;">
+                <div style="color:#64748b; font-size:11px; margin-bottom:4px;">______________________</div>
+                <div style="font-size:10px; font-weight:800; color:#f59e0b; letter-spacing:0.5px;">REGISTRATION SIGNATURE</div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        body.innerHTML = '<div style="color:#ef4444; text-align:center; padding:20px;">Failed to generate ID Card data.</div>';
+      }
+    } catch(e) {
+      console.error(e);
+      body.innerHTML = '<div style="color:#ef4444; text-align:center; padding:20px;">Error generating ID card.</div>';
+    }
+  }
+
+  function closeAdminIdModal() {
+    document.getElementById('adminIdModal').style.display = 'none';
+  }
+
+  let currentParticipantTeamId = 'Delegate_Pass';
+  async function downloadIdCardPng(elementId) {
+    const cardBox = document.getElementById(elementId);
+    if (!cardBox) return;
+    const target = cardBox.querySelector('.delegate-pass-card') || cardBox;
+    
+    try {
+      const canvas = await html2canvas(target, {
+        scale: 4, // 4K Ultra-High Resolution (300+ DPI razor sharp output)
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#031527', // Match outer navy card tone
+        imageTimeout: 0,
+        logging: false
+      });
+
+      const link = document.createElement('a');
+      link.download = `InnoWave2k26_4K_DelegatePass_${currentParticipantTeamId}.png`;
+      link.href = canvas.toDataURL('image/png', 1.0);
+      link.click();
+    } catch(e) {
+      console.error('4K PNG Export Error:', e);
+      window.print();
+    }
   }
 
   async function verifyIeeeCard(id, action) {
