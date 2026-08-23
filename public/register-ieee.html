@@ -1001,6 +1001,7 @@
 <body>
 
   <canvas id="webgl-canvas"></canvas>
+  <canvas id="confettiCanvas" style="position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:1200; display:none;"></canvas>
 
   <!-- Top Accreditation Header Banner Image -->
   <div class="accreditation-wrapper">
@@ -1558,12 +1559,95 @@
 
         const congModal = document.getElementById('congratulationsModal');
         if (congModal) congModal.style.display = 'flex';
+        triggerConfettiPetalBlast();
       } catch (e) { alert('Confirmation error.'); }
     }
 
     function closeCongratulationsModal() {
       const congModal = document.getElementById('congratulationsModal');
       if (congModal) congModal.style.display = 'none';
+    }
+
+    // Canvas Confetti & Falling Flower Petals Animation Engine
+    function triggerConfettiPetalBlast() {
+      const c = document.getElementById('confettiCanvas');
+      if (!c) return;
+      c.style.display = 'block';
+      c.width = window.innerWidth;
+      c.height = window.innerHeight;
+      const ctx = c.getContext('2d');
+
+      const colors = ['#ff2a6d', '#ff5252', '#e60067', '#ff80bf', '#f59e0b', '#00e676', '#00d4ff', '#ffd700'];
+      const particles = [];
+      const count = 220;
+
+      for (let i = 0; i < count; i++) {
+        const isPetal = i % 2 === 0;
+        particles.push({
+          x: Math.random() * c.width,
+          y: Math.random() * c.height * 0.4 - 50,
+          size: Math.random() * 8 + 6,
+          vx: (Math.random() - 0.5) * 6,
+          vy: Math.random() * 3 + 2,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          angle: Math.random() * Math.PI * 2,
+          angularVelocity: (Math.random() - 0.5) * 0.05,
+          swaySpeed: Math.random() * 0.03 + 0.01,
+          swayRange: Math.random() * 3 + 1,
+          isPetal: isPetal,
+          opacity: 1
+        });
+      }
+
+      let animationFrame;
+      const startTime = Date.now();
+
+      function render() {
+        ctx.clearRect(0, 0, c.width, c.height);
+        let alive = false;
+        const elapsed = Date.now() - startTime;
+
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          p.angle += p.angularVelocity;
+          p.x += Math.sin(p.angle * p.swaySpeed) * p.swayRange + p.vx * 0.4;
+          p.y += p.vy;
+
+          if (elapsed > 4000) p.opacity -= 0.015;
+
+          if (p.opacity > 0 && p.y < c.height + 30) {
+            alive = true;
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.angle);
+            ctx.globalAlpha = Math.max(0, p.opacity);
+            ctx.fillStyle = p.color;
+
+            if (p.isPetal) {
+              // Draw Organic Flower Petal shape
+              ctx.beginPath();
+              ctx.moveTo(0, 0);
+              ctx.bezierCurveTo(-p.size / 2, -p.size, -p.size, p.size / 2, 0, p.size * 1.4);
+              ctx.bezierCurveTo(p.size, p.size / 2, p.size / 2, -p.size, 0, 0);
+              ctx.fill();
+            } else {
+              // Draw Confetti Ribbon shape
+              ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2);
+            }
+            ctx.restore();
+          }
+        }
+
+        if (alive && elapsed < 7500) {
+          animationFrame = requestAnimationFrame(render);
+        } else {
+          ctx.clearRect(0, 0, c.width, c.height);
+          c.style.display = 'none';
+          cancelAnimationFrame(animationFrame);
+        }
+      }
+
+      render();
     }
 
     function updateWebGLColors(theme) {

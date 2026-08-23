@@ -354,14 +354,15 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
 </div>
 
 <!-- Modal for Admin Participant ID Card View & Print -->
-<div class="modal-overlay" id="adminIdModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:1000; align-items:center; justify-content:center; padding:20px; overflow-y:auto;">
-  <div style="background:var(--bg-panel); border:1.5px solid var(--accent); border-radius:20px; max-width:480px; width:100%; padding:24px; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.8);">
-    <button onclick="closeAdminIdModal()" style="position:absolute; top:16px; right:16px; background:none; border:none; color:#fff; font-size:24px; cursor:pointer;">✕</button>
+<div class="modal-overlay" id="adminIdModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:1000; align-items:center; justify-content:center; padding:20px; overflow-y:auto;" onclick="if(event.target===this) closeAdminIdModal();">
+  <div style="background:var(--bg-panel); border:1.5px solid var(--accent); border-radius:20px; max-width:480px; width:100%; padding:24px; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.8);" onclick="event.stopPropagation();">
+    <button type="button" onclick="closeAdminIdModal()" style="position:absolute; top:16px; right:16px; background:none; border:none; color:#fff; font-size:24px; cursor:pointer;">✕</button>
     
     <div id="adminIdCardBody"></div>
 
-    <div style="margin-top:20px; text-align:center;" class="no-print">
-      <button class="btn gold" onclick="downloadIdCardPng('adminIdCardBody')" style="padding:12px 28px; font-weight:800; font-size:14px; width:100%; border-radius:12px; box-shadow:0 8px 24px rgba(255,183,3,0.3);">📥 DOWNLOAD 4K ID CARD PASS (PNG IMAGE)</button>
+    <div style="margin-top:20px; display:flex; flex-direction:column; gap:10px;" class="no-print">
+      <button type="button" class="btn gold" onclick="downloadIdCardPng('adminIdCardBody')" style="padding:12px 28px; font-weight:800; font-size:14px; width:100%; border-radius:12px; box-shadow:0 8px 24px rgba(255,183,3,0.3);">📥 DOWNLOAD 4K ID CARD PASS (PNG IMAGE)</button>
+      <button type="button" class="btn" onclick="closeAdminIdModal()" style="padding:10px 20px; font-size:13px; width:100%; border-radius:10px; border:1px solid var(--border); color:var(--text-primary); cursor:pointer;">⬅ BACK TO ADMIN DASHBOARD</button>
     </div>
   </div>
 </div>
@@ -441,10 +442,11 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
 
       const ieeeLabel = isIeee ? `<span class="badge yes">IEEE Member</span>` : `<span class="badge no">Non-IEEE</span>`;
       const ieeeCardBtn = r.ieee_card ? `<button class="btn" style="padding:4px 10px; font-size:11px;" onclick="viewProofModal('${esc(r.team_id)}','IEEE Card',${r.id})">🪪 View Card</button>` : '<span class="muted" style="font-size:11px;">No File</span>';
+      const payProofBtn = r.payment_screenshot ? `<br><button class="btn" style="padding:3px 8px; font-size:10.5px; margin-top:4px; border-color:#00e676; color:#00e676;" onclick="viewPaymentProofModal('${esc(r.team_id)}',${r.id})">📸 View Payment Proof</button>` : '';
 
       return `<tr>
         <td><span class="rid">${esc(r.team_id)}</span></td>
-        <td>${payBadge(st)}<br><span class="amt" style="font-size:13px">₹${esc(r.amount||0)}</span>${r.payment_ref?`<br><span class="muted" style="font-size:11px">UTR: ${esc(r.payment_ref)}</span>`:''}</td>
+        <td>${payBadge(st)}<br><span class="amt" style="font-size:13px">₹${esc(r.amount||0)}</span>${r.payment_ref?`<br><span class="muted" style="font-size:11px">UTR: ${esc(r.payment_ref)}</span>`:''}${payProofBtn}</td>
         <td><b>${esc(r.leader_name)}</b></td>
         <td><a href="mailto:${esc(r.leader_email)}">${esc(r.leader_email)}</a><br><span class="muted">${esc(r.leader_phone)}</span></td>
         <td>${esc(r.college_name||'—')}<br><span class="muted">${esc(r.branch||'—')} (${esc(r.year||'')})</span></td>
@@ -459,6 +461,18 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
         </td>
       </tr>`;
     }).join('');
+  }
+
+  function viewPaymentProofModal(teamId, id) {
+    const row = DATA.find(r => r.id === id);
+    if (!row || !row.payment_screenshot) { alert('No payment screenshot proof uploaded for this participant.'); return; }
+    document.getElementById('proofTitle').textContent = `Payment Proof Screenshot — ${teamId} (${row.leader_name})`;
+    document.getElementById('proofImg').src = row.payment_screenshot;
+    document.getElementById('proofModalActions').innerHTML = `
+      <button class="btn gold" onclick="setStatus(${id},'Paid'); closeProofModal();">✓ Verify & Confirm Payment</button>
+      <button class="btn" style="border-color:#cbd5e1; color:#cbd5e1;" onclick="closeProofModal();">Close</button>
+    `;
+    document.getElementById('proofModal').style.display = 'flex';
   }
 
   function viewProofModal(teamId, type, id) {
