@@ -1306,6 +1306,81 @@
         </div>
       </div>
 
+      <!-- Official Small Registration Receipt Modal -->
+      <div class="modal-overlay" id="receiptModal"
+        style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:1150; align-items:center; justify-content:center; padding:16px; overflow-y:auto;">
+        <div
+          style="max-width:480px; width:100%; background:var(--bg-panel); border:1px solid var(--border); border-radius:18px; padding:24px; position:relative; box-shadow:0 20px 50px rgba(0,0,0,0.6); text-align:center;">
+          <button onclick="closeReceiptModal()"
+            style="position:absolute; top:14px; right:14px; background:rgba(255,255,255,0.1); border:none; color:var(--text-muted); width:32px; height:32px; border-radius:50%; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
+
+          <h3 style="font-family:'Space Grotesk',sans-serif; color:var(--accent); font-size:18px; font-weight:700; margin-bottom:14px;">
+            🧾 OFFICIAL REGISTRATION RECEIPT</h3>
+
+          <!-- Downloadable / Printable Receipt Slip Container -->
+          <div id="receiptSlipCard"
+            style="background:#ffffff; color:#0f172a; border:2px solid #0052cc; border-radius:14px; padding:20px; text-align:left; font-family:'Inter',sans-serif; box-shadow:0 8px 24px rgba(0,0,0,0.15); margin-bottom:18px; position:relative;">
+            <!-- Header Banner -->
+            <div
+              style="border-bottom:2px dashed #cbd5e1; padding-bottom:12px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+              <div>
+                <div style="font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:16px; color:#0052cc;">INNOWAVE 2K26</div>
+                <div style="font-size:10px; color:#64748b; font-weight:700;">PSCMRCET NATIONAL EVENT</div>
+              </div>
+              <div style="text-align:right;">
+                <div
+                  style="font-size:10px; font-weight:800; color:#00e676; background:#e6f4ea; padding:3px 8px; border-radius:12px; border:1px solid #00e676; display:inline-block;">
+                  ✓ VERIFIED & PAID</div>
+                <div style="font-size:9.5px; color:#64748b; margin-top:2px;" id="receiptDate">AUG 2026</div>
+              </div>
+            </div>
+
+            <!-- Receipt Data Grid -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:12px; margin-bottom:14px;">
+              <div>
+                <div style="font-size:9.5px; color:#64748b; font-weight:700; text-transform:uppercase;">Registration ID</div>
+                <div style="font-family:'Space Grotesk',sans-serif; font-weight:800; color:#0052cc; font-size:13.5px;" id="rcpRegId">IW26-0000</div>
+              </div>
+              <div>
+                <div style="font-size:9.5px; color:#64748b; font-weight:700; text-transform:uppercase;">Amount Paid</div>
+                <div style="font-family:'Space Grotesk',sans-serif; font-weight:800; color:#047857; font-size:13.5px;" id="rcpAmount">₹0</div>
+              </div>
+              <div style="grid-column:1 / -1;">
+                <div style="font-size:9.5px; color:#64748b; font-weight:700; text-transform:uppercase;">Participant Name</div>
+                <div style="font-weight:700; color:#0f172a; font-size:13px;" id="rcpName">-</div>
+              </div>
+              <div style="grid-column:1 / -1;">
+                <div style="font-size:9.5px; color:#64748b; font-weight:700; text-transform:uppercase;">College / Institution</div>
+                <div style="font-weight:600; color:#334155;" id="rcpCollege">-</div>
+              </div>
+              <div>
+                <div style="font-size:9.5px; color:#64748b; font-weight:700; text-transform:uppercase;">Mobile / Contact</div>
+                <div style="font-weight:600; color:#334155;" id="rcpPhone">-</div>
+              </div>
+              <div>
+                <div style="font-size:9.5px; color:#64748b; font-weight:700; text-transform:uppercase;">Payment UTR / Ref</div>
+                <div style="font-weight:700; color:#0f172a; font-size:11.5px; word-break:break-all;" id="rcpUtr">-</div>
+              </div>
+            </div>
+
+            <!-- Watermark / Digital Seal Footer -->
+            <div
+              style="border-top:1px dashed #cbd5e1; padding-top:10px; display:flex; justify-content:space-between; align-items:center; font-size:9.5px; color:#64748b;">
+              <div>Category: <span id="rcpCategory" style="font-weight:700; color:#0f172a;">IEEE Member</span></div>
+              <div style="font-weight:800; color:#0052cc;">PSCMRCET • OFFICIAL RECEIPT</div>
+            </div>
+          </div>
+
+          <!-- Download PNG Button -->
+          <button type="button" class="btn-primary-lg" style="width:100%; margin-bottom:8px;" onclick="downloadReceiptPng()">
+            📥 DOWNLOAD RECEIPT (PNG)
+          </button>
+          <button type="button" class="btn-secondary-lg" style="width:100%;" onclick="closeReceiptModal()">
+            ✕ CLOSE
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -1497,7 +1572,12 @@
         } else if (data.payment_status === 'Paid') {
           badge.textContent = '🟢 PAID & CONFIRMED';
           badge.style.color = '#00e676';
-          actWrap.innerHTML = `<div style="font-size:14px; color:#00e676; font-weight:700;">✓ Registration & Payment Verified & Confirmed!</div>`;
+          actWrap.innerHTML = `
+            <div style="font-size:14px; color:#00e676; font-weight:700; margin-bottom:10px;">✓ Registration & Payment Verified & Confirmed!</div>
+            <button type="button" class="btn-primary-lg" style="width:100%; background:linear-gradient(135deg, #00e676 0%, #00b0ff 100%); color:#041220; font-weight:800; border:none; padding:12px;" onclick="openReceiptFromStatus()">
+              🧾 VIEW & DOWNLOAD OFFICIAL RECEIPT SLIP →
+            </button>
+          `;
         } else {
           // Payment pending or card approved or UTR pending - always show payment QR option until Paid!
           badge.textContent = data.payment_status === 'Pending Payment Confirmation' ? '🟡 UTR SUBMITTED — ADMIN CONFIRMATION PENDING' : '🟢 CARD APPROVED — PAYMENT PENDING';
@@ -1535,6 +1615,49 @@
       document.getElementById('ieeeStatusBox').style.display = 'none';
       document.getElementById('paymentModal').style.display = 'block';
       document.getElementById('paymentModal').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function openReceiptFromStatus() {
+      if (lastStatusData) {
+        showReceiptModal(lastStatusData);
+      }
+    }
+
+    function showReceiptModal(data) {
+      if (!data) return;
+      if (document.getElementById('rcpRegId')) document.getElementById('rcpRegId').textContent = data.team_id || `IW26-${String(data.id).padStart(4, '0')}`;
+      if (document.getElementById('rcpAmount')) document.getElementById('rcpAmount').textContent = `₹${data.amount}`;
+      if (document.getElementById('rcpName')) document.getElementById('rcpName').textContent = data.leader_name || '-';
+      if (document.getElementById('rcpCollege')) document.getElementById('rcpCollege').textContent = data.college_name || '-';
+      if (document.getElementById('rcpPhone')) document.getElementById('rcpPhone').textContent = data.leader_phone || data.leader_email || '-';
+      if (document.getElementById('rcpUtr')) document.getElementById('rcpUtr').textContent = data.payment_ref || 'VERIFIED';
+      if (document.getElementById('rcpCategory')) document.getElementById('rcpCategory').textContent = 'IEEE Member Participant';
+      if (document.getElementById('receiptDate')) document.getElementById('receiptDate').textContent = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+
+      const modal = document.getElementById('receiptModal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeReceiptModal() {
+      const modal = document.getElementById('receiptModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    async function downloadReceiptPng() {
+      const card = document.getElementById('receiptSlipCard');
+      if (!card) return;
+      try {
+        const canvas = await html2canvas(card, { scale: 3, backgroundColor: '#ffffff' });
+        const image = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = image;
+        const regId = document.getElementById('rcpRegId').textContent.replace(/\s+/g, '_');
+        link.download = `Innowave2026_Receipt_${regId}.png`;
+        link.click();
+      } catch (err) {
+        console.error(err);
+        alert('Failed to download receipt image.');
+      }
     }
 
     (function checkUrlParams() {
