@@ -669,6 +669,10 @@ app.delete('/api/admin/registrations/all', requireAdmin, (req, res) => {
     res.json({ ok: true, deleted: info.changes, message: 'All registrations deleted successfully.' });
   } catch (e) {
     console.error(e);
+    res.status(500).json({ ok: false, error: 'Failed to delete all registrations.' });
+  }
+});
+
 app.delete('/api/admin/registrations/:id', requireAdmin, (req, res) => {
   db.prepare('DELETE FROM registrations WHERE id = ?').run(req.params.id);
   res.json({ ok: true });
