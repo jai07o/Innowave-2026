@@ -1715,12 +1715,16 @@
         alert('⚠️ Receipt Unavailable: Payment is unverified or pending admin approval.');
         return;
       }
+      const pPhone = data.leader_phone || (document.getElementById('leaderPhone') ? document.getElementById('leaderPhone').value : '') || '-';
+      const pEmail = data.leader_email || (document.getElementById('leaderEmail') ? document.getElementById('leaderEmail').value : '') || '-';
+      const pCollege = data.college_name || (document.getElementById('collegeName') ? document.getElementById('collegeName').value : '') || '-';
+
       if (document.getElementById('rcpRegId')) document.getElementById('rcpRegId').textContent = data.team_id || `IW26-${String(data.id).padStart(4, '0')}`;
       if (document.getElementById('rcpAmount')) document.getElementById('rcpAmount').textContent = `₹${data.amount}`;
       if (document.getElementById('rcpName')) document.getElementById('rcpName').textContent = data.leader_name || '-';
-      if (document.getElementById('rcpCollege')) document.getElementById('rcpCollege').textContent = data.college_name || '-';
-      if (document.getElementById('rcpPhone')) document.getElementById('rcpPhone').textContent = data.leader_phone || '-';
-      if (document.getElementById('rcpEmail')) document.getElementById('rcpEmail').textContent = data.leader_email || '-';
+      if (document.getElementById('rcpCollege')) document.getElementById('rcpCollege').textContent = pCollege;
+      if (document.getElementById('rcpPhone')) document.getElementById('rcpPhone').textContent = pPhone;
+      if (document.getElementById('rcpEmail')) document.getElementById('rcpEmail').textContent = pEmail;
       if (document.getElementById('rcpUtr')) document.getElementById('rcpUtr').textContent = data.payment_ref || 'VERIFIED';
       if (document.getElementById('rcpCategory')) document.getElementById('rcpCategory').textContent = data.ieee_member === 'Yes' ? 'IEEE Member Participant' : 'Non-IEEE Student Participant';
       if (document.getElementById('receiptDate')) document.getElementById('receiptDate').textContent = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });

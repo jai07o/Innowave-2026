@@ -393,6 +393,7 @@ app.post('/api/register/:id/confirm', (req, res) => {
 
     return res.json({
       ok: true,
+      id: row.id,
       team_id: row.team_id,
       amount: row.amount,
       fee_label: row.fee_label,
@@ -402,6 +403,10 @@ app.post('/api/register/:id/confirm', (req, res) => {
       project_title: row.project_title,
       track: row.track,
       leader_name: row.leader_name,
+      leader_email: row.leader_email,
+      leader_phone: row.leader_phone,
+      college_name: row.college_name,
+      ieee_member: row.ieee_member,
       team_size: row.team_size
     });
   } catch (e) {
