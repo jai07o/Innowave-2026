@@ -239,22 +239,37 @@ html[data-theme="light"] body, body.light-theme {
   @media (max-width: 768px) {
     html, body { overflow-x: hidden !important; width: 100% !important; }
     .dash { padding: 8px !important; }
+    .container { padding: 12px 8px !important; }
     header.bar { padding: 10px 12px !important; }
-    header.bar .in { flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
-    header.bar .actions { width: 100% !important; flex-wrap: wrap !important; gap: 6px !important; }
-    header.bar .actions button { flex: 1 1 calc(50% - 6px) !important; font-size: 11px !important; padding: 8px !important; }
+    header.bar .in { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }
+    header.bar .actions { width: 100% !important; display: flex !important; flex-wrap: wrap !important; gap: 6px !important; }
+    header.bar .actions button { flex: 1 1 calc(50% - 6px) !important; font-size: 11.5px !important; padding: 10px 8px !important; min-height: 40px !important; }
     
-    .stats { grid-template-columns: 1fr !important; gap: 8px !important; }
-    .stat { padding: 12px !important; }
+    .stats { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+    .stat { padding: 12px 10px !important; }
+    .stat .v { font-size: 22px !important; margin-top: 4px !important; }
+    .stat .k { font-size: 10px !important; }
     
     .toolbar { flex-direction: column !important; align-items: stretch !important; gap: 8px !important; }
-    .toolbar input, .toolbar select { width: 100% !important; min-width: 100% !important; font-size: 16px !important; }
+    .toolbar input, .toolbar select { width: 100% !important; min-width: 100% !important; font-size: 14px !important; min-height: 44px !important; box-sizing: border-box !important; }
     
-    .tablewrap { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; border-radius: 8px !important; }
+    .tablewrap { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; border-radius: 8px !important; width: 100% !important; }
     table { min-width: 850px !important; }
     th, td { padding: 8px 10px !important; font-size: 12px !important; }
     
-    .login input { font-size: 16px !important; }
+    .login input { font-size: 15px !important; min-height: 44px !important; }
+    .login button { min-height: 44px !important; font-size: 14px !important; }
+
+    /* Admin Modals on Mobile */
+    .modal-overlay { padding: 10px !important; }
+    #adminIdModal > div { max-width: 96% !important; padding: 16px 10px !important; box-sizing: border-box !important; }
+    #adminIdCardBody .delegate-pass-card { transform: scale(0.85); transform-origin: top center; margin-bottom: -40px !important; }
+    #proofModal > div { max-width: 96% !important; padding: 16px 12px !important; box-sizing: border-box !important; }
+  }
+
+  @media (max-width: 480px) {
+    .stats { grid-template-columns: 1fr !important; }
+    header.bar .actions button { flex: 1 1 100% !important; }
   }
 /* ========================================================
    LIGHT MODE CONTRAST & READABILITY OVERRIDES (100% Crisp)

@@ -709,14 +709,23 @@
       }
 
       .wrap {
-        padding: 0 2.5vw !important;
+        padding: 0 10px !important;
         width: 100% !important;
         max-width: 100% !important;
+        box-sizing: border-box !important;
+      }
+
+      .official-header-img {
+        width: 100% !important;
+        height: auto !important;
+        max-width: 100% !important;
+        object-fit: contain !important;
       }
 
       nav .nav-in {
         padding: 0 10px !important;
-        height: 48px !important;
+        height: auto !important;
+        min-height: 48px !important;
       }
 
       .brand-logo {
@@ -737,7 +746,7 @@
       }
 
       .reg-title {
-        font-size: clamp(1.5rem, 5.5vw, 2.2rem) !important;
+        font-size: clamp(1.4rem, 5.5vw, 2.0rem) !important;
         line-height: 1.25 !important;
       }
 
@@ -757,11 +766,10 @@
         margin-bottom: 14px !important;
       }
 
-      /* Preserve exact 2-column laptop structure on mobile fitted to screen */
       .form-grid {
         display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 8px 10px !important;
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
         width: 100% !important;
       }
 
@@ -770,11 +778,9 @@
       }
 
       .form-group label {
-        font-size: 11.5px !important;
-        margin-bottom: 3px !important;
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
+        font-size: 12px !important;
+        margin-bottom: 4px !important;
+        white-space: normal !important;
       }
 
       input[type="text"],
@@ -782,10 +788,10 @@
       input[type="tel"],
       select,
       textarea {
-        font-size: 13px !important;
-        padding: 8px 10px !important;
-        min-height: 38px !important;
-        border-radius: 6px !important;
+        font-size: 14px !important;
+        padding: 10px 12px !important;
+        min-height: 44px !important;
+        border-radius: 8px !important;
         width: 100% !important;
         box-sizing: border-box !important;
       }
@@ -793,22 +799,69 @@
       .btn-primary-lg,
       .btn-secondary-lg {
         width: 100% !important;
-        padding: 12px 14px !important;
-        font-size: 13.5px !important;
+        padding: 13px 14px !important;
+        font-size: 14px !important;
         display: flex !important;
         justify-content: center !important;
         align-items: center !important;
-        border-radius: 6px !important;
+        border-radius: 8px !important;
+        box-sizing: border-box !important;
       }
 
       #paymentModal {
-        padding: 14px 10px !important;
-        border-radius: 12px !important;
+        padding: 16px 12px !important;
+        border-radius: 14px !important;
+        margin-top: 16px !important;
       }
 
       #paymentModal img#qrImgDisplay {
         max-width: 180px !important;
         height: 180px !important;
+        margin: 0 auto !important;
+      }
+
+      /* Modal Popups on Mobile */
+      .modal-overlay {
+        padding: 10px !important;
+      }
+
+      .modal-content {
+        width: 96% !important;
+        max-width: 100% !important;
+        padding: 22px 14px !important;
+        border-radius: 18px !important;
+        box-sizing: border-box !important;
+        max-height: 90vh !important;
+      }
+
+      .modal-content h2 {
+        font-size: 20px !important;
+      }
+
+      /* Summary Box inside Congratulations Modal */
+      .modal-content > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+        padding: 14px 10px !important;
+      }
+
+      #nonIeeeStatusBox {
+        padding: 16px 12px !important;
+        margin-top: 20px !important;
+      }
+
+      #nonIeeeStatusBox div[style*="display:flex"] {
+        flex-direction: column !important;
+        gap: 8px !important;
+      }
+
+      #nonIeeeStatusBox input#statusQueryInput {
+        width: 100% !important;
+        min-width: 100% !important;
+      }
+
+      #nonIeeeStatusBox button {
+        width: 100% !important;
       }
     }
 
