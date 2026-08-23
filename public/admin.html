@@ -752,6 +752,15 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
     }
   }
 
+  function downloadExcel() {
+    const token = TOKEN || sessionStorage.getItem('iw_token') || '';
+    if (!token) {
+      alert('Admin session expired. Please log in again.');
+      return;
+    }
+    window.location.href = `/api/admin/export.xlsx?token=${encodeURIComponent(token)}`;
+  }
+
   // auto-login if token present
   if(TOKEN) showDash();
 

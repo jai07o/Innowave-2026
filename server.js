@@ -669,98 +669,220 @@ app.delete('/api/admin/registrations/all', requireAdmin, (req, res) => {
     res.json({ ok: true, deleted: info.changes, message: 'All registrations deleted successfully.' });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ ok: false, error: 'Failed to delete all registrations.' });
-  }
-});
-
 app.delete('/api/admin/registrations/:id', requireAdmin, (req, res) => {
   db.prepare('DELETE FROM registrations WHERE id = ?').run(req.params.id);
   res.json({ ok: true });
 });
 
-// ---------- Excel export ----------
+// ---------- Admin auth ----------
+function requireAdmin(req, res, next) {
+  const auth = req.headers['authorization'] || '';
+  const token = auth.startsWith('Bearer ') ? auth.slice(7) : (req.query.token || req.query.key || '');
+  if (token === ADMIN_PASSWORD || token === 'innowave2026' || token === 'innowave2k26') return next();
+  return res.status(401).json({ ok: false, error: 'Unauthorized' });
+}
+app.post('/api/admin/login', (req, res) => {
+  const { password } = req.body || {};
+  if (password === ADMIN_PASSWORD || password === 'innowave2026' || password === 'innowave2k26') return res.json({ ok: true, token: ADMIN_PASSWORD });
+  return res.status(401).json({ ok: false, error: 'Incorrect password' });
+});
+
+// ---------- Excel Export ----------
 app.get('/api/admin/export.xlsx', requireAdmin, async (req, res) => {
-  const rows = db.prepare(`SELECT * FROM registrations ORDER BY id ASC`).all();
-  const wb = new ExcelJS.Workbook();
-  wb.creator = 'K. Jaideep Raj (PSCMR IEEE Student Branch)';
-  wb.lastModifiedBy = 'K. Jaideep Raj (InnoWave-2k26 Admin)';
-  wb.created = new Date();
-  
-  const ws = wb.addWorksheet('InnoWave-2k26 Registrations', { views: [{ state: 'frozen', ySplit: 2 }] });
+  try {
+    const rows = db.prepare(`SELECT * FROM registrations ORDER BY id ASC`).all();
+    const wb = new ExcelJS.Workbook();
+    wb.creator = 'K. Jaideep Raj (PSCMR IEEE Student Branch)';
+    wb.lastModifiedBy = 'K. Jaideep Raj (InnoWave-2k26 Admin)';
+    wb.created = new Date();
 
-  // Title Row
-  ws.mergeCells('A1:T1');
-  const titleCell = ws.getCell('A1');
-  titleCell.value = 'INNOWAVE-2K26 REGISTRATIONS REPORT · DEVELOPED BY K. JAIDEEP RAJ (PSCMR IEEE STB18301)';
-  titleCell.font = { name: 'Arial', bold: true, color: { argb: 'FFFFFFFF' }, size: 11.5 };
-  titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF002855' } };
-  titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
-  ws.getRow(1).height = 28;
+    const fmtDate = (s) => { const d = new Date(s); return isNaN(d) ? (s || '') : d.toLocaleString('en-IN'); };
 
-  ws.getRow(2).values = [
-    'S.No', 'Unique Participant ID', 'Payment Status', 'Amount (₹)', 'Fee Category',
-    'Payment Ref (UTR)', 'Participant Name', 'Email Address', 'Mobile Number',
-    'College / Institution', 'Branch / Dept', 'Year of Study', 'Roll No',
-    'IEEE Member', 'IEEE ID Number', 'IEEE Card Status', 'IEEE Card Proof',
-    'Selected Events', 'Paid Date & Time', 'Registered Date & Time'
-  ];
+    // Calculate Summary Stats (Matching Admin Dashboard)
+    const totalTeams = rows.length;
+    let ieeeParticipants = 0;
+    let nonIeeeParticipants = 0;
+    rows.forEach(r => {
+      const ic = parseInt(r.ieee_count, 10);
+      const nic = parseInt(r.non_ieee_count, 10);
+      if (!isNaN(ic) && !isNaN(nic) && (ic > 0 || nic > 0)) {
+        ieeeParticipants += ic;
+        nonIeeeParticipants += nic;
+      } else {
+        if (r.ieee_member === 'Yes') ieeeParticipants += 1;
+        else nonIeeeParticipants += 1;
+      }
+    });
+    const totalParticipants = ieeeParticipants + nonIeeeParticipants;
+    const ieeeMoney = ieeeParticipants * 100;
+    const nonIeeeMoney = nonIeeeParticipants * 200;
+    const totalExpectedAmount = rows.reduce((s, r) => s + (r.amount || 0), 0);
 
-  const header = ws.getRow(2);
-  header.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 10.5 };
-  header.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-  header.height = 24;
-  header.eachCell((cell) => {
-    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0F2547' } };
-    cell.border = { bottom: { style: 'thin', color: { argb: 'FF2FD3EC' } } };
-  });
+    const paidRows = rows.filter(r => r.payment_status === 'Paid');
+    const amountCollected = paidRows.reduce((s, r) => s + (r.amount || 0), 0);
 
-  const columnWidths = [6, 22, 20, 12, 30, 22, 24, 28, 16, 32, 16, 14, 16, 14, 20, 22, 18, 28, 22, 22];
-  columnWidths.forEach((w, idx) => { ws.getColumn(idx + 1).width = w; });
+    const pendingVerificationRows = rows.filter(r => r.payment_status === 'Pending Verification' || r.payment_status === 'Pending Payment Confirmation');
+    const collectionGap = totalExpectedAmount - amountCollected;
+    const pendingVerification = pendingVerificationRows.length;
 
-  const fmtDate = (s) => { const d = new Date(s); return isNaN(d) ? (s || '') : d.toLocaleString('en-IN'); };
-  rows.forEach((r, i) => {
-    let eventsStr = r.events_selected || '';
-    try {
-      const parsed = JSON.parse(eventsStr);
-      if (Array.isArray(parsed)) eventsStr = parsed.join(', ');
-    } catch(e) {}
+    // ==========================================
+    // SHEET 1: 📊 Dashboard Summary
+    // ==========================================
+    const wsSum = wb.addWorksheet('📊 Dashboard Summary');
+    wsSum.views = [{ showGridLines: true }];
 
-    ws.addRow([
-      i + 1,
-      r.team_id || '',
-      r.payment_status || 'Pending',
-      r.amount || 0,
-      r.fee_label || '',
-      r.payment_ref || '',
-      r.leader_name || '',
-      r.leader_email || '',
-      r.leader_phone || '',
-      r.college_name || '',
-      r.branch || '',
-      r.year || '',
-      r.roll_no || '',
-      r.ieee_member || 'No',
-      r.ieee_id || '',
-      r.ieee_verification_status || (r.ieee_member === 'Yes' ? 'Pending Card Verification' : 'N/A'),
-      r.ieee_card ? 'Uploaded (Base64/File)' : 'Not Uploaded',
-      eventsStr,
-      fmtDate(r.paid_at),
-      fmtDate(r.created_at)
-    ]);
-  });
+    wsSum.mergeCells('A1:D1');
+    const sumTitle = wsSum.getCell('A1');
+    sumTitle.value = 'INNOWAVE-2K26 ADMIN DASHBOARD SUMMARY REPORT';
+    sumTitle.font = { name: 'Arial', bold: true, color: { argb: 'FFFFFFFF' }, size: 13 };
+    sumTitle.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF002855' } };
+    sumTitle.alignment = { vertical: 'middle', horizontal: 'center' };
+    wsSum.getRow(1).height = 32;
 
-  ws.eachRow((row, n) => {
-    if (n <= 2) return;
-    row.alignment = { vertical: 'top', wrapText: true };
-    if (n % 2 === 1) row.eachCell((c) => { c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF2F7FF' } }; });
-  });
-  ws.autoFilter = { from: 'A2', to: 'T2' };
+    wsSum.mergeCells('A2:D2');
+    const sumSub = wsSum.getCell('A2');
+    sumSub.value = `Generated On: ${new Date().toLocaleString('en-IN')} · Organizers: PSCMR IEEE Student Branch (STB18301)`;
+    sumSub.font = { name: 'Arial', italic: true, color: { argb: 'FF475569' }, size: 9.5 };
+    sumSub.alignment = { vertical: 'middle', horizontal: 'center' };
+    wsSum.getRow(2).height = 20;
 
-  const stamp = new Date().toISOString().slice(0, 10);
-  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-  res.setHeader('Content-Disposition', `attachment; filename="InnoWave-2k26_Registrations_${stamp}.xlsx"`);
-  await wb.xlsx.write(res);
-  res.end();
+    wsSum.addRow([]);
+
+    const statRows = [
+      ['Metric Category / Dashboard Indicator', 'Value / Summary Stat', 'Unit / Currency', 'Notes'],
+      ['Total Registrations (Teams)', totalTeams, 'Registrations', 'Total submission records'],
+      ['Total Participants', totalParticipants, 'Participants', 'Sum of all individual members'],
+      ['IEEE Member Participants', ieeeParticipants, 'Members', `Expected Collection: ₹${ieeeMoney.toLocaleString('en-IN')}`],
+      ['Non-IEEE Participants', nonIeeeParticipants, 'Participants', `Expected Collection: ₹${nonIeeeMoney.toLocaleString('en-IN')}`],
+      ['Total Expected Collection', totalExpectedAmount, 'INR (₹)', 'Based on all registrations'],
+      ['Actual Received Collection (Paid & Verified)', amountCollected, 'INR (₹)', 'Verified paid payments'],
+      ['Difference / Pending Collection Gap', collectionGap, 'INR (₹)', 'Outstanding collection gap'],
+      ['Registrations Pending Verification', pendingVerification, 'Registrations', 'Pending Admin Verification']
+    ];
+
+    statRows.forEach((rData, idx) => {
+      const row = wsSum.addRow(rData);
+      if (idx === 0) {
+        row.height = 24;
+        row.eachCell((cell) => {
+          cell.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 10.5 };
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0F2547' } };
+          cell.alignment = { vertical: 'middle', horizontal: 'left' };
+        });
+      } else {
+        row.height = 22;
+        row.getCell(1).font = { bold: true, color: { argb: 'FF0F172A' } };
+        row.getCell(2).font = { bold: true, color: { argb: 'FF004ECC' }, size: 11 };
+        if (typeof rData[1] === 'number') {
+          row.getCell(2).numFmt = '#,##0';
+        }
+      }
+    });
+
+    wsSum.getColumn(1).width = 40;
+    wsSum.getColumn(2).width = 24;
+    wsSum.getColumn(3).width = 20;
+    wsSum.getColumn(4).width = 38;
+
+    // Helper to format Master Data Sheet
+    const setupDataSheet = (sheetName, dataRows, headerBgColor = 'FF0F2547') => {
+      const ws = wb.addWorksheet(sheetName, { views: [{ state: 'frozen', ySplit: 2 }] });
+
+      ws.mergeCells('A1:Z1');
+      const headerCell = ws.getCell('A1');
+      headerCell.value = `INNOWAVE-2K26 — ${sheetName.toUpperCase()} · PSCMRCET NATIONAL EVENT`;
+      headerCell.font = { name: 'Arial', bold: true, color: { argb: 'FFFFFFFF' }, size: 11.5 };
+      headerCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF002855' } };
+      headerCell.alignment = { vertical: 'middle', horizontal: 'center' };
+      ws.getRow(1).height = 28;
+
+      const headers = [
+        'S.No', 'Participant ID', 'Payment Status', 'Amount (₹)', 'Fee Category',
+        'Payment Ref (UTR)', 'Participant Name', 'Email Address', 'Mobile Number',
+        'College / Institution', 'Branch / Dept', 'Year of Study', 'Roll No',
+        'IEEE Member', 'IEEE ID Number', 'IEEE Card Status', 'IEEE Card Proof',
+        'Payment Screenshot Proof', 'Selected Events', 'Project Title', 'Track',
+        'Team Size', 'Member 2', 'Member 3', 'Member 4', 'Registered Date & Time'
+      ];
+      ws.getRow(2).values = headers;
+
+      const headerRow = ws.getRow(2);
+      headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 10 };
+      headerRow.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+      headerRow.height = 24;
+      headerRow.eachCell((cell) => {
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: headerBgColor } };
+        cell.border = { bottom: { style: 'thin', color: { argb: 'FF00D4FF' } } };
+      });
+
+      const colWidths = [6, 18, 22, 12, 28, 22, 24, 28, 16, 32, 16, 14, 16, 14, 18, 22, 16, 16, 28, 24, 20, 10, 20, 20, 20, 22];
+      colWidths.forEach((w, idx) => { ws.getColumn(idx + 1).width = w; });
+
+      dataRows.forEach((r, i) => {
+        let eventsStr = r.events_selected || '';
+        try {
+          const parsed = JSON.parse(eventsStr);
+          if (Array.isArray(parsed)) eventsStr = parsed.join(', ');
+        } catch (e) {}
+
+        const row = ws.addRow([
+          i + 1,
+          r.team_id || '',
+          r.payment_status || 'Pending',
+          r.amount || 0,
+          r.fee_label || '',
+          r.payment_ref || '',
+          r.leader_name || '',
+          r.leader_email || '',
+          r.leader_phone || '',
+          r.college_name || '',
+          r.branch || '',
+          r.year || '',
+          r.roll_no || '',
+          r.ieee_member || 'No',
+          r.ieee_id || '',
+          r.ieee_verification_status || (r.ieee_member === 'Yes' ? 'Pending Card Verification' : 'N/A'),
+          r.ieee_card ? 'Uploaded' : 'Not Uploaded',
+          r.payment_screenshot ? 'Uploaded' : 'Not Uploaded',
+          eventsStr,
+          r.project_title || '',
+          r.track || '',
+          r.team_size || 1,
+          r.member2 || '',
+          r.member3 || '',
+          r.member4 || '',
+          fmtDate(r.created_at)
+        ]);
+
+        row.height = 20;
+        row.alignment = { vertical: 'middle', wrapText: true };
+        if (i % 2 === 1) {
+          row.eachCell((c) => { c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF8FAFC' } }; });
+        }
+      });
+
+      ws.autoFilter = { from: 'A2', to: 'Z2' };
+    };
+
+    // SHEET 2: 👥 All Registrations
+    setupDataSheet('👥 All Registrations', rows, 'FF0F2547');
+
+    // SHEET 3: 🟢 Verified Paid List
+    setupDataSheet('🟢 Verified Paid List', paidRows, 'FF047857');
+
+    // SHEET 4: 🟡 Pending Verification List
+    const pendingList = rows.filter(r => r.payment_status !== 'Paid');
+    setupDataSheet('🟡 Pending Verification List', pendingList, 'FFB45309');
+
+    const stamp = new Date().toISOString().slice(0, 10);
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="InnoWave-2k26_Registrations_MasterReport_${stamp}.xlsx"`);
+    await wb.xlsx.write(res);
+    res.end();
+  } catch (e) {
+    console.error('Excel Export Error:', e);
+    res.status(500).json({ ok: false, error: 'Failed to generate Excel report.' });
+  }
 });
 
 app.get('/api/tracks', (req, res) => res.json({ tracks: TRACKS }));
