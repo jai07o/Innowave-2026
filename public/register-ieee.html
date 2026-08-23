@@ -987,6 +987,76 @@
       color: #0f172a !important;
     }
 
+    /* Light Mode Status Box, Payment Confirmation Box & Card Overrides */
+    [data-theme="light"] #nonIeeeStatusBox,
+    [data-theme="light"] #ieeeStatusBox,
+    [data-theme="light"] #ieeeSuccessBox,
+    [data-theme="light"] #statusResultWrap,
+    [data-theme="light"] #paymentModal div[style*="text-align:left"],
+    [data-theme="light"] #paymentModal div[style*="rgba(10,8,22"],
+    body.light-theme #nonIeeeStatusBox,
+    body.light-theme #ieeeStatusBox,
+    body.light-theme #ieeeSuccessBox,
+    body.light-theme #statusResultWrap,
+    body.light-theme #paymentModal div[style*="text-align:left"],
+    body.light-theme #paymentModal div[style*="rgba(10,8,22"] {
+      background: #ffffff !important;
+      border: 1.5px solid #cbd5e1 !important;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08) !important;
+      color: #0f172a !important;
+    }
+
+    [data-theme="light"] #nonIeeeStatusBox h3,
+    [data-theme="light"] #ieeeStatusBox h3,
+    [data-theme="light"] #paymentModal h3,
+    [data-theme="light"] #paymentModal h4,
+    body.light-theme #nonIeeeStatusBox h3,
+    body.light-theme #ieeeStatusBox h3,
+    body.light-theme #paymentModal h3,
+    body.light-theme #paymentModal h4 {
+      color: #004ecc !important;
+      font-weight: 800 !important;
+    }
+
+    [data-theme="light"] #nonIeeeStatusBox label,
+    [data-theme="light"] #ieeeStatusBox label,
+    [data-theme="light"] #paymentModal label,
+    [data-theme="light"] #nonIeeeStatusBox p,
+    [data-theme="light"] #ieeeStatusBox p,
+    [data-theme="light"] #paymentModal p,
+    body.light-theme #nonIeeeStatusBox label,
+    body.light-theme #ieeeStatusBox label,
+    body.light-theme #paymentModal label,
+    body.light-theme #nonIeeeStatusBox p,
+    body.light-theme #ieeeStatusBox p,
+    body.light-theme #paymentModal p {
+      color: #1e293b !important;
+      font-weight: 700 !important;
+    }
+
+    [data-theme="light"] #nonIeeeStatusBox .btn-primary-lg,
+    [data-theme="light"] #ieeeStatusBox .btn-primary-lg,
+    [data-theme="light"] #paymentModal .btn-primary-lg,
+    body.light-theme #nonIeeeStatusBox .btn-primary-lg,
+    body.light-theme #ieeeStatusBox .btn-primary-lg,
+    body.light-theme #paymentModal .btn-primary-lg {
+      background: linear-gradient(135deg, #004ecc 0%, #0080ff 100%) !important;
+      color: #ffffff !important;
+      border: none !important;
+      box-shadow: 0 4px 14px rgba(0, 78, 204, 0.3) !important;
+    }
+
+    [data-theme="light"] #paymentModal .btn-secondary-lg,
+    body.light-theme #paymentModal .btn-secondary-lg {
+      background: #ffffff !important;
+      color: #004ecc !important;
+      border: 1.5px solid #004ecc !important;
+      font-weight: 800 !important;
+    }
+      box-shadow: 0 14px 45px rgba(15, 23, 42, 0.08) !important;
+      color: #0f172a !important;
+    }
+
     [data-theme="light"] input[type="text"],
     [data-theme="light"] input[type="email"],
     [data-theme="light"] input[type="tel"],
@@ -1160,7 +1230,7 @@
 
       <!-- IEEE Status Lookup Box -->
       <div id="ieeeStatusBox"
-        style="margin-top:36px; background:rgba(10,8,22,0.85); border:1px solid var(--border); border-radius:12px; padding:28px; text-align:center;">
+        style="margin-top:36px; background:var(--bg-panel); border:1px solid var(--border); border-radius:12px; padding:28px; text-align:center;">
         <h3
           style="font-family:'Space Grotesk',sans-serif; color:var(--accent); font-size:20px; font-weight:700; margin-bottom:6px;">
           🔍 CHECK IEEE VERIFICATION STATUS & PAY</h3>
@@ -1173,17 +1243,17 @@
             🔑 Registration ID / Phone / Email *
           </label>
           <input type="text" id="statusQueryInput" placeholder="Enter Registration ID (e.g. IW26-0005), Phone, or Email"
-            style="width:100%; box-sizing:border-box; background:rgba(10,8,22,0.95); border:2px solid var(--accent); border-radius:10px; padding:16px 20px; color:var(--text-primary); font-size:18px; font-weight:600; outline:none; box-shadow:0 4px 16px rgba(0,212,255,0.12);">
+            style="width:100%; box-sizing:border-box; background:var(--bg-primary); border:2px solid var(--accent); border-radius:10px; padding:16px 20px; color:var(--text-primary); font-size:18px; font-weight:600; outline:none;">
 
           <button type="button" class="btn-primary-lg"
-            style="width:100%; margin-top:14px; padding:16px 24px; font-size:16px; font-weight:800; border-radius:10px; box-shadow:0 6px 20px rgba(0,212,255,0.3); text-align:center; justify-content:center;"
+            style="width:100%; margin-top:14px; padding:16px 24px; font-size:16px; font-weight:800; border-radius:10px; text-align:center; justify-content:center;"
             onclick="performStatusCheck()">
             🔍 CHECK VERIFICATION & PAYMENT STATUS →
           </button>
         </div>
 
         <div id="statusResultWrap"
-          style="display:none; max-width:580px; margin:0 auto; text-align:left; background:rgba(18,14,32,0.95); border:1px solid var(--border); border-radius:10px; padding:20px;">
+          style="display:none; max-width:580px; margin:0 auto; text-align:left; background:var(--card-bg); border:1px solid var(--border); border-radius:10px; padding:20px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
             <span style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:18px; color:var(--accent);"
               id="resTeamId">IW26-XXXX</span>
@@ -1220,11 +1290,11 @@
         </div>
 
         <div
-          style="text-align:left; max-width:480px; margin:0 auto; background:rgba(10,8,22,0.9); border:1px solid var(--border); border-radius:10px; padding:20px;">
+          style="text-align:left; max-width:480px; margin:0 auto; background:var(--bg-panel); border:1px solid var(--border); border-radius:10px; padding:20px;">
           <h4 class="font-space" style="color:var(--accent); font-size:15px; margin-bottom:12px;">COMPLETE YOUR PAYMENT
             CONFIRMATION</h4>
           <div style="margin-bottom:14px;">
-            <label style="display:block; font-size:12.5px; font-weight:600; margin-bottom:4px;">1. Enter 12-Digit UPI
+            <label style="display:block; font-size:12.5px; font-weight:600; margin-bottom:4px; color:var(--text-muted);">1. Enter 12-Digit UPI
               Transaction Reference ID (UTR) *</label>
             <input type="text" id="utrRef" placeholder="e.g. 425819034123"
               style="width:100%; background:var(--bg-primary); border:1px solid var(--border); border-radius:6px; padding:10px; color:var(--text-primary); font-family:monospace; outline:none;">
