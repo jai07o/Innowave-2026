@@ -1315,142 +1315,6 @@
         </div>
       </div>
 
-      <!-- Congratulations Blast Popup Modal -->
-      <div class="modal-overlay" id="congratulationsModal"
-        style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:1100; align-items:center; justify-content:center; padding:20px; overflow-y:auto;">
-        <div class="modal-content"
-          style="max-width:520px; width:100%; text-align:center; background:linear-gradient(135deg, rgba(4, 16, 36, 0.98), rgba(3, 10, 20, 0.99)); border:2px solid #00e676; box-shadow: 0 0 50px rgba(0, 230, 118, 0.35), 0 10px 40px rgba(0,0,0,0.8); border-radius:24px; padding:32px; position:relative;">
-          <button class="modal-close" onclick="closeCongratulationsModal()"
-            style="position:absolute; top:16px; right:16px; background:none; border:none; color:var(--text-muted); font-size:22px; cursor:pointer;">✕</button>
-
-          <div style="font-size:54px; line-height:1; margin-bottom:12px;">🎉 🏆 🎊</div>
-          <h2 class="font-space" style="color:#00e676; font-size:26px; font-weight:800; margin-bottom:6px; text-shadow:0 0 15px rgba(0,230,118,0.5);">
-            CONGRATULATIONS!</h2>
-          <div style="font-size:14px; font-weight:800; color:#f59e0b; margin-bottom:16px; letter-spacing:0.5px; text-transform:uppercase;">
-            YOUR REGISTRATION HAS BEEN SUBMITTED!</div>
-
-          <p style="color:var(--text-muted); font-size:13.5px; margin-bottom:20px; line-height:1.5;">
-            Welcome to <b>INNOWAVE-2026 Engineer's Day Celebration</b>! Your payment reference has been successfully submitted and saved.
-          </p>
-
-          <!-- Registration Summary Card -->
-          <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(0,230,118,0.3); border-radius:16px; padding:20px; margin-bottom:24px; text-align:left; font-size:14px; display:grid; grid-template-columns:1fr 1fr; gap:14px;">
-            <div style="grid-column: span 2; background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.3); padding:12px 16px; border-radius:12px; display:flex; justify-content:space-between; align-items:center;">
-              <div>
-                <div style="color:#94a3b8; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">YOUR REGISTRATION ID</div>
-                <div id="popTeamId" style="color:#00e676; font-size:24px; font-weight:900; font-family:'Space Grotesk',sans-serif;">IW26-XXXX</div>
-              </div>
-              <div style="background:#00e676; color:#031527; font-weight:900; font-size:12px; padding:6px 12px; border-radius:8px;">
-                ✓ SUBMITTED
-              </div>
-            </div>
-
-            <div>
-              <div style="color:var(--text-muted); font-size:12px;">Participant Name:</div>
-              <div id="popName" style="color:var(--text-primary); font-weight:800; font-size:15px;"></div>
-            </div>
-            <div>
-              <div style="color:var(--text-muted); font-size:12px;">Payment Status:</div>
-              <div id="popStatus" style="color:#2e7d32; font-weight:800; font-size:13px; background:#e8f5e9; padding:3px 8px; border-radius:6px; display:inline-block; margin-top:2px;">
-                ✓ Payment Submitted</div>
-            </div>
-            <div style="grid-column: span 2;">
-              <div style="color:var(--text-muted); font-size:12px;">UPI Reference (UTR):</div>
-              <div id="popRef" style="color:var(--accent); font-family:monospace; font-weight:800; font-size:15px;"></div>
-            </div>
-          </div>
-
-          <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:10px; padding:12px; margin-bottom:20px; font-size:12.5px; color:#f59e0b; text-align:center; font-weight:600;">
-            ℹ️ Note: Official ID cards & Delegate Passes are printed and issued exclusively by event organizers at the admin desk / event venue.
-          </div>
-
-          <!-- Action Buttons -->
-          <div style="display:flex; flex-direction:column; gap:10px;">
-            <button onclick="location.reload()" class="btn-primary-lg"
-              style="border:none; cursor:pointer; width:100%; font-size:14px; background:linear-gradient(135deg, #00d4ff, #0066ff); color:#ffffff; font-weight:800; padding:12px;">➕
-              REGISTER ANOTHER PARTICIPANT</button>
-            <button onclick="location.href='index.html'" class="btn-secondary-lg"
-              style="border:1px solid var(--border); color:var(--text-primary); background:transparent; font-size:13.5px; cursor:pointer; padding:10px;">🏠
-              RETURN TO HOME</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Official Small Registration Receipt Modal -->
-      <div class="modal-overlay" id="receiptModal"
-        style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:1150; align-items:center; justify-content:center; padding:16px; overflow-y:auto;">
-        <div
-          style="max-width:480px; width:100%; background:var(--bg-panel); border:1px solid var(--border); border-radius:18px; padding:24px; position:relative; box-shadow:0 20px 50px rgba(0,0,0,0.6); text-align:center;">
-          <button onclick="closeReceiptModal()"
-            style="position:absolute; top:14px; right:14px; background:rgba(255,255,255,0.1); border:none; color:var(--text-muted); width:32px; height:32px; border-radius:50%; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
-
-          <h3 style="font-family:'Space Grotesk',sans-serif; color:var(--accent); font-size:18px; font-weight:700; margin-bottom:14px;">
-            🧾 OFFICIAL REGISTRATION RECEIPT</h3>
-
-          <!-- Downloadable / Printable Receipt Slip Container -->
-          <div id="receiptSlipCard"
-            style="background:#ffffff; color:#0f172a; border:2px solid #0052cc; border-radius:14px; padding:20px; text-align:left; font-family:'Inter',sans-serif; box-shadow:0 8px 24px rgba(0,0,0,0.15); margin-bottom:18px; position:relative;">
-            <!-- Header Banner -->
-            <div
-              style="border-bottom:2px dashed #cbd5e1; padding-bottom:12px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-              <div>
-                <div style="font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:16px; color:#0052cc;">INNOWAVE 2K26</div>
-                <div style="font-size:10px; color:#64748b; font-weight:700;">PSCMRCET NATIONAL EVENT</div>
-              </div>
-              <div style="text-align:right;">
-                <div
-                  style="font-size:10px; font-weight:800; color:#00e676; background:#e6f4ea; padding:3px 8px; border-radius:12px; border:1px solid #00e676; display:inline-block;">
-                  ✓ VERIFIED & PAID</div>
-                <div style="font-size:9.5px; color:#64748b; margin-top:2px;" id="receiptDate">AUG 2026</div>
-              </div>
-            </div>
-
-            <!-- Receipt Data Grid -->
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:12px; margin-bottom:14px;">
-              <div>
-                <div style="font-size:9.5px; color:#64748b; font-weight:700; text-transform:uppercase;">Registration ID</div>
-                <div style="font-family:'Space Grotesk',sans-serif; font-weight:800; color:#0052cc; font-size:13.5px;" id="rcpRegId">IW26-0000</div>
-              </div>
-              <div>
-                <div style="font-size:9.5px; color:#64748b; font-weight:700; text-transform:uppercase;">Amount Paid</div>
-                <div style="font-family:'Space Grotesk',sans-serif; font-weight:800; color:#047857; font-size:13.5px;" id="rcpAmount">₹0</div>
-              </div>
-              <div style="grid-column:1 / -1;">
-                <div style="font-size:9.5px; color:#64748b; font-weight:700; text-transform:uppercase;">Participant Name</div>
-                <div style="font-weight:700; color:#0f172a; font-size:13px;" id="rcpName">-</div>
-              </div>
-              <div style="grid-column:1 / -1;">
-                <div style="font-size:9.5px; color:#64748b; font-weight:700; text-transform:uppercase;">College / Institution</div>
-                <div style="font-weight:600; color:#334155;" id="rcpCollege">-</div>
-              </div>
-              <div>
-                <div style="font-size:9.5px; color:#64748b; font-weight:700; text-transform:uppercase;">Mobile / Contact</div>
-                <div style="font-weight:600; color:#334155;" id="rcpPhone">-</div>
-              </div>
-              <div>
-                <div style="font-size:9.5px; color:#64748b; font-weight:700; text-transform:uppercase;">Payment UTR / Ref</div>
-                <div style="font-weight:700; color:#0f172a; font-size:11.5px; word-break:break-all;" id="rcpUtr">-</div>
-              </div>
-            </div>
-
-            <!-- Watermark / Digital Seal Footer -->
-            <div
-              style="border-top:1px dashed #cbd5e1; padding-top:10px; display:flex; justify-content:space-between; align-items:center; font-size:9.5px; color:#64748b;">
-              <div>Category: <span id="rcpCategory" style="font-weight:700; color:#0f172a;">IEEE Member</span></div>
-              <div style="font-weight:800; color:#0052cc;">PSCMRCET • OFFICIAL RECEIPT</div>
-            </div>
-          </div>
-
-          <!-- Download PNG Button -->
-          <button type="button" class="btn-primary-lg" style="width:100%; margin-bottom:8px;" onclick="downloadReceiptPng()">
-            📥 DOWNLOAD RECEIPT (PNG)
-          </button>
-          <button type="button" class="btn-secondary-lg" style="width:100%;" onclick="closeReceiptModal()">
-            ✕ CLOSE
-          </button>
-        </div>
-      </div>
-
     </div>
   </div>
 
@@ -1461,6 +1325,142 @@
         OF ENGINEERING AND TECHNOLOGY</p>
     </div>
   </footer>
+
+  <!-- Top-Level Root Congratulations Blast Popup Modal -->
+  <div class="modal-overlay" id="congratulationsModal"
+    style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:9999; align-items:center; justify-content:center; padding:16px; box-sizing:border-box; overflow-y:auto;">
+    <div class="modal-content"
+      style="max-width:520px; width:95%; margin:auto; text-align:center; background:linear-gradient(135deg, rgba(4, 16, 36, 0.98), rgba(3, 10, 20, 0.99)); border:2px solid #00e676; box-shadow: 0 0 50px rgba(0, 230, 118, 0.35), 0 10px 40px rgba(0,0,0,0.8); border-radius:24px; padding:28px 20px; position:relative; max-height:90vh; overflow-y:auto; box-sizing:border-box;">
+      <button class="modal-close" onclick="closeCongratulationsModal()"
+        style="position:absolute; top:14px; right:14px; background:rgba(255,255,255,0.1); border:none; color:var(--text-muted); width:32px; height:32px; border-radius:50%; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
+
+      <div style="font-size:50px; line-height:1; margin-bottom:10px;">🎉 🏆 🎊</div>
+      <h2 class="font-space" style="color:#00e676; font-size:24px; font-weight:800; margin-bottom:6px; text-shadow:0 0 15px rgba(0,230,118,0.5);">
+        CONGRATULATIONS!</h2>
+      <div style="font-size:13px; font-weight:800; color:#f59e0b; margin-bottom:14px; letter-spacing:0.5px; text-transform:uppercase;">
+        YOUR REGISTRATION HAS BEEN SUBMITTED!</div>
+
+      <p style="color:var(--text-muted); font-size:13px; margin-bottom:18px; line-height:1.5;">
+        Welcome to <b>INNOWAVE-2026 Engineer's Day Celebration</b>! Your payment reference has been successfully submitted and saved.
+      </p>
+
+      <!-- Registration Summary Card -->
+      <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(0,230,118,0.3); border-radius:16px; padding:18px 14px; margin-bottom:20px; text-align:left; font-size:13.5px; display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div style="grid-column: span 2; background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.3); padding:10px 14px; border-radius:12px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="color:#94a3b8; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">YOUR REGISTRATION ID</div>
+            <div id="popTeamId" style="color:#00e676; font-size:22px; font-weight:900; font-family:'Space Grotesk',sans-serif;">IW26-XXXX</div>
+          </div>
+          <div style="background:#00e676; color:#031527; font-weight:900; font-size:11.5px; padding:5px 10px; border-radius:8px;">
+            ✓ SUBMITTED
+          </div>
+        </div>
+
+        <div>
+          <div style="color:var(--text-muted); font-size:11.5px;">Participant Name:</div>
+          <div id="popName" style="color:var(--text-primary); font-weight:800; font-size:14px;"></div>
+        </div>
+        <div>
+          <div style="color:var(--text-muted); font-size:11.5px;">Payment Status:</div>
+          <div id="popStatus" style="color:#2e7d32; font-weight:800; font-size:12.5px; background:#e8f5e9; padding:3px 8px; border-radius:6px; display:inline-block; margin-top:2px;">
+            ✓ Payment Submitted</div>
+        </div>
+        <div style="grid-column: span 2;">
+          <div style="color:var(--text-muted); font-size:11.5px;">UPI Reference (UTR):</div>
+          <div id="popRef" style="color:var(--accent); font-family:monospace; font-weight:800; font-size:14.5px;"></div>
+        </div>
+      </div>
+
+      <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:10px; padding:10px; margin-bottom:18px; font-size:12px; color:#f59e0b; text-align:center; font-weight:600;">
+        ℹ️ Note: Official ID cards & Delegate Passes are printed and issued exclusively by event organizers at the admin desk / event venue.
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <button onclick="location.reload()" class="btn-primary-lg"
+          style="border:none; cursor:pointer; width:100%; font-size:13.5px; background:linear-gradient(135deg, #00d4ff, #0066ff); color:#ffffff; font-weight:800; padding:11px;">➕
+          REGISTER ANOTHER PARTICIPANT</button>
+        <button onclick="location.href='index.html'" class="btn-secondary-lg"
+          style="border:1px solid var(--border); color:var(--text-primary); background:transparent; font-size:13px; cursor:pointer; padding:10px;">🏠
+          RETURN TO HOME</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top-Level Official Small Registration Receipt Modal -->
+  <div class="modal-overlay" id="receiptModal"
+    style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:9999; align-items:center; justify-content:center; padding:16px; box-sizing:border-box; overflow-y:auto;">
+    <div
+      style="max-width:480px; width:95%; margin:auto; background:var(--bg-panel); border:1px solid var(--border); border-radius:18px; padding:20px; position:relative; box-shadow:0 20px 50px rgba(0,0,0,0.6); text-align:center; max-height:90vh; overflow-y:auto; box-sizing:border-box;">
+      <button onclick="closeReceiptModal()"
+        style="position:absolute; top:14px; right:14px; background:rgba(255,255,255,0.1); border:none; color:var(--text-muted); width:32px; height:32px; border-radius:50%; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
+
+      <h3 style="font-family:'Space Grotesk',sans-serif; color:var(--accent); font-size:17px; font-weight:700; margin-bottom:14px;">
+        🧾 OFFICIAL REGISTRATION RECEIPT</h3>
+
+      <!-- Downloadable / Printable Receipt Slip Container -->
+      <div id="receiptSlipCard"
+        style="background:#ffffff; color:#0f172a; border:2px solid #0052cc; border-radius:14px; padding:18px; text-align:left; font-family:'Inter',sans-serif; box-shadow:0 8px 24px rgba(0,0,0,0.15); margin-bottom:16px; position:relative;">
+        <!-- Header Banner -->
+        <div
+          style="border-bottom:2px dashed #cbd5e1; padding-bottom:10px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <div>
+            <div style="font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:15px; color:#0052cc;">INNOWAVE 2K26</div>
+            <div style="font-size:9.5px; color:#64748b; font-weight:700;">PSCMRCET NATIONAL EVENT</div>
+          </div>
+          <div style="text-align:right;">
+            <div
+              style="font-size:9.5px; font-weight:800; color:#00e676; background:#e6f4ea; padding:3px 8px; border-radius:12px; border:1px solid #00e676; display:inline-block;">
+              ✓ VERIFIED & PAID</div>
+            <div style="font-size:9px; color:#64748b; margin-top:2px;" id="receiptDate">AUG 2026</div>
+          </div>
+        </div>
+
+        <!-- Receipt Data Grid -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:12px; margin-bottom:12px;">
+          <div>
+            <div style="font-size:9px; color:#64748b; font-weight:700; text-transform:uppercase;">Registration ID</div>
+            <div style="font-family:'Space Grotesk',sans-serif; font-weight:800; color:#0052cc; font-size:13px;" id="rcpRegId">IW26-0000</div>
+          </div>
+          <div>
+            <div style="font-size:9px; color:#64748b; font-weight:700; text-transform:uppercase;">Amount Paid</div>
+            <div style="font-family:'Space Grotesk',sans-serif; font-weight:800; color:#047857; font-size:13px;" id="rcpAmount">₹0</div>
+          </div>
+          <div style="grid-column:1 / -1;">
+            <div style="font-size:9px; color:#64748b; font-weight:700; text-transform:uppercase;">Participant Name</div>
+            <div style="font-weight:700; color:#0f172a; font-size:12.5px;" id="rcpName">-</div>
+          </div>
+          <div style="grid-column:1 / -1;">
+            <div style="font-size:9.5px; color:#64748b; font-weight:700; text-transform:uppercase;">College / Institution</div>
+            <div style="font-weight:600; color:#334155; font-size:11.5px;" id="rcpCollege">-</div>
+          </div>
+          <div>
+            <div style="font-size:9px; color:#64748b; font-weight:700; text-transform:uppercase;">Mobile / Contact</div>
+            <div style="font-weight:600; color:#334155; font-size:11.5px;" id="rcpPhone">-</div>
+          </div>
+          <div>
+            <div style="font-size:9px; color:#64748b; font-weight:700; text-transform:uppercase;">Payment UTR / Ref</div>
+            <div style="font-weight:700; color:#0f172a; font-size:11px; word-break:break-all;" id="rcpUtr">-</div>
+          </div>
+        </div>
+
+        <!-- Watermark / Digital Seal Footer -->
+        <div
+          style="border-top:1px dashed #cbd5e1; padding-top:8px; display:flex; justify-content:space-between; align-items:center; font-size:9px; color:#64748b;">
+          <div>Category: <span id="rcpCategory" style="font-weight:700; color:#0f172a;">IEEE Member</span></div>
+          <div style="font-weight:800; color:#0052cc;">PSCMRCET • OFFICIAL RECEIPT</div>
+        </div>
+      </div>
+
+      <!-- Download PNG Button -->
+      <button type="button" class="btn-primary-lg" style="width:100%; margin-bottom:8px;" onclick="downloadReceiptPng()">
+        📥 DOWNLOAD RECEIPT (PNG)
+      </button>
+      <button type="button" class="btn-secondary-lg" style="width:100%;" onclick="closeReceiptModal()">
+        ✕ CLOSE
+      </button>
+    </div>
+  </div>
 
   <script>
     // 3D Canvas Background
