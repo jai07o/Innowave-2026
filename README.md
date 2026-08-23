@@ -39,7 +39,7 @@ The platform provides a complete end-to-end event workflow: interactive 3D landi
 
 ### 📝 3. IEEE & Non-IEEE Registration Portals (`register-ieee.html` & `register-non-ieee.html`)
 - **Dynamic Fee Calculator**: Automatically computes team registration fees based on membership status and team size.
-- **UPI QR Payment Integration**: Renders a dynamic UPI QR code linked to the official payee (`gunugukrishnakumar@ybl` / `PSCMR IEEE Student Branch`).
+- **UPI QR Payment Integration**: Renders a dynamic UPI QR code linked to the official payee (`6309419599@axl` / `PSCMR IEEE Student Branch`).
 - **Payment UTR Reference Verification**: Accepts transaction UTR reference numbers and stores proof for manual organizer auditing.
 - **Automated Success Receipt**: Generates a printable digital registration slip upon submission.
 

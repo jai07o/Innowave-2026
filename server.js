@@ -55,7 +55,7 @@ function getBaseUrl(req) {
 
 const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'innowave2k26';
-const UPI_VPA = process.env.UPI_VPA || 'gunugukrishnakumar@ybl';          // <-- Collection UPI ID
+const UPI_VPA = process.env.UPI_VPA || '6309419599@axl';          // <-- Collection UPI ID
 const UPI_PAYEE_NAME = process.env.UPI_PAYEE_NAME || 'PSCMR IEEE Student Branch';
 
 // ---------- Database ----------
