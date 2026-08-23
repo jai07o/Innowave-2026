@@ -30,15 +30,15 @@
 
     [data-theme="light"] {
       --bg-primary: #f8fafc;
-      --bg-panel: rgba(255, 255, 255, 0.96);
-      --border: #e2e8f0;
-      --accent: #002855;
-      --accent-blue: #1e3a8a;
-      --gold: #b45309;
-      --accent-dim: rgba(30, 58, 138, 0.08);
-      --warn: #b45309;
-      --text-primary: #0f172a;
-      --text-muted: #475569;
+      --bg-panel: #ffffff;
+      --border: #cbd5e1;
+      --accent: #e11d48;
+      --accent-blue: #be123c;
+      --gold: #d97706;
+      --accent-dim: rgba(225, 29, 72, 0.08);
+      --warn: #e11d48;
+      --text-primary: #09090b;
+      --text-muted: #1e293b;
     }
 
     * {
@@ -866,25 +866,25 @@
     }
 
     /* ========================================================
-   LIGHT MODE CONTRAST & READABILITY OVERRIDES (100% Crisp)
+   LIGHT MODE CONTRAST & READABILITY OVERRIDES (100% Crisp & Aggressive)
    ======================================================== */
     html[data-theme="light"],
     body.light-theme,
     [data-theme="light"] body {
-      --bg-primary: #f4f6fc !important;
+      --bg-primary: #f8fafc !important;
       --bg-panel: #ffffff !important;
       --border: #cbd5e1 !important;
-      --accent: #0284c7 !important;
-      --accent-blue: #1e3a8a !important;
-      --text-primary: #0f172a !important;
-      --text-muted: #334155 !important;
+      --accent: #e11d48 !important;
+      --accent-blue: #be123c !important;
+      --text-primary: #09090b !important;
+      --text-muted: #1e293b !important;
       --card-bg: #ffffff !important;
     }
 
     [data-theme="light"] body,
     body.light-theme {
-      background-color: #f4f6fc !important;
-      color: #0f172a !important;
+      background-color: #f8fafc !important;
+      color: #09090b !important;
     }
 
     [data-theme="light"] h1,
@@ -895,7 +895,8 @@
     body.light-theme h2,
     body.light-theme h3,
     body.light-theme .reg-title {
-      color: #0f172a !important;
+      color: #09090b !important;
+      font-weight: 800 !important;
     }
 
     [data-theme="light"] p,
@@ -904,45 +905,47 @@
     body.light-theme p,
     body.light-theme label,
     body.light-theme .fee-note {
-      color: #334155 !important;
-      font-weight: 600 !important;
+      color: #1e293b !important;
+      font-weight: 700 !important;
     }
 
     [data-theme="light"] .reg-badge,
     body.light-theme .reg-badge {
-      background: #e0f2fe !important;
-      border: 1.5px solid #0284c7 !important;
-      color: #0369a1 !important;
+      background: #ffe4e6 !important;
+      border: 2px solid #f43f5e !important;
+      color: #9f1239 !important;
+      font-weight: 800 !important;
     }
 
     [data-theme="light"] nav.navbar,
     body.light-theme nav.navbar {
-      background: rgba(255, 255, 255, 0.95) !important;
-      backdrop-filter: blur(16px) !important;
-      border-bottom: 1.5px solid #cbd5e1 !important;
+      background: rgba(255, 255, 255, 0.97) !important;
+      backdrop-filter: blur(20px) !important;
+      border-bottom: 2.5px solid #0f172a !important;
+      box-shadow: 0 10px 35px rgba(15, 23, 42, 0.1) !important;
     }
 
     /* Brighter Vibrant INNOWAVE 2K26 Header Logo in Light Mode */
     [data-theme="light"] .brand-logo,
     body.light-theme .brand-logo {
-      color: #004ecc !important;
-      font-weight: 800 !important;
-      text-shadow: 0 0 12px rgba(0, 78, 204, 0.15);
+      color: #09090b !important;
+      font-weight: 900 !important;
+      text-shadow: 0 2px 10px rgba(15, 23, 42, 0.1);
     }
 
     [data-theme="light"] .brand-logo .accent-text,
     body.light-theme .brand-logo .accent-text {
-      background: linear-gradient(135deg, #ff007f 0%, #7000ff 100%);
+      background: linear-gradient(135deg, #e11d48 0%, #2563eb 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       font-weight: 900 !important;
-      filter: drop-shadow(0 2px 4px rgba(255, 0, 127, 0.25));
+      filter: drop-shadow(0 2px 4px rgba(225, 29, 72, 0.25));
     }
 
     [data-theme="light"] .brand-logo .dot,
     body.light-theme .brand-logo .dot {
-      background: #ff007f !important;
-      box-shadow: 0 0 10px #ff007f !important;
+      background: #e11d48 !important;
+      box-shadow: 0 0 10px #e11d48 !important;
     }
 
     [data-theme="light"] .registration-panel,
@@ -952,9 +955,9 @@
     body.light-theme .fee-slot-card,
     body.light-theme .modal-content {
       background: #ffffff !important;
-      border: 1.5px solid #cbd5e1 !important;
-      box-shadow: 0 14px 45px rgba(15, 23, 42, 0.08) !important;
-      color: #0f172a !important;
+      border: 2px solid #cbd5e1 !important;
+      box-shadow: 0 16px 50px rgba(15, 23, 42, 0.12) !important;
+      color: #09090b !important;
     }
 
     /* Light Mode Status Box, Payment Confirmation Box & Card Overrides */
@@ -971,9 +974,9 @@
     body.light-theme #paymentModal div[style*="text-align:left"],
     body.light-theme #paymentModal div[style*="rgba(10,8,22"] {
       background: #ffffff !important;
-      border: 1.5px solid #cbd5e1 !important;
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08) !important;
-      color: #0f172a !important;
+      border: 2px solid #cbd5e1 !important;
+      box-shadow: 0 12px 35px rgba(15, 23, 42, 0.1) !important;
+      color: #09090b !important;
     }
 
     [data-theme="light"] #nonIeeeStatusBox h3,
@@ -984,7 +987,7 @@
     body.light-theme #ieeeStatusBox h3,
     body.light-theme #paymentModal h3,
     body.light-theme #paymentModal h4 {
-      color: #004ecc !important;
+      color: #e11d48 !important;
       font-weight: 800 !important;
     }
 
@@ -1000,7 +1003,7 @@
     body.light-theme #nonIeeeStatusBox p,
     body.light-theme #ieeeStatusBox p,
     body.light-theme #paymentModal p {
-      color: #1e293b !important;
+      color: #09090b !important;
       font-weight: 700 !important;
     }
 
@@ -1010,17 +1013,19 @@
     body.light-theme #nonIeeeStatusBox .btn-primary-lg,
     body.light-theme #ieeeStatusBox .btn-primary-lg,
     body.light-theme #paymentModal .btn-primary-lg {
-      background: linear-gradient(135deg, #004ecc 0%, #0080ff 100%) !important;
+      background: linear-gradient(135deg, #e11d48 0%, #be123c 100%) !important;
       color: #ffffff !important;
-      border: none !important;
-      box-shadow: 0 4px 14px rgba(0, 78, 204, 0.3) !important;
+      border: 2px solid #be123c !important;
+      box-shadow: 0 8px 24px rgba(225, 29, 72, 0.4) !important;
+      font-weight: 900 !important;
+      text-transform: uppercase;
     }
 
     [data-theme="light"] #paymentModal .btn-secondary-lg,
     body.light-theme #paymentModal .btn-secondary-lg {
-      background: #ffffff !important;
-      color: #004ecc !important;
-      border: 1.5px solid #004ecc !important;
+      background: #0f172a !important;
+      color: #ffffff !important;
+      border: 2px solid #0f172a !important;
       font-weight: 800 !important;
     }
 
@@ -1037,9 +1042,10 @@
     body.light-theme textarea,
     body.light-theme input[type="file"] {
       background: #ffffff !important;
-      color: #0f172a !important;
-      border: 1.5px solid #94a3b8 !important;
-      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+      color: #09090b !important;
+      border: 2.5px solid #64748b !important;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+      font-weight: 700 !important;
     }
 
     [data-theme="light"] input::placeholder,
@@ -1048,13 +1054,14 @@
     body.light-theme textarea::placeholder {
       color: #64748b !important;
       opacity: 1 !important;
+      font-weight: 600 !important;
     }
 
     [data-theme="light"] footer,
     body.light-theme footer {
       background: #ffffff !important;
-      border-top: 1.5px solid #cbd5e1 !important;
-      color: #334155 !important;
+      border-top: 2px solid #cbd5e1 !important;
+      color: #1e293b !important;
     }
   </style>
 </head>

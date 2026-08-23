@@ -33,24 +33,25 @@
     }
 
     [data-theme="light"] {
-      --bg-primary: #f4f6fc;
-      --bg-panel: rgba(255, 255, 255, 0.98);
-      --border: #e2e8f0;
-      --accent: #4f46e5;
-      /* Indigo Violet Accent */
-      --accent-blue: #2563eb;
-      /* Royal Blue Accent */
-      --gold: #6366f1;
-      /* Violet Highlight */
-      --accent-dim: rgba(79, 70, 229, 0.08);
-      --warn: #ea580c;
-      --text-primary: #0f172a;
-      /* Dark Obsidian */
-      --text-muted: #475569;
-      /* Slate Gray */
+      --bg-primary: #f8fafc;
+      --bg-panel: #ffffff;
+      --border: #cbd5e1;
+      --accent: #2563eb;
+      /* Royal Sapphire Accent */
+      --accent-blue: #1d4ed8;
+      /* Deep Cobalt Blue */
+      --gold: #d97706;
+      /* Bold Amber Accent */
+      --accent-dim: rgba(37, 99, 235, 0.08);
+      --warn: #e11d48;
+      /* Flame Red */
+      --text-primary: #09090b;
+      /* Deep Obsidian Ink */
+      --text-muted: #1e293b;
+      /* Slate 800 for Crisp Contrast */
       --card-bg: #ffffff;
       --input-bg: #ffffff;
-      --input-text: #0f172a;
+      --input-text: #09090b;
     }
 
     * {
@@ -76,7 +77,10 @@
     }
 
     html[data-theme="light"] {
-      background: #f4f6fc !important;
+      background: #f8fafc !important;
+      background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px), radial-gradient(#cbd5e1 1.2px, #f8fafc 1.2px) !important;
+      background-size: 40px 40px !important;
+      background-position: 0 0, 20px 20px !important;
     }
 
     html[data-theme="dark"] {
@@ -96,33 +100,37 @@
     html[data-theme="light"] body,
     body.light-theme {
       background: transparent !important;
-      color: #0f172a !important;
+      color: #09090b !important;
     }
 
     [data-theme="light"] .accreditation-wrapper,
     body.light-theme .accreditation-wrapper {
       background: #ffffff !important;
-      border-bottom: 2px solid #e2e8f0 !important;
-      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03) !important;
+      border-bottom: 2.5px solid #0f172a !important;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08) !important;
     }
 
     [data-theme="light"] .navbar,
     body.light-theme .navbar {
-      background: rgba(255, 255, 255, 0.95) !important;
-      backdrop-filter: blur(18px) !important;
-      border-bottom: 2px solid #e2e8f0 !important;
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05) !important;
+      background: rgba(255, 255, 255, 0.97) !important;
+      backdrop-filter: blur(20px) !important;
+      border-bottom: 2.5px solid #0f172a !important;
+      box-shadow: 0 10px 35px rgba(15, 23, 42, 0.1) !important;
     }
 
     [data-theme="light"] .nav-links a,
     body.light-theme .nav-links a {
-      color: #1e293b !important;
-      font-weight: 700 !important;
+      color: #0f172a !important;
+      font-weight: 800 !important;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     [data-theme="light"] .nav-links a:hover,
     body.light-theme .nav-links a:hover {
-      color: #0d9488 !important;
+      color: #2563eb !important;
+      background: rgba(37, 99, 235, 0.08) !important;
+      border-radius: 8px !important;
     }
 
     [data-theme="light"] .nav-cta,
@@ -131,11 +139,13 @@
     body.light-theme .nav-cta,
     body.light-theme .btn-primary-lg,
     body.light-theme .btn.primary {
-      background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
       color: #ffffff !important;
-      border: none !important;
-      box-shadow: 0 8px 24px rgba(13, 148, 136, 0.3) !important;
-      font-weight: 800 !important;
+      border: 2px solid #1d4ed8 !important;
+      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35) !important;
+      font-weight: 900 !important;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     [data-theme="light"] .btn.gold,
@@ -144,9 +154,11 @@
     body.light-theme .btn-ieee {
       background: linear-gradient(135deg, #e11d48 0%, #be123c 100%) !important;
       color: #ffffff !important;
-      border: none !important;
-      box-shadow: 0 8px 24px rgba(225, 29, 72, 0.35) !important;
-      font-weight: 800 !important;
+      border: 2px solid #be123c !important;
+      box-shadow: 0 8px 24px rgba(225, 29, 72, 0.4) !important;
+      font-weight: 900 !important;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     [data-theme="light"] .theme-toggle-btn,
@@ -530,25 +542,25 @@
     }
 
     /* ========================================================
-       LIGHT MODE CONTRAST & READABILITY OVERRIDES (100% Crisp)
+       LIGHT MODE CONTRAST & READABILITY OVERRIDES (100% Crisp & Aggressive)
        ======================================================== */
     html[data-theme="light"],
     body.light-theme,
     [data-theme="light"] body {
-      --bg-primary: #f4f6fc !important;
+      --bg-primary: #f8fafc !important;
       --bg-panel: #ffffff !important;
       --border: #cbd5e1 !important;
-      --accent: #0284c7 !important;
-      --accent-blue: #1e3a8a !important;
-      --text-primary: #0f172a !important;
-      --text-muted: #334155 !important;
+      --accent: #2563eb !important;
+      --accent-blue: #1d4ed8 !important;
+      --text-primary: #09090b !important;
+      --text-muted: #1e293b !important;
       --card-bg: #ffffff !important;
     }
 
     [data-theme="light"] body,
     body.light-theme {
-      background-color: #f4f6fc !important;
-      color: #0f172a !important;
+      background-color: #f8fafc !important;
+      color: #09090b !important;
     }
 
     /* Headings, Titles & Brand Logo */
@@ -574,52 +586,56 @@
     body.light-theme .contact-name,
     body.light-theme .patron-name,
     body.light-theme .reg-title {
-      color: #0f172a !important;
+      color: #09090b !important;
+      font-weight: 800 !important;
+      letter-spacing: -0.02em;
     }
 
     /* Brighter Vibrant INNOWAVE 2K26 Header Logo in Light Mode */
     [data-theme="light"] .brand-logo,
     body.light-theme .brand-logo {
-      color: #004ecc !important;
-      font-weight: 800 !important;
-      text-shadow: 0 0 12px rgba(0, 78, 204, 0.15);
+      color: #09090b !important;
+      font-weight: 900 !important;
+      text-shadow: 0 2px 10px rgba(15, 23, 42, 0.1);
     }
 
     [data-theme="light"] .brand-logo .accent-text,
     body.light-theme .brand-logo .accent-text {
-      background: linear-gradient(135deg, #ff007f 0%, #7000ff 100%);
+      background: linear-gradient(135deg, #e11d48 0%, #2563eb 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       font-weight: 900 !important;
-      filter: drop-shadow(0 2px 4px rgba(255, 0, 127, 0.25));
+      filter: drop-shadow(0 2px 4px rgba(225, 29, 72, 0.25));
     }
 
     [data-theme="light"] .brand-logo .dot,
     body.light-theme .brand-logo .dot {
-      background: #ff007f !important;
-      box-shadow: 0 0 10px #ff007f !important;
+      background: #e11d48 !important;
+      box-shadow: 0 0 10px #e11d48 !important;
     }
 
     /* Hero Badge & Subtitle */
     [data-theme="light"] .hero-badge,
     body.light-theme .hero-badge {
-      background: #e0f2fe !important;
-      border: 1.5px solid #0284c7 !important;
-      color: #0369a1 !important;
+      background: #e0e7ff !important;
+      border: 2px solid #6366f1 !important;
+      color: #3730a3 !important;
+      font-weight: 800 !important;
     }
 
     [data-theme="light"] .hero-subtitle,
     body.light-theme .hero-subtitle {
-      color: #0284c7 !important;
+      color: #1d4ed8 !important;
       font-weight: 800 !important;
     }
 
     /* Section Tags & Stat Cards */
     [data-theme="light"] .sec-tag,
     body.light-theme .sec-tag {
-      background: #e0f2fe !important;
-      border: 1px solid #0284c7 !important;
-      color: #0369a1 !important;
+      background: #e0e7ff !important;
+      border: 2px solid #6366f1 !important;
+      color: #3730a3 !important;
+      font-weight: 800 !important;
     }
 
     [data-theme="light"] .stat-card,
@@ -627,22 +643,22 @@
     body.light-theme .stat-card,
     body.light-theme .about-box {
       background: #ffffff !important;
-      border: 1.5px solid #cbd5e1 !important;
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06) !important;
+      border: 2px solid #cbd5e1 !important;
+      box-shadow: 0 12px 35px rgba(15, 23, 42, 0.08) !important;
     }
 
     [data-theme="light"] .stat-lbl,
     body.light-theme .stat-lbl {
-      color: #334155 !important;
-      font-weight: 700 !important;
+      color: #1e293b !important;
+      font-weight: 800 !important;
     }
 
     /* 1. IEEE Leaders & Event Pods in Light Mode */
     [data-theme="light"] .event-pod,
     body.light-theme .event-pod {
       background: #ffffff !important;
-      border: 1.5px solid #cbd5e1 !important;
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08) !important;
+      border: 2px solid #cbd5e1 !important;
+      box-shadow: 0 12px 35px rgba(15, 23, 42, 0.08) !important;
     }
 
     [data-theme="light"] .event-desc,
@@ -651,20 +667,22 @@
     body.light-theme .event-desc,
     body.light-theme .contact-role,
     body.light-theme .patron-role {
-      color: #1e3a8a !important;
+      color: #1e293b !important;
+      font-weight: 600 !important;
     }
 
     [data-theme="light"] .card-imprint svg,
     body.light-theme .card-imprint svg {
-      opacity: 0.18 !important;
-      stroke: #0284c7 !important;
+      opacity: 0.25 !important;
+      stroke: #2563eb !important;
     }
 
     [data-theme="light"] .phone-pill,
     body.light-theme .phone-pill {
-      background: #f1f5f9 !important;
-      border: 1px solid #cbd5e1 !important;
-      color: #0f172a !important;
+      background: #eff6ff !important;
+      border: 1.5px solid #93c5fd !important;
+      color: #1d4ed8 !important;
+      font-weight: 800 !important;
     }
 
     /* 2. Co-ordinators & Patron Cards in Light Mode */
@@ -673,53 +691,55 @@
     body.light-theme .contact-card,
     body.light-theme .patron-card {
       background: #ffffff !important;
-      border: 1.5px solid #cbd5e1 !important;
-      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06) !important;
+      border: 2px solid #cbd5e1 !important;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08) !important;
     }
 
     [data-theme="light"] .contact-dept,
     [data-theme="light"] .co-dept,
     body.light-theme .contact-dept,
     body.light-theme .co-dept {
-      color: #0284c7 !important;
-      font-weight: 700 !important;
+      color: #2563eb !important;
+      font-weight: 800 !important;
     }
 
     /* 3. Category Chooser Modal & Cards in Light Mode */
     [data-theme="light"] .modal-content,
     body.light-theme .modal-content {
       background: #ffffff !important;
-      border: 1.5px solid #cbd5e1 !important;
-      box-shadow: 0 25px 70px rgba(15, 23, 42, 0.2) !important;
-      color: #0f172a !important;
+      border: 2.5px solid #0f172a !important;
+      box-shadow: 0 30px 80px rgba(15, 23, 42, 0.25) !important;
+      color: #09090b !important;
     }
 
     [data-theme="light"] .chooser-card,
     body.light-theme .chooser-card {
-      background: #f8fafc !important;
-      border: 1.5px solid #cbd5e1 !important;
-      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05) !important;
+      background: #ffffff !important;
+      border: 2px solid #cbd5e1 !important;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06) !important;
     }
 
     [data-theme="light"] .chooser-card:hover,
     body.light-theme .chooser-card:hover {
       background: #ffffff !important;
-      border-color: #0284c7 !important;
-      box-shadow: 0 14px 35px rgba(2, 132, 199, 0.15) !important;
+      border-color: #2563eb !important;
+      box-shadow: 0 18px 45px rgba(37, 99, 235, 0.2) !important;
     }
 
     [data-theme="light"] .chooser-title,
     [data-theme="light"] .chooser-card h3,
     body.light-theme .chooser-title,
     body.light-theme .chooser-card h3 {
-      color: #0f172a !important;
+      color: #09090b !important;
+      font-weight: 800 !important;
     }
 
     [data-theme="light"] .chooser-desc,
     [data-theme="light"] .chooser-card p,
     body.light-theme .chooser-desc,
     body.light-theme .chooser-card p {
-      color: #475569 !important;
+      color: #1e293b !important;
+      font-weight: 600 !important;
     }
 
     /* 4. Registration Panels, Cards & Form Controls in Light Mode */
@@ -732,9 +752,9 @@
     body.light-theme .form-section,
     body.light-theme .fee-slot-card {
       background: #ffffff !important;
-      border: 1.5px solid #cbd5e1 !important;
-      box-shadow: 0 14px 45px rgba(15, 23, 42, 0.08) !important;
-      color: #0f172a !important;
+      border: 2px solid #cbd5e1 !important;
+      box-shadow: 0 16px 50px rgba(15, 23, 42, 0.1) !important;
+      color: #09090b !important;
     }
 
     [data-theme="light"] .fee-note,
@@ -742,8 +762,9 @@
     body.light-theme .fee-note,
     body.light-theme .form-note {
       background: #f1f5f9 !important;
-      border: 1px solid #cbd5e1 !important;
-      color: #0f172a !important;
+      border: 1.5px solid #cbd5e1 !important;
+      color: #09090b !important;
+      font-weight: 600 !important;
     }
 
     [data-theme="light"] label,
@@ -752,8 +773,11 @@
     body.light-theme label,
     body.light-theme .form-label,
     body.light-theme .form-group label {
-      color: #0f172a !important;
-      font-weight: 700 !important;
+      color: #09090b !important;
+      font-weight: 800 !important;
+      text-transform: uppercase;
+      font-size: 0.88rem;
+      letter-spacing: 0.5px;
     }
 
     [data-theme="light"] input[type="text"],
@@ -769,9 +793,10 @@
     body.light-theme textarea,
     body.light-theme input[type="file"] {
       background: #ffffff !important;
-      color: #0f172a !important;
-      border: 1.5px solid #94a3b8 !important;
-      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+      color: #09090b !important;
+      border: 2.5px solid #64748b !important;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+      font-weight: 700 !important;
     }
 
     /* Modal Category Chooser Dynamic Theme Styling */
@@ -3012,12 +3037,12 @@
     </div>
   </section>
 
-  <!-- PSCMRCET IEEE BRANCH COMMITTEE MEMBERS SECTION -->
+  <!-- PSCMRCET IEEE STUDENT BRANCH COMMITTEE MEMBERS SECTION -->
   <section id="ieee-leaders">
     <div class="wrap">
       <div class="sec-title-wrap">
         <div class="sec-tag">PSCMRCET</div>
-        <h2 class="sec-title">IEEE BRANCH COMMITTEE MEMBERS</h2>
+        <h2 class="sec-title">IEEE STUDENT BRANCH COMMITTEE MEMBERS</h2>
       </div>
 
       <div class="ieee-leaders-grid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:22px;">
@@ -3036,7 +3061,7 @@
               CHINNI</div>
             <p class="event-desc"
               style="font-size: 11px; font-weight: 700; color: var(--gold); text-transform: uppercase; margin-bottom: 12px;">
-              PSCMR IEEE BRANCH COUNSELOR</p>
+              PSCMR IEEE STUDENT BRANCH COUNSELOR</p>
           </div>
           <div class="phone-pill"
             style="display: inline-flex; align-items: center; gap: 8px; background: rgba(245, 158, 11, 0.1); border: 1px solid var(--gold); padding: 8px 18px; border-radius: 24px; font-size: 13.5px; font-weight: 700; color: var(--text-primary);">
@@ -3058,7 +3083,7 @@
               MAHABUBSUBHANI</div>
             <p class="event-desc"
               style="font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; margin-bottom: 12px;">
-              PSCMR IEEE BRANCH CHAIRPERSON</p>
+              PSCMR IEEE STUDENT BRANCH CHAIRPERSON</p>
           </div>
           <div class="phone-pill"
             style="display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 212, 255, 0.1); border: 1px solid var(--accent); padding: 8px 18px; border-radius: 24px; font-size: 13.5px; font-weight: 700; color: var(--text-primary);">
@@ -3069,7 +3094,7 @@
         <!-- ViceChair Card -->
         <div class="event-pod" style="--pod-accent:var(--accent);">
           <span class="pod-number-pill"
-            style="background:linear-gradient(135deg, #00d4ff 0%, #0066ff 100%); color:#ffffff;">VICECHAIR</span>
+            style="background:linear-gradient(135deg, #00d4ff 0%, #0066ff 100%); color:#ffffff;">VICE CHAIR</span>
           <div class="leader-img-box"
             style="width: 150px; height: 185px; margin: 14px auto 14px; border-radius: 24px; overflow: hidden; border: 2.5px solid var(--accent); box-shadow: 0 10px 30px rgba(0,212,255,0.3);">
             <img src="assets/vikas.png" alt="VEMULA BALA SAI VIKAS"
@@ -3080,7 +3105,7 @@
               VIKAS</div>
             <p class="event-desc"
               style="font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; margin-bottom: 12px;">
-              PSCMR IEEE BRANCH VICECHAIR</p>
+              PSCMR IEEE STUDENT BRANCH VICE CHAIR</p>
           </div>
           <div class="phone-pill"
             style="display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 212, 255, 0.1); border: 1px solid var(--accent); padding: 8px 18px; border-radius: 24px; font-size: 13.5px; font-weight: 700; color: var(--text-primary);">
@@ -3102,7 +3127,7 @@
               Satya Sai</div>
             <p class="event-desc"
               style="font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; margin-bottom: 12px;">
-              PSCMR IEEE BRANCH SECRETARY</p>
+              PSCMR IEEE STUDENT BRANCH SECRETARY</p>
           </div>
           <div class="phone-pill"
             style="display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 212, 255, 0.1); border: 1px solid var(--accent); padding: 8px 18px; border-radius: 24px; font-size: 13.5px; font-weight: 700; color: var(--text-primary);">
@@ -3124,7 +3149,7 @@
               SHANMUKHA SAI SRI HARSHA</div>
             <p class="event-desc"
               style="font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; margin-bottom: 12px;">
-              PSCMR IEEE BRANCH TREASURER</p>
+              PSCMR IEEE STUDENT BRANCH TREASURER</p>
           </div>
           <div class="phone-pill"
             style="display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 212, 255, 0.1); border: 1px solid var(--accent); padding: 8px 18px; border-radius: 24px; font-size: 13.5px; font-weight: 700; color: var(--text-primary);">
@@ -3145,7 +3170,7 @@
             <div class="event-name" style="font-size: 15.5px; margin-bottom: 4px; font-weight:800;">RAAVI ARAVIND</div>
             <p class="event-desc"
               style="font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; margin-bottom: 12px;">
-              PSCMR IEEE BRANCH WEBMASTER</p>
+              PSCMR IEEE STUDENT BRANCH WEBMASTER</p>
           </div>
           <div class="phone-pill"
             style="display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 212, 255, 0.1); border: 1px solid var(--accent); padding: 8px 18px; border-radius: 24px; font-size: 13.5px; font-weight: 700; color: var(--text-primary);">
