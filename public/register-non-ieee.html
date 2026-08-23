@@ -1664,20 +1664,21 @@
             </button>
           `;
         } else {
-          badge.textContent = data.payment_status === 'Pending Payment Confirmation' ? '🟡 UTR SUBMITTED — ADMIN CONFIRMATION PENDING' : '🟡 PAYMENT PENDING';
+          const isUnverified = (data.payment_status === 'Pending Verification' || data.payment_status === 'Unverified');
+          badge.textContent = isUnverified ? '🟡 UNVERIFIED — PENDING ADMIN VERIFICATION' : (data.payment_status === 'Pending Payment Confirmation' ? '🟡 UTR SUBMITTED — ADMIN CONFIRMATION PENDING' : '🟡 PAYMENT PENDING');
           badge.style.color = '#f59e0b';
 
           if (data.upi) {
             actWrap.innerHTML = `
           <div style="font-size:13px; color:var(--text-muted); margin-bottom:8px;">
-            ${data.payment_status === 'Pending Payment Confirmation' ? 'UTR submitted & under verification. You can re-view your Payment QR code anytime below:' : 'Scan QR code to complete payment and submit UTR:'}
+            ${isUnverified ? '⚠️ Payment status is Unverified by Admin. Official receipt slip is locked until Admin verifies payment.' : (data.payment_status === 'Pending Payment Confirmation' ? 'UTR submitted & under verification. You can re-view your Payment QR code anytime below:' : 'Scan QR code to complete payment and submit UTR:')}
           </div>
           <button type="button" class="btn-primary-lg" style="margin-top:4px; width:100%;" onclick="openPaymentModalWithData()">
             📲 OPEN PAYMENT QR CODE & SUBMIT UTR →
           </button>
         `;
           } else {
-            actWrap.innerHTML = `<div style="font-size:13px; color:var(--accent); font-weight:700;">✓ Registration Status: ${data.payment_status}</div>`;
+            actWrap.innerHTML = `<div style="font-size:13px; color:var(--accent); font-weight:700;">⚠️ Registration Status: ${data.payment_status} (Receipt Locked)</div>`;
           }
         }
       } catch (err) {
@@ -1701,13 +1702,19 @@
     }
 
     function openReceiptFromStatus() {
-      if (lastStatusData) {
+      if (lastStatusData && lastStatusData.payment_status === 'Paid') {
         showReceiptModal(lastStatusData);
+      } else {
+        alert('⚠️ Receipt Unavailable: Payment is unverified or pending admin approval.');
       }
     }
 
     function showReceiptModal(data) {
       if (!data) return;
+      if (data.payment_status !== 'Paid') {
+        alert('⚠️ Receipt Unavailable: Payment is unverified or pending admin approval.');
+        return;
+      }
       if (document.getElementById('rcpRegId')) document.getElementById('rcpRegId').textContent = data.team_id || `IW26-${String(data.id).padStart(4, '0')}`;
       if (document.getElementById('rcpAmount')) document.getElementById('rcpAmount').textContent = `₹${data.amount}`;
       if (document.getElementById('rcpName')) document.getElementById('rcpName').textContent = data.leader_name || '-';
@@ -1728,6 +1735,10 @@
     }
 
     async function downloadReceiptPng() {
+      if (!lastStatusData || lastStatusData.payment_status !== 'Paid') {
+        alert('⚠️ Download Blocked: Official receipt is unavailable because payment is unverified by Admin.');
+        return;
+      }
       const card = document.getElementById('receiptSlipCard');
       if (!card) return;
       try {
