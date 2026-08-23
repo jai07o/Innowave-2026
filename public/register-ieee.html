@@ -1435,12 +1435,16 @@
             <div style="font-weight:600; color:#334155; font-size:11.5px;" id="rcpCollege">-</div>
           </div>
           <div>
-            <div style="font-size:9px; color:#64748b; font-weight:700; text-transform:uppercase;">Mobile / Contact</div>
-            <div style="font-weight:600; color:#334155; font-size:11.5px;" id="rcpPhone">-</div>
+            <div style="font-size:9px; color:#64748b; font-weight:700; text-transform:uppercase;">Mobile Number</div>
+            <div style="font-weight:700; color:#0f172a; font-size:12px;" id="rcpPhone">-</div>
           </div>
           <div>
-            <div style="font-size:9px; color:#64748b; font-weight:700; text-transform:uppercase;">Payment UTR / Ref</div>
-            <div style="font-weight:700; color:#0f172a; font-size:11px; word-break:break-all;" id="rcpUtr">-</div>
+            <div style="font-size:9px; color:#64748b; font-weight:700; text-transform:uppercase;">Email Address</div>
+            <div style="font-weight:600; color:#334155; font-size:11px; word-break:break-all;" id="rcpEmail">-</div>
+          </div>
+          <div style="grid-column:1 / -1;">
+            <div style="font-size:9px; color:#64748b; font-weight:700; text-transform:uppercase;">Payment UTR / Reference</div>
+            <div style="font-weight:700; color:#0052cc; font-size:11.5px; font-family:monospace; word-break:break-all;" id="rcpUtr">-</div>
           </div>
         </div>
 
@@ -1699,7 +1703,8 @@
       if (document.getElementById('rcpAmount')) document.getElementById('rcpAmount').textContent = `₹${data.amount}`;
       if (document.getElementById('rcpName')) document.getElementById('rcpName').textContent = data.leader_name || '-';
       if (document.getElementById('rcpCollege')) document.getElementById('rcpCollege').textContent = data.college_name || '-';
-      if (document.getElementById('rcpPhone')) document.getElementById('rcpPhone').textContent = data.leader_phone || data.leader_email || '-';
+      if (document.getElementById('rcpPhone')) document.getElementById('rcpPhone').textContent = data.leader_phone || '-';
+      if (document.getElementById('rcpEmail')) document.getElementById('rcpEmail').textContent = data.leader_email || '-';
       if (document.getElementById('rcpUtr')) document.getElementById('rcpUtr').textContent = data.payment_ref || 'VERIFIED';
       if (document.getElementById('rcpCategory')) document.getElementById('rcpCategory').textContent = 'IEEE Member Participant';
       if (document.getElementById('receiptDate')) document.getElementById('receiptDate').textContent = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
