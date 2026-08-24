@@ -19,6 +19,141 @@ const express = require('express');
 const Database = require('better-sqlite3');
 const ExcelJS = require('exceljs');
 const QRCode = require('qrcode');
+const nodemailer = require('nodemailer');
+
+const WHATSAPP_GROUP_LINK = 'https://chat.whatsapp.com/G2WlPqnRVYdIvVti3gZL2S?s=cl&p=a&ilr=0';
+
+// Configurable Nodemailer SMTP Mail Transporter
+const mailTransporter = nodemailer.createTransport({
+  service: process.env.SMTP_SERVICE || 'gmail',
+  host: process.env.SMTP_HOST || 'smtp.gmail.com',
+  port: parseInt(process.env.SMTP_PORT || '587', 10),
+  secure: process.env.SMTP_SECURE === 'true',
+  auth: {
+    user: process.env.SMTP_USER || process.env.EMAIL_USER || '',
+    pass: process.env.SMTP_PASS || process.env.EMAIL_PASS || ''
+  }
+});
+
+async function sendParticipantConfirmationEmail(p) {
+  if (!p || !p.leader_email) return { ok: false, error: 'No recipient email address provided.' };
+  
+  const recipientEmail = p.leader_email.trim();
+  const teamId = p.team_id || `IW26-${String(p.id).padStart(4, '0')}`;
+  const name = p.leader_name || 'Participant';
+  const college = p.college_name || 'PSCMRCET';
+  const phone = p.leader_phone || '—';
+  const amount = p.amount || (p.ieee_member === 'Yes' ? 100 : 200);
+  const status = p.payment_status || 'Paid';
+  const utr = p.payment_ref || 'VERIFIED';
+  
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6fc; margin: 0; padding: 20px; color: #0f172a; }
+        .email-card { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 2px solid #0052cc; }
+        .header { background: linear-gradient(135deg, #03182e 0%, #082a4a 100%); color: #ffffff; padding: 28px 20px; text-align: center; border-bottom: 4px solid #f59e0b; }
+        .header h1 { margin: 0; font-size: 28px; font-weight: 800; letter-spacing: 1px; color: #00d4ff; }
+        .header p { margin: 6px 0 0; font-size: 13px; color: #fbbf24; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; }
+        .content { padding: 28px 24px; }
+        .greeting { font-size: 20px; font-weight: 800; color: #0052cc; margin-bottom: 12px; }
+        .msg { font-size: 14.5px; line-height: 1.6; color: #334155; margin-bottom: 22px; }
+        .details-box { background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 16px; margin-bottom: 22px; }
+        .details-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e2e8f0; font-size: 13.5px; }
+        .details-row:last-child { border-bottom: none; }
+        .details-label { font-weight: 700; color: #64748b; }
+        .details-value { font-weight: 800; color: #0f172a; text-align: right; }
+        .whatsapp-section { background: linear-gradient(135deg, #128c7e 0%, #25d366 100%); border-radius: 16px; padding: 22px; text-align: center; color: #ffffff; margin-bottom: 22px; }
+        .whatsapp-title { font-size: 18px; font-weight: 900; margin-bottom: 6px; }
+        .whatsapp-desc { font-size: 13px; opacity: 0.95; margin-bottom: 16px; line-height: 1.4; }
+        .whatsapp-btn { display: inline-block; background: #ffffff; color: #075e54; font-weight: 900; font-size: 15px; text-decoration: none; padding: 12px 28px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .footer { background: #0f172a; color: #94a3b8; text-align: center; padding: 18px; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="email-card">
+        <div class="header">
+          <h1>INNOWAVE-2K26</h1>
+          <p>PSCMRCET NATIONAL LEVEL FEST</p>
+        </div>
+        <div class="content">
+          <div class="greeting">🎉 Congratulations, ${name}!</div>
+          <div class="msg">
+            Your registration for <b>INNOWAVE-2K26 National-Level Engineer's Day Celebration</b> at PSCMR College of Engineering and Technology has been successfully confirmed and recorded.
+          </div>
+
+          <div class="details-box">
+            <div class="details-row">
+              <span class="details-label">REGISTRATION ID:</span>
+              <span class="details-value" style="color:#0052cc;">${teamId}</span>
+            </div>
+            <div class="details-row">
+              <span class="details-label">PARTICIPANT NAME:</span>
+              <span class="details-value">${name}</span>
+            </div>
+            <div class="details-row">
+              <span class="details-label">COLLEGE / INSTITUTION:</span>
+              <span class="details-value">${college}</span>
+            </div>
+            <div class="details-row">
+              <span class="details-label">MOBILE NUMBER:</span>
+              <span class="details-value">${phone}</span>
+            </div>
+            <div class="details-row">
+              <span class="details-label">AMOUNT PAID:</span>
+              <span class="details-value" style="color:#047857;">₹${amount}</span>
+            </div>
+            <div class="details-row">
+              <span class="details-label">UPI UTR / REF:</span>
+              <span class="details-value">${utr}</span>
+            </div>
+            <div class="details-row">
+              <span class="details-label">PAYMENT STATUS:</span>
+              <span class="details-value" style="color:#047857;">✓ ${status === 'Paid' ? 'Payment Successful' : status}</span>
+            </div>
+          </div>
+
+          <div class="whatsapp-section">
+            <div class="whatsapp-title">💬 Join Official INNOWAVE-2K26 WhatsApp Group</div>
+            <div class="whatsapp-desc">Stay updated with event schedules, lab venues, real-time announcements, and round updates!</div>
+            <a href="${WHATSAPP_GROUP_LINK}" target="_blank" class="whatsapp-btn">👉 JOIN WHATSAPP GROUP NOW</a>
+          </div>
+
+          <div style="font-size:12px; color:#64748b; text-align:center; line-height:1.5;">
+            ℹ️ Note: Official ID cards & Delegate Passes will be printed and issued at the event venue. Please keep your Registration ID (<b>${teamId}</b>) handy.
+          </div>
+        </div>
+        <div class="footer">
+          InnoWave-2k26 Organizing Team · PSCMR College of Engineering & Technology, Vijayawada
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  const mailOptions = {
+    from: `"INNOWAVE-2K26 Team" <${process.env.SMTP_USER || process.env.EMAIL_USER || 'innowave2k26@gmail.com'}>`,
+    to: recipientEmail,
+    subject: `🎉 Registration Confirmed — INNOWAVE-2K26 (${teamId})`,
+    html: htmlContent
+  };
+
+  try {
+    if (!process.env.SMTP_USER && !process.env.EMAIL_USER) {
+      console.log(`[Email Notice] SMTP user env not configured. Simulating email dispatch to ${recipientEmail} for Registration ${teamId}. WhatsApp Link: ${WHATSAPP_GROUP_LINK}`);
+      return { ok: true, simulated: true, team_id: teamId, whatsapp: WHATSAPP_GROUP_LINK };
+    }
+    const info = await mailTransporter.sendMail(mailOptions);
+    console.log(`[Email Sent] Email successfully dispatched to ${recipientEmail} (${teamId}): ${info.messageId}`);
+    return { ok: true, messageId: info.messageId, team_id: teamId };
+  } catch (err) {
+    console.error(`[Email Error] Failed to send email to ${recipientEmail}:`, err);
+    return { ok: false, error: err.message, simulated: true, whatsapp: WHATSAPP_GROUP_LINK };
+  }
+}
 
 const os = require('os');
 function getPrimaryLanIp() {
@@ -391,6 +526,9 @@ app.post('/api/register/:id/confirm', (req, res) => {
     db.prepare(`UPDATE registrations SET payment_ref=?, payment_screenshot=?, paid_at=?, payment_status=? WHERE id=?`)
       .run(ref, screenshot, new Date().toISOString(), paymentStatus, id);
 
+    // Send confirmation email with WhatsApp group link asynchronously
+    sendParticipantConfirmationEmail({ ...row, payment_ref: ref, payment_status: paymentStatus }).catch(err => console.error(err));
+
     return res.json({
       ok: true,
       id: row.id,
@@ -535,9 +673,7 @@ app.get('/api/admin/registrations', requireAdmin, (req, res) => {
 });
 
 // ---------- Email notification helper ----------
-let mailTransporter = null;
 try {
-  const nodemailer = require('nodemailer');
   if (process.env.SMTP_HOST && process.env.SMTP_USER) {
     mailTransporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
@@ -666,6 +802,47 @@ app.post('/api/admin/registrations/:id/verify-ieee-card', requireAdmin, async (r
     return res.json({ ok: true, status: 'Card Rejected', message: 'IEEE Card marked as rejected.' });
   }
   return res.status(400).json({ ok: false, error: 'Invalid action' });
+});
+
+// Admin Route: Send Confirmation & WhatsApp Email to Single Participant
+app.post('/api/admin/registrations/:id/send-email', requireAdmin, async (req, res) => {
+  try {
+    const row = db.prepare('SELECT * FROM registrations WHERE id=?').get(req.params.id);
+    if (!row) return res.status(404).json({ ok: false, error: 'Registration record not found.' });
+    if (!row.leader_email) return res.status(400).json({ ok: false, error: 'No email address recorded for participant.' });
+
+    const result = await sendParticipantConfirmationEmail(row);
+    return res.json(result);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ ok: false, error: 'Failed to send confirmation email.' });
+  }
+});
+
+// Admin Route: Send Confirmation & WhatsApp Email to All Participants
+app.post('/api/admin/send-email-all', requireAdmin, async (req, res) => {
+  try {
+    const rows = db.prepare("SELECT * FROM registrations WHERE leader_email IS NOT NULL AND leader_email != ''").all();
+    let sentCount = 0;
+    let failedCount = 0;
+
+    for (const row of rows) {
+      const resMail = await sendParticipantConfirmationEmail(row);
+      if (resMail && resMail.ok) sentCount++;
+      else failedCount++;
+    }
+
+    return res.json({
+      ok: true,
+      total: rows.length,
+      sent: sentCount,
+      failed: failedCount,
+      message: `Emails dispatched to ${sentCount} participant(s).`
+    });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ ok: false, error: 'Failed to send batch emails.' });
+  }
 });
 
 app.delete('/api/admin/registrations/all', requireAdmin, (req, res) => {

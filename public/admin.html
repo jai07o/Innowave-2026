@@ -318,6 +318,7 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
       <div class="actions">
         <button class="btn" id="themeToggleBtn" onclick="toggleTheme()" style="padding:6px 14px;">☀️ LIGHT</button>
         <button class="btn" onclick="loadData()">↻ Refresh</button>
+        <button class="btn" style="background:#25d366; color:#ffffff; border:none; font-weight:800;" onclick="sendEmailToAll()">✉️ Send Email & WhatsApp Link to All</button>
         <button class="btn primary" onclick="downloadExcel()">⬇ Download Excel</button>
         <button class="btn" style="background:#dc2626; color:#ffffff; border:none; font-weight:700;" onclick="deleteAllRegistrations()">🗑️ DELETE ALL</button>
         <button class="btn" onclick="logout()">Logout</button>
@@ -477,10 +478,43 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
           ${verifyBtn}<br>
           ${ieeeActionBtns}<br>
           <button class="btn" style="padding:4px 10px; font-size:11px; margin-top:4px; border-color:var(--accent); color:var(--accent);" onclick="openAdminIdCard(${r.id})">🖨️ Print ID Card</button><br>
+          <button class="btn" style="padding:4px 10px; font-size:11px; margin-top:4px; border-color:#25d366; color:#25d366;" onclick="sendEmailToOne(${r.id})">✉️ Send Email</button><br>
           <button class="del" style="margin-top:6px" onclick="delRow(${r.id})">Delete</button>
         </td>
       </tr>`;
     }).join('');
+  }
+
+  async function sendEmailToOne(id) {
+    const row = DATA.find(r => r.id === id);
+    if (!row) return;
+    if (!confirm(`Send confirmation email with WhatsApp group link to ${row.leader_name} (${row.leader_email})?`)) return;
+    try {
+      const res = await fetch(`/api/admin/registrations/${id}/send-email`, { credentials: 'same-origin', method: 'POST' });
+      const data = await res.json();
+      if (data.ok) {
+        alert(`✅ Confirmation email with WhatsApp link sent to ${row.leader_email}!`);
+      } else {
+        alert('❌ Failed to send email: ' + (data.error || 'Unknown error'));
+      }
+    } catch (e) {
+      alert('❌ Request failed: ' + e.message);
+    }
+  }
+
+  async function sendEmailToAll() {
+    if (!confirm('Send confirmation email with WhatsApp group link to ALL registered participants?')) return;
+    try {
+      const res = await fetch('/api/admin/send-email-all', { credentials: 'same-origin', method: 'POST' });
+      const data = await res.json();
+      if (data.ok) {
+        alert(`✅ Emails dispatched to ${data.sent} participant(s)!`);
+      } else {
+        alert('❌ Failed: ' + (data.error || 'Unknown error'));
+      }
+    } catch (e) {
+      alert('❌ Request failed: ' + e.message);
+    }
   }
 
   function viewPaymentProofModal(teamId, id) {
