@@ -38,6 +38,14 @@ const mailTransporter = nodemailer.createTransport({
 async function sendParticipantConfirmationEmail(p) {
   if (!p || !p.leader_email) return { ok: false, error: 'No recipient email address provided.' };
   
+  // Strict Guard: Only send email after overall registration INCLUDING payment is completed
+  const hasCompletedPayment = (p.payment_ref && p.payment_ref.trim().length >= 6) || (p.payment_screenshot && p.payment_screenshot.length > 0) || p.payment_status === 'Paid' || p.payment_status === 'Pending Verification';
+  
+  if (!hasCompletedPayment) {
+    console.log(`[Email Deferred] Registration ${p.team_id || p.id} (${p.leader_name}) has not completed payment step yet. Email with WhatsApp link will be sent after overall registration & payment completion.`);
+    return { ok: false, deferred: true, reason: 'Overall registration including payment is not completed yet.' };
+  }
+
   const recipientEmail = p.leader_email.trim();
   const teamId = p.team_id || `IW26-${String(p.id).padStart(4, '0')}`;
   const name = p.leader_name || 'Participant';
@@ -771,6 +779,15 @@ app.post('/api/admin/registrations/:id/status', requireAdmin, (req, res) => {
   const allowed = ['Paid', 'Pending Verification', 'Pending', 'IEEE Verification Needed', 'IEEE Card Approved - Payment Pending', 'IEEE Card Rejected'];
   if (!allowed.includes(status)) return res.status(400).json({ ok: false, error: 'Invalid status' });
   db.prepare('UPDATE registrations SET payment_status=? WHERE id=?').run(status, req.params.id);
+
+  // When payment is marked as Paid, send/resend the completed registration confirmation email
+  if (status === 'Paid') {
+    const updatedRow = db.prepare('SELECT * FROM registrations WHERE id=?').get(req.params.id);
+    if (updatedRow) {
+      sendParticipantConfirmationEmail(updatedRow).catch(err => console.error(err));
+    }
+  }
+
   res.json({ ok: true });
 });
 
