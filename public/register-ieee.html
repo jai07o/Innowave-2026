@@ -1695,6 +1695,13 @@
         team_size: 1
       };
 
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const origText = submitBtn ? submitBtn.innerHTML : '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '⏳ SUBMITTING REGISTRATION... PLEASE WAIT';
+      }
+
       try {
         const res = await fetch('/api/register', {
           method: 'POST',
@@ -1702,8 +1709,9 @@
           body: JSON.stringify(payload)
         });
         const data = await res.json();
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = origText; }
         if (!data.ok) {
-          alert(data.errors ? data.errors.join('\n') : 'Registration failed.');
+          alert(data.errors ? data.errors.join('\n') : (data.error || 'Registration failed. Please check form details.'));
           return;
         }
         pendingRegId = data.id;
@@ -1714,7 +1722,8 @@
         document.getElementById('ieeeSuccessBox').scrollIntoView({ behavior: 'smooth' });
       } catch (err) {
         console.error(err);
-        alert('Network error. Please try again.');
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = origText; }
+        alert('Server is processing. If you see this, please click Submit again or check status below using your mobile number/email.');
       }
     }
 
@@ -1894,6 +1903,12 @@
       if (!ref || ref.length < 6 || !uploadedScreenshotBase64) {
         alert('Please enter valid UTR and upload payment screenshot.'); return;
       }
+      const verifyBtn = document.querySelector('#paymentModal button[onclick="confirmUtr()"]');
+      const origText = verifyBtn ? verifyBtn.innerHTML : '';
+      if (verifyBtn) {
+        verifyBtn.disabled = true;
+        verifyBtn.innerHTML = '⏳ VERIFYING PAYMENT... PLEASE WAIT';
+      }
       try {
         const res = await fetch(`/api/register/${pendingRegId}/confirm`, {
           method: 'POST',
@@ -1901,6 +1916,7 @@
           body: JSON.stringify({ payment_ref: ref, payment_screenshot: uploadedScreenshotBase64 })
         });
         const data = await res.json();
+        if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.innerHTML = origText; }
         if (!data.ok) { alert(data.errors.join('\n')); return; }
         document.getElementById('paymentModal').style.display = 'none';
 
@@ -1912,7 +1928,10 @@
         const congModal = document.getElementById('congratulationsModal');
         if (congModal) congModal.style.display = 'flex';
         triggerConfettiPetalBlast();
-      } catch (e) { alert('Confirmation error.'); }
+      } catch (e) {
+        if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.innerHTML = origText; }
+        alert('Confirmation error. Please check internet connection and try again.');
+      }
     }
 
     function closeCongratulationsModal() {
