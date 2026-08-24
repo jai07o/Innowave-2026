@@ -49,6 +49,32 @@ async function verifyUtrMatchesScreenshot(utrRef, screenshotBase64) {
     return { match: false, error: e.message };
   }
 }
+async function verifyIeeeCardMatchesScreenshot(ieeeId, cardBase64) {
+  try {
+    if (!ieeeId || !cardBase64 || !cardBase64.includes('base64,')) {
+      return { match: false, text: '' };
+    }
+    const cleanId = String(ieeeId).replace(/\D/g, '');
+    if (cleanId.length < 4) return { match: false, text: '' };
+
+    const base64Data = cardBase64.split('base64,')[1];
+    const imageBuffer = Buffer.from(base64Data, 'base64');
+
+    const worker = await createWorker('eng');
+    const ret = await worker.recognize(imageBuffer);
+    await worker.terminate();
+
+    const extractedText = ret.data.text || '';
+    const cleanExtractedText = extractedText.replace(/[\s\-\:\/]/g, '');
+
+    // Match exact numeric IEEE ID sequence inside OCR extracted card text
+    const isMatch = cleanExtractedText.includes(cleanId) || (cleanId.length >= 6 && cleanExtractedText.includes(cleanId.slice(-6)));
+    return { match: isMatch, text: extractedText };
+  } catch (e) {
+    console.error('[OCR IEEE Card Match Error]', e);
+    return { match: false, error: e.message };
+  }
+}
 
 // Configurable Nodemailer SMTP Mail Transporter
 const mailTransporter = nodemailer.createTransport({
@@ -157,7 +183,8 @@ function ensureColumn(col, decl) {
  'payment_status TEXT','payment_ref TEXT','paid_at TEXT','events_selected TEXT',
  'college_name TEXT','ieee_email TEXT','ieee_grade TEXT','ieee_count INTEGER','non_ieee_count INTEGER',
  'ieee_verification_status TEXT','ieee_card TEXT','ieee_card_approved INTEGER',
- 'duplicate_utr INTEGER DEFAULT 0','utr_mismatch INTEGER DEFAULT 0','utr_warning TEXT'].forEach(d => {
+ 'duplicate_utr INTEGER DEFAULT 0','utr_mismatch INTEGER DEFAULT 0','utr_warning TEXT',
+ 'ieee_ocr_mismatch INTEGER DEFAULT 0','ieee_warning TEXT'].forEach(d => {
   const parts = d.split(' ');
   ensureColumn(parts[0], parts.slice(1).join(' '));
 });
@@ -344,8 +371,22 @@ app.post('/api/register', async (req, res) => {
 
     const { amount, label } = computeBrochureFee(v.ieee_count, v.non_ieee_count, v.college_name);
     const isIeeeMember = (v.ieee_member === 'Yes');
-    const ieeeStatus = isIeeeMember ? 'Pending Card Verification' : 'N/A';
-    const initialPaymentStatus = isIeeeMember ? 'IEEE Verification Needed' : 'Pending Payment Confirmation';
+    let ieeeStatus = isIeeeMember ? 'Pending Card Verification' : 'N/A';
+    let initialPaymentStatus = isIeeeMember ? 'IEEE Verification Needed' : 'Pending Payment Confirmation';
+    let ieeeOcrMismatch = 0;
+    let ieeeWarning = null;
+
+    if (isIeeeMember && v.ieee_card && v.ieee_id) {
+      const ocrRes = await verifyIeeeCardMatchesScreenshot(v.ieee_id, v.ieee_card);
+      if (ocrRes.match) {
+        ieeeStatus = 'Pending Card Verification (IEEE ID OCR Verified)';
+      } else {
+        // 🚫 IEEE ID SCREENSHOT MISMATCH: Flag for Admin review!
+        ieeeOcrMismatch = 1;
+        ieeeWarning = `IEEE ID MISMATCH: Entered IEEE ID '${v.ieee_id}' was NOT detected inside uploaded IEEE Card proof image!`;
+        ieeeStatus = 'Pending (IEEE ID Mismatch with Card)';
+      }
+    }
 
     let regId = existingId;
     let team_id = '';
@@ -369,11 +410,11 @@ app.post('/api/register', async (req, res) => {
       const info = db.prepare(`INSERT INTO registrations
         (team_id, reg_seq, project_title, track, events_selected, description, leader_name, leader_email, leader_phone,
          college_name, roll_no, branch, year, ieee_member, ieee_id, ieee_card, ieee_verification_status, ieee_email, ieee_grade, ieee_count, non_ieee_count,
-         team_size, member2, member3, member4, amount, fee_label, payment_mode, payment_status, created_at)
+         team_size, member2, member3, member4, amount, fee_label, payment_mode, payment_status, ieee_ocr_mismatch, ieee_warning, created_at)
         VALUES (@team_id,@reg_seq,@project_title,@track,@events_selected,@description,@leader_name,@leader_email,@leader_phone,
          @college_name,@roll_no,@branch,@year,@ieee_member,@ieee_id,@ieee_card,@ieee_verification_status,@ieee_email,@ieee_grade,@ieee_count,@non_ieee_count,
-         @team_size,@member2,@member3,@member4,@amount,@fee_label,'UPI',@payment_status,@created_at)`)
-        .run({ ...v, team_id, reg_seq: seq, ieee_verification_status: ieeeStatus, amount, fee_label: label, payment_status: initialPaymentStatus, created_at });
+         @team_size,@member2,@member3,@member4,@amount,@fee_label,'UPI',@payment_status,@ieee_ocr_mismatch,@ieee_warning,@created_at)`)
+        .run({ ...v, team_id, reg_seq: seq, ieee_verification_status: ieeeStatus, amount, fee_label: label, payment_status: initialPaymentStatus, ieee_ocr_mismatch: ieeeOcrMismatch, ieee_warning: ieeeWarning, created_at });
       regId = info.lastInsertRowid;
     }
 
@@ -386,7 +427,7 @@ app.post('/api/register', async (req, res) => {
         fee_label: label,
         is_ieee: true,
         ieee_verification_status: ieeeStatus,
-        message: 'Your IEEE Membership Card proof has been submitted for Admin Verification. Once verified by our team, your payment QR code will be activated!'
+        message: ieeeOcrMismatch ? 'Your IEEE Membership Card proof has been submitted. Notice: Entered IEEE ID does not match card image text and is pending Admin review.' : 'Your IEEE Membership Card proof has been submitted for Admin Verification. Once verified by our team, your payment QR code will be activated!'
       });
     }
 

@@ -484,9 +484,18 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
         `<button class="verify" style="background:rgba(149,172,208,.12);color:#c2d2ec;border-color:var(--line)" onclick="setStatus(${r.id},'Pending Verification')">Unverify</button>`;
 
       let ieeeActionBtns = '';
+      let ieeeMismatchBadge = '';
+      const isIeeeCardMismatch = (r.ieee_ocr_mismatch === 1 || (r.ieee_verification_status && r.ieee_verification_status.includes('Mismatch')));
+
+      if (isIeeeCardMismatch) {
+        ieeeMismatchBadge = `<div style="margin-top:4px; background:#431407; border:1px solid #f97316; color:#fdba74; font-size:10px; font-weight:800; padding:4px 8px; border-radius:6px; text-align:left;">⚠️ IEEE ID CARD MISMATCH<br><span style="font-weight:600; color:#ffedd5;">${esc(r.ieee_warning || 'Entered IEEE ID not found in uploaded card image!')}</span></div>`;
+      }
+
       if (isIeee) {
-        if (ieeeStatus === 'Pending Card Verification' || ieeeStatus === 'Card Rejected') {
-          ieeeActionBtns = `<button class="btn gold" style="padding:4px 10px; font-size:11px; margin-top:4px;" onclick="verifyIeeeCard(${r.id},'approve')">✓ Approve IEEE Card</button>`;
+        if (ieeeStatus === 'Pending Card Verification' || ieeeStatus.includes('Pending') || ieeeStatus === 'Card Rejected') {
+          ieeeActionBtns = isIeeeCardMismatch ? 
+            `<button class="btn gold" style="padding:4px 10px; font-size:11px; margin-top:4px; background:#dc2626; border-color:#ef4444; color:#ffffff; font-weight:900;" onclick="verifyIeeeCard(${r.id},'approve')">⚠️ Admin Override Approve Card</button>` :
+            `<button class="btn gold" style="padding:4px 10px; font-size:11px; margin-top:4px;" onclick="verifyIeeeCard(${r.id},'approve')">✓ Approve IEEE Card</button>`;
         } else {
           ieeeActionBtns = `<span style="font-size:11px; color:#00e676; font-weight:700; display:block; margin-top:3px;">✓ Card Approved</span>`;
         }
@@ -502,7 +511,7 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
         <td><b>${esc(r.leader_name)}</b></td>
         <td><a href="mailto:${esc(r.leader_email)}">${esc(r.leader_email)}</a><br><span class="muted">${esc(r.leader_phone)}</span></td>
         <td>${esc(r.college_name||'—')}<br><span class="muted">${esc(r.branch||'—')} (${esc(r.year||'')})</span></td>
-        <td>${ieeeLabel}${r.ieee_id?`<br><span class="muted" style="font-size:11px">ID: ${esc(r.ieee_id)}</span>`:''}<br><span style="font-size:11px; color:var(--accent); font-weight:700;">${esc(ieeeStatus)}</span></td>
+        <td>${ieeeLabel}${r.ieee_id?`<br><span class="muted" style="font-size:11px">ID: ${esc(r.ieee_id)}</span>`:''}<br><span style="font-size:11px; color:var(--accent); font-weight:700;">${esc(ieeeStatus)}</span>${ieeeMismatchBadge}</td>
         <td>${ieeeCardBtn}</td>
         <td class="muted" style="font-size:12.5px;white-space:nowrap">${esc(when)}</td>
         <td style="white-space:nowrap">
