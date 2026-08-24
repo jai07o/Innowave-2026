@@ -18,6 +18,8 @@ const fs = require('fs');
 const express = require('express');
 const Database = require('better-sqlite3');
 const ExcelJS = require('exceljs');
+const QRCode = require('qrcode');
+const nodemailer = require('nodemailer');
 const { createWorker } = require('tesseract.js');
 
 const WHATSAPP_GROUP_LINK = 'https://chat.whatsapp.com/G2WlPqnRVYdIvVti3gZL2S?s=cl&p=a&ilr=0';
