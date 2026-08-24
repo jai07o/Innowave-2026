@@ -476,7 +476,7 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
         <td style="white-space:nowrap">
           ${verifyBtn}<br>
           ${ieeeActionBtns}<br>
-          <button class="btn" style="padding:4px 10px; font-size:11px; margin-top:4px; border-color:var(--accent); color:var(--accent);" onclick="openAdminIdCard(${r.id})">🪪 ID Card</button><br>
+          <button class="btn" style="padding:4px 10px; font-size:11px; margin-top:4px; border-color:var(--accent); color:var(--accent);" onclick="openAdminIdCard(${r.id})">🖨️ Print ID Card</button><br>
           <button class="del" style="margin-top:6px" onclick="delRow(${r.id})">Delete</button>
         </td>
       </tr>`;
@@ -517,7 +517,7 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
 
     const body = document.getElementById('adminIdCardBody');
     body.innerHTML = '<div style="text-align:center; padding:20px; color:var(--accent);">⌛ Generating Participant ID Card & QR Code…</div>';
-    document.getElementById('adminIdModal').style.display = 'flex';
+    document.getElementById('adminIdModal').style.display = 'none';
 
     currentParticipantTeamId = row.team_id || row.id;
     try {
@@ -654,12 +654,17 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
             </div>
           </div>
         `;
+        // Ensure modal overlay is NOT shown, then immediately launch print dialog
+        document.getElementById('adminIdModal').style.display = 'none';
+        setTimeout(() => {
+          window.print();
+        }, 150);
       } else {
-        body.innerHTML = '<div style="color:#ef4444; text-align:center; padding:20px;">Failed to generate ID Card data.</div>';
+        alert('Failed to generate ID Card data.');
       }
     } catch(e) {
       console.error(e);
-      body.innerHTML = '<div style="color:#ef4444; text-align:center; padding:20px;">Error generating ID card.</div>';
+      alert('Error generating ID card.');
     }
   }
 
