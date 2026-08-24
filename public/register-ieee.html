@@ -1669,7 +1669,7 @@
       const ieeeId = document.getElementById('ieeeId').value.trim();
 
       if (!ieeeId || !uploadedIeeeCardBase64) {
-        alert('Please provide your IEEE Membership ID and upload your IEEE Card proof.');
+        showValidationErrorModal('⚠️ MISSING IEEE CARD DETAILS', 'Please provide your IEEE Membership ID number and upload your IEEE Card proof screenshot image.');
         return;
       }
 
@@ -1711,7 +1711,7 @@
         const data = await res.json();
         if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = origText; }
         if (!data.ok) {
-          alert(data.errors ? data.errors.join('\n') : (data.error || 'Registration failed. Please check form details.'));
+          showValidationErrorModal('⚠️ REGISTRATION / MISMATCH ALERT', data.errors ? data.errors : (data.error || 'Registration failed. Please check your form details.'));
           return;
         }
         pendingRegId = data.id;
@@ -1723,7 +1723,7 @@
       } catch (err) {
         console.error(err);
         if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = origText; }
-        alert('Server is processing. If you see this, please click Submit again or check status below using your mobile number/email.');
+        showValidationErrorModal('⚠️ CONNECTION NOTICE', 'Server is processing. Please click Submit again to confirm.');
       }
     }
 
@@ -1901,7 +1901,8 @@
     async function confirmUtr() {
       const ref = document.getElementById('utrRef').value.trim();
       if (!ref || ref.length < 6 || !uploadedScreenshotBase64) {
-        alert('Please enter valid UTR and upload payment screenshot.'); return;
+        showValidationErrorModal('⚠️ PAYMENT PROOF REQUIRED', 'Please enter a valid 12-digit UTR / Reference ID and upload your payment screenshot image.');
+        return;
       }
       const verifyBtn = document.querySelector('#paymentModal button[onclick="confirmUtr()"]');
       const origText = verifyBtn ? verifyBtn.innerHTML : '';
@@ -1917,7 +1918,10 @@
         });
         const data = await res.json();
         if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.innerHTML = origText; }
-        if (!data.ok) { alert(data.errors.join('\n')); return; }
+        if (!data.ok) {
+          showValidationErrorModal('⚠️ PAYMENT / UTR MISMATCH ALERT', data.errors ? data.errors : (data.error || 'Payment verification failed. Please check UTR or re-upload screenshot.'));
+          return;
+        }
         document.getElementById('paymentModal').style.display = 'none';
 
         if (document.getElementById('popTeamId')) document.getElementById('popTeamId').textContent = data.team_id;
@@ -1930,7 +1934,7 @@
         triggerConfettiPetalBlast();
       } catch (e) {
         if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.innerHTML = origText; }
-        alert('Confirmation error. Please check internet connection and try again.');
+        showValidationErrorModal('⚠️ NETWORK NOTICE', 'Confirmation error. Please check internet connection and try again.');
       }
     }
 
@@ -2106,7 +2110,36 @@
       setupDragAndDropAndPaste('ieeeCardDropZone', 'ieeeCard', previewIeeeCard);
       setupDragAndDropAndPaste('paymentProofDropZone', 'paymentProofInput', previewScreenshot);
     });
+
+    // Custom Center-Screen Validation & Mismatch Error Modal Helper
+    function showValidationErrorModal(title, errorsArray) {
+      const modal = document.getElementById('validationErrorModal');
+      if (!modal) { alert(Array.isArray(errorsArray) ? errorsArray.join('\n\n') : errorsArray); return; }
+      document.getElementById('valErrorTitle').textContent = title || '⚠️ ENTRY / MISMATCH ALERT';
+      const text = Array.isArray(errorsArray) ? errorsArray.join('\n\n') : String(errorsArray);
+      document.getElementById('valErrorText').textContent = text;
+      modal.style.display = 'flex';
+    }
+
+    function closeValidationErrorModal() {
+      const modal = document.getElementById('validationErrorModal');
+      if (modal) modal.style.display = 'none';
+    }
   </script>
+
+  <!-- Custom Center-Screen Validation & Mismatch Error Modal -->
+  <div id="validationErrorModal" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(4, 4, 6, 0.86); backdrop-filter:blur(18px); z-index:99999; justify-content:center; align-items:center; padding:16px;">
+    <div style="background:var(--bg-panel); border:2.5px solid #ef4444; border-radius:24px; max-width:480px; width:100%; padding:28px 24px; text-align:center; box-shadow:0 20px 60px rgba(239, 68, 68, 0.35); position:relative;">
+      <div style="width:64px; height:64px; border-radius:50%; background:rgba(239, 68, 68, 0.15); border:2px solid #ef4444; display:flex; align-items:center; justify-content:center; font-size:32px; margin:0 auto 16px; color:#ef4444;">⚠️</div>
+      <h3 id="valErrorTitle" style="font-size:20px; font-weight:900; color:#ffffff; margin-bottom:12px; letter-spacing:-0.01em;">ENTRY / MISMATCH DETECTED</h3>
+      <div id="valErrorText" style="font-size:13.5px; color:#fca5a5; background:rgba(69, 10, 10, 0.65); border:1.5px solid #ef4444; border-radius:14px; padding:16px; margin-bottom:24px; text-align:left; line-height:1.55; white-space:pre-line; word-break:break-word; max-height:260px; overflow-y:auto;">
+        Please check your details.
+      </div>
+      <button type="button" onclick="closeValidationErrorModal()" style="width:100%; padding:15px; border-radius:30px; background:linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color:#ffffff; font-weight:900; font-size:14px; border:none; cursor:pointer; box-shadow:0 6px 22px rgba(239, 68, 68, 0.4); text-transform:uppercase; letter-spacing:0.05em;">
+        ✓ OK — RE-ENTER DETAILS
+      </button>
+    </div>
+  </div>
 </body>
 
 </html>
