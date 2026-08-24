@@ -399,11 +399,12 @@ app.post('/api/register', async (req, res) => {
         const ocrRes = await verifyIeeeCardMatchesScreenshot(v.ieee_id, v.ieee_card);
         if (ocrRes.match) {
           ieeeStatus = 'Pending Card Verification (IEEE ID OCR Verified)';
-        } else {
-          // 🚫 IEEE ID SCREENSHOT MISMATCH: Flag for Admin review!
-          ieeeOcrMismatch = 1;
-          ieeeWarning = `IEEE ID MISMATCH: Entered IEEE ID '${v.ieee_id}' was NOT detected inside uploaded IEEE Card proof image!`;
-          ieeeStatus = 'Pending (IEEE ID Mismatch with Card)';
+        } else if (ocrRes.text !== 'TIMEOUT') {
+          // 🚫 BLOCK SUBMISSION: Pop up error alert on frontend and do NOT send to Admin/DB!
+          return res.status(400).json({
+            ok: false,
+            errors: [`⚠️ IEEE CARD ID MISMATCH DETECTED:\n\nThe entered IEEE Membership ID '${v.ieee_id}' was NOT found inside your uploaded IEEE Card proof screenshot.\n\nPlease check your IEEE Membership ID number or re-upload a clear image of your official IEEE Card.`]
+          });
         }
       } catch (err) {
         console.error('[IEEE Card OCR Safe Fallback]', err.message);
@@ -503,15 +504,11 @@ app.post('/api/register/:id/confirm', async (req, res) => {
     let utrWarning = null;
 
     if (existingUtrRow) {
-      // 🚫 DUPLICATE UTR DETECTED: Do NOT auto-verify! Require Admin manual review!
-      duplicateUtr = 1;
-      utrWarning = `DUPLICATE UTR DETECTED: UTR '${ref}' was also submitted by Registration ID '${existingUtrRow.team_id}' (${existingUtrRow.leader_name})!`;
-      paymentStatus = 'Pending Verification (Duplicate UTR)';
-      autoVerified = false;
-
-      // Mark the pre-existing row as duplicate too so Admin sees the flag on both!
-      db.prepare(`UPDATE registrations SET duplicate_utr = 1, utr_warning = ? WHERE id = ?`)
-        .run(`DUPLICATE UTR DETECTED: UTR '${ref}' is shared with Registration ID '${row.team_id}' (${row.leader_name})!`, existingUtrRow.id);
+      // 🚫 BLOCK SUBMISSION: Duplicate UTR error popup alert on frontend!
+      return res.status(400).json({
+        ok: false,
+        errors: [`🚫 DUPLICATE UTR DETECTED:\n\nThe UTR / Reference ID '${ref}' has ALREADY been submitted by another participant (${existingUtrRow.team_id}).\n\nPlease check your transaction receipt and enter your own valid 12-digit UPI reference ID.`]
+      });
     } else if ((is12DigitNumeric || isValidUtrFormat) && !isDummySpam) {
       try {
         // 🔍 OCR Screenshot Text Verification: Check if UTR is present inside uploaded payment screenshot!
@@ -519,12 +516,12 @@ app.post('/api/register/:id/confirm', async (req, res) => {
         if (ocrResult.match) {
           paymentStatus = 'Paid';
           autoVerified = true;
-        } else {
-          // 🚫 UTR SCREENSHOT MISMATCH: Do NOT auto-verify as Paid!
-          utrMismatch = 1;
-          utrWarning = `UTR SCREENSHOT MISMATCH: Entered UTR '${ref}' was NOT detected inside uploaded payment screenshot!`;
-          paymentStatus = 'Pending Verification (UTR Mismatch)';
-          autoVerified = false;
+        } else if (ocrResult.text !== 'TIMEOUT') {
+          // 🚫 BLOCK SUBMISSION: UTR Screenshot Mismatch error popup alert on frontend!
+          return res.status(400).json({
+            ok: false,
+            errors: [`⚠️ PAYMENT SCREENSHOT MISMATCH DETECTED:\n\nThe entered 12-digit UTR number '${ref}' was NOT found inside your uploaded payment screenshot image.\n\nPlease check your 12-digit UPI reference ID or re-upload a clear payment screenshot.`]
+          });
         }
       } catch (err) {
         console.error('[UTR OCR Safe Fallback]', err.message);
