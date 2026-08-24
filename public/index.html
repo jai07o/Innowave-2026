@@ -3299,7 +3299,7 @@
           <div style="color:var(--text-muted); font-size:12px;">Payment Status:</div>
           <div id="popStatus"
             style="color:#2e7d32; font-weight:800; font-size:13.5px; background:#e8f5e9; padding:2px 8px; border-radius:6px; display:inline-block; margin-top:2px;">
-            ✓ PAID (Auto-Verified)</div>
+            ✓ Payment Successful</div>
         </div>
         <div>
           <div style="color:var(--text-muted); font-size:12px;">Participant Name:</div>
@@ -3920,12 +3920,12 @@
           const popStatusEl = document.getElementById('popStatus');
 
           if (data.payment_status === 'Paid') {
-            statusEl.textContent = '✓ PAID (Auto-Verified)';
+            statusEl.textContent = '✓ Payment Successful';
             statusEl.style.background = '#e8f5e9';
             statusEl.style.color = '#2e7d32';
             statusEl.style.border = '1px solid #a5d6a7';
 
-            popStatusEl.textContent = '✓ PAID (Auto-Verified)';
+            popStatusEl.textContent = '✓ Payment Successful';
             popStatusEl.style.background = '#e8f5e9';
             popStatusEl.style.color = '#2e7d32';
           } else {
