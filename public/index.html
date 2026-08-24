@@ -2764,36 +2764,45 @@
         box-sizing: border-box !important;
         word-break: break-word !important;
       }
-      /* Chief Patrons & Patrons Mobile Screen Fitting & 100% Center Alignment */
+      /* Chief Patrons & Patrons Mobile View Same as Laptop View (Horizontal Side-by-Side Flex Wrap Grid Centered) */
       #patrons .wrap {
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
         text-align: center !important;
-        padding: 0 12px !important;
+        padding: 0 8px !important;
       }
       .patrons-card-grid {
         display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
         justify-content: center !important;
+        align-items: center !important;
         width: 100% !important;
         max-width: 100% !important;
-        gap: 14px !important;
+        gap: 10px !important;
         margin: 0 auto !important;
       }
       .patron-card {
-        width: 100% !important;
-        max-width: 320px !important;
-        margin: 0 auto !important;
+        flex: 1 1 calc(50% - 12px) !important;
+        max-width: 48% !important;
+        min-width: 135px !important;
+        margin: 0 !important;
         text-align: center !important;
         align-items: center !important;
         justify-content: center !important;
-        padding: 16px 14px !important;
+        padding: 14px 8px !important;
         box-sizing: border-box !important;
       }
-      .patron-name, .patron-role {
+      .patron-name {
+        font-size: 13px !important;
+        line-height: 1.25 !important;
+        text-align: center !important;
+        width: 100% !important;
+      }
+      .patron-role {
+        font-size: 10.5px !important;
         text-align: center !important;
         width: 100% !important;
       }
