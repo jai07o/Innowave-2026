@@ -1326,6 +1326,8 @@
       border-bottom: 1px solid var(--border);
       text-align: center;
       overflow: hidden;
+      position: relative;
+      z-index: 2;
     }
 
     .official-header-img {
@@ -1334,7 +1336,9 @@
       height: auto;
       display: block;
       margin: 0 auto;
-      object-fit: fill;
+      object-fit: contain;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
     }
 
     /* Sticky Navbar - Medium/Small Normal Height */
