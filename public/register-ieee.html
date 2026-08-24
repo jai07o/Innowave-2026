@@ -1624,29 +1624,67 @@
       if (payBtnFee) payBtnFee.textContent = `₹${currentFee}`;
     }
 
-    function previewIeeeCard(input) {
-      uploadedIeeeCardBase64 = '';
+    function compressImageFile(file, maxWidth = 1200, quality = 0.82) {
+      return new Promise((resolve) => {
+        if (!file || !file.type.startsWith('image/')) return resolve(null);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let w = img.width;
+            let h = img.height;
+            if (w > maxWidth) {
+              h = Math.round((h * maxWidth) / w);
+              w = maxWidth;
+            }
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.onerror = () => resolve(e.target.result);
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function previewIeeeCard(input) {
       const previewImg = document.getElementById('ieeeCardPreviewImg');
       const fileNameSpan = document.getElementById('ieeeCardFileName');
       const previewWrap = document.getElementById('ieeeCardPreviewWrap');
 
       if (input.files && input.files[0]) {
         const file = input.files[0];
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          uploadedIeeeCardBase64 = e.target.result;
-          previewWrap.style.display = 'block';
-          if (file.type.startsWith('image/')) {
-            previewImg.src = e.target.result;
-            previewImg.style.display = 'inline-block';
-            fileNameSpan.style.display = 'none';
-          } else {
+        if (file.type.startsWith('image/')) {
+          const compressed = await compressImageFile(file);
+          uploadedIeeeCardBase64 = compressed;
+          previewImg.src = compressed;
+          previewImg.style.display = 'inline-block';
+          fileNameSpan.style.display = 'none';
+        } else {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            uploadedIeeeCardBase64 = e.target.result;
             previewImg.style.display = 'none';
             fileNameSpan.textContent = `📄 ${file.name}`;
             fileNameSpan.style.display = 'inline-block';
-          }
-        };
-        reader.readAsDataURL(file);
+          };
+          reader.readAsDataURL(file);
+        }
+        previewWrap.style.display = 'block';
+      }
+    }
+
+    async function previewScreenshot(input) {
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const compressed = await compressImageFile(file);
+        uploadedScreenshotBase64 = compressed;
+        document.getElementById('screenshotPreviewImg').src = compressed;
+        document.getElementById('screenshotPreviewWrap').style.display = 'block';
       }
     }
 

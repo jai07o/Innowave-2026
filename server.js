@@ -233,17 +233,30 @@ const TRACK_CODE = {
   'Renewable Energy & Energy Management':'ENRG','Open Innovation':'OPEN'
 };
 
+const compression = require('compression');
+
 // ---------- App ----------
 const app = express();
+app.use(compression());
+
+// Database Pragmas for Ultra-Fast I/O
+db.pragma('synchronous = NORMAL');
+db.pragma('temp_store = MEMORY');
+db.pragma('cache_size = -16000'); // 16MB RAM Cache
+
+// API Caching Control (Static assets cached, API routes fresh)
 app.use((req, res, next) => {
-  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-  res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '0');
+  if (req.path.startsWith('/api/')) {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  } else if (/\.(png|jpe?g|gif|webp|svg|ico|css|js|woff2?)$/i.test(req.path)) {
+    res.setHeader('Cache-Control', 'public, max-age=86400'); // 1-day cache for assets
+  }
   next();
 });
+
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
-app.use(express.static(path.join(__dirname, 'public'), { etag: false }));
+app.use(express.static(path.join(__dirname, 'public'), { etag: true, maxAge: '1d' }));
 
 app.get('/register-ieee', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'register-ieee.html'));
