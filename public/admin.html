@@ -292,7 +292,12 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
 </head>
 <body>
 
-<canvas id="admin-webgl-canvas"></canvas>
+<canvas id="admin-webgl-canvas" style="position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:0;"></canvas>
+
+<!-- Overall Full-Screen Light Mode Backdrop (Entire Viewport) -->
+<div class="overall-screen-bg-light light-mode-only" style="position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:0; pointer-events:none; overflow:hidden;">
+  <img src="assets/bg_overall_design.jpg" class="overall-screen-bg-img" alt="Background Design" style="width:100vw; height:100vh; object-fit:cover; opacity:0.22; filter:saturate(1.18) brightness(1.02); transform:scale(1.02);">
+</div>
 
 <!-- LOGIN -->
 <div class="login-wrap" id="loginWrap">
@@ -764,7 +769,7 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
   // auto-login if token present
   if(TOKEN) showDash();
 
-  // 3D Blueprint Background for Dashboard
+  // 3D Animated Background Engine for Admin Dashboard
   (function initAdmin3D(){
     const canvas = document.getElementById('admin-webgl-canvas');
     if(!canvas) return;
@@ -774,41 +779,94 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-    camera.position.set(0, 0, 16);
+    camera.position.set(0, 0, 14);
 
-    const cyan = new THREE.Color(0x00d4ff);
-    const lineColor = new THREE.Color(0x1a2740);
+    const isLightDefault = document.documentElement.getAttribute('data-theme') === 'light' || document.body.classList.contains('light-theme');
+    scene.fog = new THREE.FogExp2(isLightDefault ? 0xf4f6fc : 0x040406, 0.02);
 
-    function buildGear(radius, teeth, depth, toothDepth) {
-      const shape = new THREE.Shape();
-      const inner = radius - toothDepth;
-      const steps = teeth * 2;
-      for (let i = 0; i <= steps; i++) {
-        const a = (i / steps) * Math.PI * 2;
-        const r = (i % 2 === 0) ? radius : inner;
-        const x = Math.cos(a) * r, y = Math.sin(a) * r;
-        if (i === 0) shape.moveTo(x, y); else shape.lineTo(x, y);
-      }
-      const hole = new THREE.Path();
-      hole.absarc(0, 0, radius * 0.3, 0, Math.PI * 2, true);
-      shape.holes.push(hole);
-      const geo = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: true, bevelThickness: 0.04, bevelSize: 0.02, bevelSegments: 1, curveSegments: 3 });
-      return new THREE.EdgesGeometry(geo, 1);
+    const lightGroup = new THREE.Group();
+    const darkGroup = new THREE.Group();
+    scene.add(lightGroup);
+    scene.add(darkGroup);
+
+    // --- Light Mode 3D Geodesic Core ---
+    const globeGroup = new THREE.Group();
+    const sphereMat = new THREE.MeshBasicMaterial({ color: 0x0f2942, wireframe: true, transparent: true, opacity: 0.25 });
+    const innerSphere = new THREE.Mesh(new THREE.IcosahedronGeometry(3.6, 2), sphereMat);
+    globeGroup.add(innerSphere);
+
+    const ringMat1 = new THREE.MeshBasicMaterial({ color: 0x1d4ed8, wireframe: true, transparent: true, opacity: 0.35 });
+    const ring1 = new THREE.Mesh(new THREE.TorusGeometry(5.2, 0.12, 16, 64), ringMat1);
+    ring1.rotation.x = Math.PI / 3;
+    globeGroup.add(ring1);
+
+    const ringMat2 = new THREE.MeshBasicMaterial({ color: 0x2563eb, wireframe: true, transparent: true, opacity: 0.25 });
+    const ring2 = new THREE.Mesh(new THREE.TorusGeometry(6.5, 0.08, 16, 64), ringMat2);
+    ring2.rotation.y = Math.PI / 4;
+    globeGroup.add(ring2);
+
+    globeGroup.position.set(0, 0, -2);
+    lightGroup.add(globeGroup);
+
+    // --- Dark Mode 3D Particle Constellation Network ---
+    const NODE_COUNT = 75;
+    const DIST_THRESHOLD = 5.2;
+    const nodes = [];
+    const positions = new Float32Array(NODE_COUNT * 3);
+
+    for (let i = 0; i < NODE_COUNT; i++) {
+      const x = (Math.random() - 0.5) * 40;
+      const y = (Math.random() - 0.5) * 30;
+      const z = (Math.random() - 0.5) * 28;
+      nodes.push({
+        x, y, z,
+        vx: (Math.random() - 0.5) * 0.025,
+        vy: (Math.random() - 0.5) * 0.025,
+        vz: (Math.random() - 0.5) * 0.025
+      });
+      positions[i * 3] = x;
+      positions[i * 3 + 1] = y;
+      positions[i * 3 + 2] = z;
     }
 
-    const rig = new THREE.Group();
-    rig.position.set(6, -1, -2);
-    scene.add(rig);
+    const nodeGeo = new THREE.BufferGeometry();
+    nodeGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
-    const g1 = new THREE.LineSegments(buildGear(3.6, 16, 0.25, 0.45), new THREE.LineBasicMaterial({ color: cyan, transparent: true, opacity: 0.45 }));
-    const g2 = new THREE.LineSegments(buildGear(2.2, 10, 0.25, 0.3), new THREE.LineBasicMaterial({ color: lineColor, transparent: true, opacity: 0.4 }));
-    g2.position.set(-3.0, 2.2, -1);
-    rig.add(g1); rig.add(g2);
+    function createNodeTexture() {
+      const c = document.createElement('canvas');
+      c.width = 64; c.height = 64;
+      const ctx = c.getContext('2d');
+      const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+      g.addColorStop(0, 'rgba(255, 255, 255, 1)');
+      g.addColorStop(0.25, 'rgba(0, 212, 255, 0.95)');
+      g.addColorStop(0.65, 'rgba(0, 102, 255, 0.35)');
+      g.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = g; ctx.fillRect(0, 0, 64, 64);
+      return new THREE.CanvasTexture(c);
+    }
 
-    const grid = new THREE.GridHelper(60, 40, 0x1a2740, 0x0d1526);
-    grid.position.y = -8;
-    grid.material.transparent = true; grid.material.opacity = 0.15;
-    scene.add(grid);
+    const nodeMat = new THREE.PointsMaterial({
+      size: 0.85, map: createNodeTexture(), transparent: true, opacity: 0.95, depthWrite: false, blending: THREE.AdditiveBlending
+    });
+    const pointCloud = new THREE.Points(nodeGeo, nodeMat);
+    darkGroup.add(pointCloud);
+
+    const MAX_LINES = NODE_COUNT * 12;
+    const linePositions = new Float32Array(MAX_LINES * 6);
+    const lineColors = new Float32Array(MAX_LINES * 6);
+    const lineGeo = new THREE.BufferGeometry();
+    lineGeo.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
+    lineGeo.setAttribute('color', new THREE.BufferAttribute(lineColors, 3));
+
+    const lineMat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending });
+    const linesMesh = new THREE.LineSegments(lineGeo, lineMat);
+    darkGroup.add(linesMesh);
+
+    let mouseX = 0, mouseY = 0;
+    window.addEventListener('mousemove', (e) => {
+      mouseX = (e.clientX / window.innerWidth - 0.5);
+      mouseY = (e.clientY / window.innerHeight - 0.5);
+    });
 
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
@@ -816,22 +874,76 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
+    const clock = new THREE.Clock();
+
     function animate() {
       requestAnimationFrame(animate);
-      g1.rotation.z += 0.003;
-      g2.rotation.z -= 0.005;
-      rig.rotation.y = Math.sin(Date.now() * 0.0005) * 0.05;
+      const t = clock.getElapsedTime();
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light' || document.body.classList.contains('light-theme');
+
+      if (isLight) {
+        lightGroup.visible = true;
+        darkGroup.visible = false;
+        if (scene.fog) scene.fog.color.setHex(0xf4f6fc);
+        globeGroup.rotation.y = t * 0.22;
+        ring1.rotation.z = t * 0.35;
+        ring2.rotation.y = t * 0.3;
+      } else {
+        lightGroup.visible = false;
+        darkGroup.visible = true;
+        if (scene.fog) scene.fog.color.setHex(0x040406);
+
+        const posAttr = nodeGeo.attributes.position;
+        const posArray = posAttr.array;
+        for (let i = 0; i < NODE_COUNT; i++) {
+          const nd = nodes[i];
+          nd.x += nd.vx; nd.y += nd.vy; nd.z += nd.vz;
+          if (Math.abs(nd.x) > 20) nd.vx *= -1;
+          if (Math.abs(nd.y) > 15) nd.vy *= -1;
+          if (Math.abs(nd.z) > 14) nd.vz *= -1;
+          posArray[i * 3] = nd.x; posArray[i * 3 + 1] = nd.y; posArray[i * 3 + 2] = nd.z;
+        }
+        posAttr.needsUpdate = true;
+
+        let vIdx = 0; let cIdx = 0; let lineCount = 0;
+        for (let i = 0; i < NODE_COUNT; i++) {
+          for (let j = i + 1; j < NODE_COUNT; j++) {
+            const dx = nodes[i].x - nodes[j].x;
+            const dy = nodes[i].y - nodes[j].y;
+            const dz = nodes[i].z - nodes[j].z;
+            const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            if (dist < DIST_THRESHOLD) {
+              const alpha = Math.pow(1 - dist / DIST_THRESHOLD, 1.1) * 0.75;
+              linePositions[vIdx++] = nodes[i].x; linePositions[vIdx++] = nodes[i].y; linePositions[vIdx++] = nodes[i].z;
+              linePositions[vIdx++] = nodes[j].x; linePositions[vIdx++] = nodes[j].y; linePositions[vIdx++] = nodes[j].z;
+              lineColors[cIdx++] = 0.0; lineColors[cIdx++] = 0.4 + alpha * 0.5; lineColors[cIdx++] = 0.8 + alpha * 0.2;
+              lineColors[cIdx++] = 0.0; lineColors[cIdx++] = 0.4 + alpha * 0.5; lineColors[cIdx++] = 0.8 + alpha * 0.2;
+              lineCount++;
+            }
+          }
+        }
+        lineGeo.attributes.position.needsUpdate = true;
+        lineGeo.attributes.color.needsUpdate = true;
+        lineGeo.setDrawRange(0, lineCount * 2);
+      }
+
+      camera.position.x += (mouseX * 3.5 - camera.position.x) * 0.04;
+      camera.position.y += (-mouseY * 2.5 - camera.position.y) * 0.04;
+      camera.lookAt(0, 0, 0);
+
       renderer.render(scene, camera);
     }
     animate();
 
     window.updateAdminWebGLColors = function(theme) {
       if (theme === 'light') {
-        g1.material.color.setHex(0x0f2942);
-        g2.material.color.setHex(0x1d4ed8);
+        lightGroup.visible = true;
+        darkGroup.visible = false;
+        if (scene.fog) scene.fog.color.setHex(0xf4f6fc);
       } else {
-        g1.material.color.setHex(0x00d4ff);
-        g2.material.color.setHex(0x0066ff);
+        lightGroup.visible = false;
+        darkGroup.visible = true;
+        if (scene.fog) scene.fog.color.setHex(0x040406);
       }
     };
   })();
