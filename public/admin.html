@@ -469,7 +469,10 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
       const isIeee = (r.ieee_member === 'Yes');
       const ieeeStatus = r.ieee_verification_status || (isIeee ? 'Pending Card Verification' : 'N/A');
 
-      const verifyBtn = st!=='Paid' ? `<button class="verify" onclick="setStatus(${r.id},'Paid')">✓ Verify Payment</button>` :
+      const isDupUtr = (r.duplicate_utr === 1 || (r.payment_status && r.payment_status.includes('Duplicate UTR')));
+      const dupWarningBadge = isDupUtr ? `<div style="margin-top:6px; background:#450a0a; border:1.5px solid #ef4444; color:#fca5a5; font-size:10px; font-weight:800; padding:4px 8px; border-radius:6px; text-align:left;">⚠️ DUPLICATE UTR DETECTED<br><span style="font-weight:600; color:#fee2e2;">${esc(r.utr_warning || 'Same UTR used by another participant!')}</span></div>` : '';
+
+      const verifyBtn = st!=='Paid' ? (isDupUtr ? `<button class="verify" style="background:#dc2626; border-color:#ef4444; color:#ffffff; font-weight:900;" onclick="setStatus(${r.id},'Paid')">⚠️ Admin Override Verify</button>` : `<button class="verify" onclick="setStatus(${r.id},'Paid')">✓ Verify Payment</button>`) :
         `<button class="verify" style="background:rgba(149,172,208,.12);color:#c2d2ec;border-color:var(--line)" onclick="setStatus(${r.id},'Pending Verification')">Unverify</button>`;
 
       let ieeeActionBtns = '';
@@ -487,7 +490,7 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
 
       return `<tr>
         <td><span class="rid">${esc(r.team_id)}</span></td>
-        <td>${payBadge(st)}<br><span class="amt" style="font-size:13px">₹${esc(r.amount||0)}</span>${r.payment_ref?`<br><span class="muted" style="font-size:11px">UTR: ${esc(r.payment_ref)}</span>`:''}${payProofBtn}</td>
+        <td>${payBadge(st)}<br><span class="amt" style="font-size:13px">₹${esc(r.amount||0)}</span>${r.payment_ref?`<br><span class="muted" style="font-size:11px">UTR: ${esc(r.payment_ref)}</span>`:''}${dupWarningBadge}${payProofBtn}</td>
         <td><b>${esc(r.leader_name)}</b></td>
         <td><a href="mailto:${esc(r.leader_email)}">${esc(r.leader_email)}</a><br><span class="muted">${esc(r.leader_phone)}</span></td>
         <td>${esc(r.college_name||'—')}<br><span class="muted">${esc(r.branch||'—')} (${esc(r.year||'')})</span></td>

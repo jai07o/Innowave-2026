@@ -1258,12 +1258,16 @@
           </div>
 
           <div class="form-group full">
-            <label style="color:var(--gold); font-size:14px; font-weight:700;">
-              🪪 Upload IEEE Membership Card / Proof (Image / PDF) *
+            <label style="color:var(--gold); font-size:14px; font-weight:700; margin-bottom:6px; display:block;">
+              🪪 Upload IEEE Membership Card / Proof (Drag & Drop / Paste / Click) *
             </label>
-            <input type="file" id="ieeeCard" required accept="image/*,.pdf" onchange="previewIeeeCard(this)"
-              style="background:rgba(245, 158, 11, 0.1); border:1px solid var(--gold); padding:10px; border-radius:6px; cursor:pointer;">
-            <div id="ieeeCardPreviewWrap" style="display:none; margin-top:8px;">
+            <div id="ieeeCardDropZone" style="border:2px dashed var(--gold); border-radius:10px; padding:16px 10px; text-align:center; background:rgba(245, 158, 11, 0.05); cursor:pointer; transition:all 0.2s ease;" onclick="document.getElementById('ieeeCard').click()">
+              <div style="font-size:24px; margin-bottom:4px;">🪪 📋</div>
+              <div style="font-size:13px; font-weight:800; color:var(--gold);">Drag & Drop IEEE Card Here OR Click to Upload</div>
+              <div style="font-size:11px; color:var(--text-muted); margin-top:3px;">💡 Tip: Press <b>Ctrl + V</b> anywhere to paste a copied card image or screenshot!</div>
+              <input type="file" id="ieeeCard" required accept="image/*,.pdf" onchange="previewIeeeCard(this)" style="display:none;">
+            </div>
+            <div id="ieeeCardPreviewWrap" style="display:none; margin-top:8px; text-align:center;">
               <img id="ieeeCardPreviewImg"
                 style="max-width:160px; max-height:160px; border-radius:6px; border:1px solid var(--accent); display:none;"
                 alt="IEEE Card Preview">
@@ -1377,13 +1381,16 @@
               style="width:100%; background:var(--bg-primary); border:1px solid var(--border); border-radius:6px; padding:10px; color:var(--text-primary); font-family:monospace; outline:none;">
           </div>
           <div style="margin-bottom:16px;">
-            <label style="display:block; font-size:12.5px; font-weight:600; margin-bottom:4px;">2. Upload Payment
-              Screenshot Proof *</label>
-            <input type="file" accept="image/*" onchange="previewScreenshot(this)"
-              style="width:100%; background:var(--bg-primary); border:1px solid var(--border); border-radius:6px; padding:8px; color:var(--text-primary); font-size:12px;">
-            <div id="screenshotPreviewWrap" style="display:none; margin-top:8px;">
+            <label style="display:block; font-size:12.5px; font-weight:600; margin-bottom:6px;">2. Upload Payment Screenshot Proof (Drag & Drop / Paste / Click) *</label>
+            <div id="paymentProofDropZone" style="border:2px dashed var(--accent); border-radius:10px; padding:14px 10px; text-align:center; background:rgba(0, 212, 255, 0.04); cursor:pointer; transition:all 0.2s ease;" onclick="document.getElementById('paymentProofInput').click()">
+              <div style="font-size:22px; margin-bottom:4px;">📁 📋</div>
+              <div style="font-size:12.5px; font-weight:800; color:var(--accent);">Drag & Drop Screenshot Here OR Click to Upload</div>
+              <div style="font-size:11px; color:var(--text-muted); margin-top:3px;">💡 Tip: Press <b>Ctrl + V</b> anywhere to paste a copied payment screenshot!</div>
+              <input type="file" id="paymentProofInput" accept="image/*" onchange="previewScreenshot(this)" style="display:none;">
+            </div>
+            <div id="screenshotPreviewWrap" style="display:none; margin-top:8px; text-align:center;">
               <img id="screenshotPreviewImg"
-                style="max-width:120px; max-height:120px; border-radius:6px; border:1px solid var(--accent);"
+                style="max-width:140px; max-height:140px; border-radius:6px; border:1px solid var(--accent);"
                 alt="Screenshot Preview">
             </div>
           </div>
@@ -2028,6 +2035,58 @@
       const saved = localStorage.getItem('user_innowave_theme') || 'dark';
       applyTheme(saved);
     })();
+
+    // Enhanced Drag & Drop + Copy-Paste (Ctrl+V / Cmd+V) Upload Handlers
+    function setupDragAndDropAndPaste(zoneId, inputId, callback) {
+      const zone = document.getElementById(zoneId);
+      const input = document.getElementById(inputId);
+      if (!zone || !input) return;
+
+      ['dragenter', 'dragover'].forEach(name => {
+        zone.addEventListener(name, (e) => {
+          e.preventDefault(); e.stopPropagation();
+          zone.style.background = 'rgba(0, 212, 255, 0.18)';
+          zone.style.borderColor = '#00e676';
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(name => {
+        zone.addEventListener(name, (e) => {
+          e.preventDefault(); e.stopPropagation();
+          zone.style.background = '';
+          zone.style.borderColor = '';
+        });
+      });
+
+      zone.addEventListener('drop', (e) => {
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+          input.files = e.dataTransfer.files;
+          if (callback) callback(input);
+        }
+      });
+
+      window.addEventListener('paste', (e) => {
+        const items = (e.clipboardData || (e.originalEvent && e.originalEvent.clipboardData))?.items;
+        if (!items) return;
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].kind === 'file' && items[i].type.startsWith('image/')) {
+            const file = items[i].getAsFile();
+            if (file) {
+              const dt = new DataTransfer();
+              dt.items.add(file);
+              input.files = dt.files;
+              if (callback) callback(input);
+              break;
+            }
+          }
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setupDragAndDropAndPaste('ieeeCardDropZone', 'ieeeCard', previewIeeeCard);
+      setupDragAndDropAndPaste('paymentProofDropZone', 'paymentProofInput', previewScreenshot);
+    });
   </script>
 </body>
 

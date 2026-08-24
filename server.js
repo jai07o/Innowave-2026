@@ -129,7 +129,8 @@ function ensureColumn(col, decl) {
 ['team_id TEXT','reg_seq INTEGER','amount INTEGER','fee_label TEXT','payment_mode TEXT',
  'payment_status TEXT','payment_ref TEXT','paid_at TEXT','events_selected TEXT',
  'college_name TEXT','ieee_email TEXT','ieee_grade TEXT','ieee_count INTEGER','non_ieee_count INTEGER',
- 'ieee_verification_status TEXT','ieee_card TEXT','ieee_card_approved INTEGER'].forEach(d => {
+ 'ieee_verification_status TEXT','ieee_card TEXT','ieee_card_approved INTEGER',
+ 'duplicate_utr INTEGER DEFAULT 0','utr_warning TEXT'].forEach(d => {
   const parts = d.split(' ');
   ensureColumn(parts[0], parts.slice(1).join(' '));
 });
@@ -400,17 +401,32 @@ app.post('/api/register/:id/confirm', (req, res) => {
     const isValidUtrFormat = /^[A-Za-z0-9]{10,16}$/.test(cleanRef);
     const isDummySpam = /^0+$|^123456789/.test(cleanRef);
 
+    // Check if another registration already uploaded this same UTR number!
+    const cleanRefUpper = cleanRef.toUpperCase();
+    const existingUtrRow = db.prepare(`SELECT id, team_id, leader_name, payment_status FROM registrations WHERE payment_ref IS NOT NULL AND UPPER(TRIM(payment_ref)) = ? AND id != ?`).get(cleanRefUpper, id);
+
     let paymentStatus = 'Pending Verification';
     let autoVerified = false;
+    let duplicateUtr = 0;
+    let utrWarning = null;
 
-    // Automated verification engine: valid UTR formats auto-approve instantly
-    if ((is12DigitNumeric || isValidUtrFormat) && !isDummySpam) {
+    if (existingUtrRow) {
+      // 🚫 DUPLICATE UTR DETECTED: Do NOT auto-verify! Require Admin manual review!
+      duplicateUtr = 1;
+      utrWarning = `DUPLICATE UTR DETECTED: UTR '${ref}' was also submitted by Registration ID '${existingUtrRow.team_id}' (${existingUtrRow.leader_name})!`;
+      paymentStatus = 'Pending Verification (Duplicate UTR)';
+      autoVerified = false;
+
+      // Mark the pre-existing row as duplicate too so Admin sees the flag on both!
+      db.prepare(`UPDATE registrations SET duplicate_utr = 1, utr_warning = ? WHERE id = ?`)
+        .run(`DUPLICATE UTR DETECTED: UTR '${ref}' is shared with Registration ID '${row.team_id}' (${row.leader_name})!`, existingUtrRow.id);
+    } else if ((is12DigitNumeric || isValidUtrFormat) && !isDummySpam) {
       paymentStatus = 'Paid';
       autoVerified = true;
     }
 
-    db.prepare(`UPDATE registrations SET payment_ref=?, payment_screenshot=?, paid_at=?, payment_status=? WHERE id=?`)
-      .run(ref, screenshot, new Date().toISOString(), paymentStatus, id);
+    db.prepare(`UPDATE registrations SET payment_ref=?, payment_screenshot=?, paid_at=?, payment_status=?, duplicate_utr=?, utr_warning=? WHERE id=?`)
+      .run(ref, screenshot, new Date().toISOString(), paymentStatus, duplicateUtr, utrWarning, id);
 
     // Send confirmation email with WhatsApp group link asynchronously
     sendParticipantConfirmationEmail({ ...row, payment_ref: ref, payment_status: paymentStatus }).catch(err => console.error(err));
