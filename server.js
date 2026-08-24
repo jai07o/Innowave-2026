@@ -18,10 +18,35 @@ const fs = require('fs');
 const express = require('express');
 const Database = require('better-sqlite3');
 const ExcelJS = require('exceljs');
-const QRCode = require('qrcode');
-const nodemailer = require('nodemailer');
+const { createWorker } = require('tesseract.js');
 
 const WHATSAPP_GROUP_LINK = 'https://chat.whatsapp.com/G2WlPqnRVYdIvVti3gZL2S?s=cl&p=a&ilr=0';
+
+async function verifyUtrMatchesScreenshot(utrRef, screenshotBase64) {
+  try {
+    if (!utrRef || !screenshotBase64 || !screenshotBase64.includes('base64,')) {
+      return { match: false, text: '' };
+    }
+    const cleanUtr = String(utrRef).replace(/\D/g, '');
+    if (cleanUtr.length < 6) return { match: false, text: '' };
+
+    const base64Data = screenshotBase64.split('base64,')[1];
+    const imageBuffer = Buffer.from(base64Data, 'base64');
+
+    const worker = await createWorker('eng');
+    const ret = await worker.recognize(imageBuffer);
+    await worker.terminate();
+
+    const extractedText = ret.data.text || '';
+    const cleanExtractedText = extractedText.replace(/[\s\-\:\/]/g, '');
+
+    const isMatch = cleanExtractedText.includes(cleanUtr) || (cleanUtr.length >= 10 && cleanExtractedText.includes(cleanUtr.slice(-10)));
+    return { match: isMatch, text: extractedText };
+  } catch (e) {
+    console.error('[OCR UTR Match Error]', e);
+    return { match: false, error: e.message };
+  }
+}
 
 // Configurable Nodemailer SMTP Mail Transporter
 const mailTransporter = nodemailer.createTransport({
@@ -130,7 +155,7 @@ function ensureColumn(col, decl) {
  'payment_status TEXT','payment_ref TEXT','paid_at TEXT','events_selected TEXT',
  'college_name TEXT','ieee_email TEXT','ieee_grade TEXT','ieee_count INTEGER','non_ieee_count INTEGER',
  'ieee_verification_status TEXT','ieee_card TEXT','ieee_card_approved INTEGER',
- 'duplicate_utr INTEGER DEFAULT 0','utr_warning TEXT'].forEach(d => {
+ 'duplicate_utr INTEGER DEFAULT 0','utr_mismatch INTEGER DEFAULT 0','utr_warning TEXT'].forEach(d => {
   const parts = d.split(' ');
   ensureColumn(parts[0], parts.slice(1).join(' '));
 });
@@ -384,7 +409,7 @@ app.post('/api/register', async (req, res) => {
 });
 
 // ---------- Step 2: confirm payment (submit UPI reference + payment screenshot) ----------
-app.post('/api/register/:id/confirm', (req, res) => {
+app.post('/api/register/:id/confirm', async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     const ref = (req.body && req.body.payment_ref || '').trim();
@@ -408,6 +433,7 @@ app.post('/api/register/:id/confirm', (req, res) => {
     let paymentStatus = 'Pending Verification';
     let autoVerified = false;
     let duplicateUtr = 0;
+    let utrMismatch = 0;
     let utrWarning = null;
 
     if (existingUtrRow) {
@@ -421,12 +447,22 @@ app.post('/api/register/:id/confirm', (req, res) => {
       db.prepare(`UPDATE registrations SET duplicate_utr = 1, utr_warning = ? WHERE id = ?`)
         .run(`DUPLICATE UTR DETECTED: UTR '${ref}' is shared with Registration ID '${row.team_id}' (${row.leader_name})!`, existingUtrRow.id);
     } else if ((is12DigitNumeric || isValidUtrFormat) && !isDummySpam) {
-      paymentStatus = 'Paid';
-      autoVerified = true;
+      // 🔍 OCR Screenshot Text Verification: Check if UTR is present inside uploaded payment screenshot!
+      const ocrResult = await verifyUtrMatchesScreenshot(cleanRef, screenshot);
+      if (ocrResult.match) {
+        paymentStatus = 'Paid';
+        autoVerified = true;
+      } else {
+        // 🚫 UTR SCREENSHOT MISMATCH: Do NOT auto-verify as Paid!
+        utrMismatch = 1;
+        utrWarning = `UTR SCREENSHOT MISMATCH: Entered UTR '${ref}' was NOT detected inside uploaded payment screenshot!`;
+        paymentStatus = 'Pending Verification (UTR Mismatch)';
+        autoVerified = false;
+      }
     }
 
-    db.prepare(`UPDATE registrations SET payment_ref=?, payment_screenshot=?, paid_at=?, payment_status=?, duplicate_utr=?, utr_warning=? WHERE id=?`)
-      .run(ref, screenshot, new Date().toISOString(), paymentStatus, duplicateUtr, utrWarning, id);
+    db.prepare(`UPDATE registrations SET payment_ref=?, payment_screenshot=?, paid_at=?, payment_status=?, duplicate_utr=?, utr_mismatch=?, utr_warning=? WHERE id=?`)
+      .run(ref, screenshot, new Date().toISOString(), paymentStatus, duplicateUtr, utrMismatch, utrWarning, id);
 
     // Send confirmation email with WhatsApp group link asynchronously
     sendParticipantConfirmationEmail({ ...row, payment_ref: ref, payment_status: paymentStatus }).catch(err => console.error(err));

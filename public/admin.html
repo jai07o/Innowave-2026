@@ -470,9 +470,17 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
       const ieeeStatus = r.ieee_verification_status || (isIeee ? 'Pending Card Verification' : 'N/A');
 
       const isDupUtr = (r.duplicate_utr === 1 || (r.payment_status && r.payment_status.includes('Duplicate UTR')));
-      const dupWarningBadge = isDupUtr ? `<div style="margin-top:6px; background:#450a0a; border:1.5px solid #ef4444; color:#fca5a5; font-size:10px; font-weight:800; padding:4px 8px; border-radius:6px; text-align:left;">⚠️ DUPLICATE UTR DETECTED<br><span style="font-weight:600; color:#fee2e2;">${esc(r.utr_warning || 'Same UTR used by another participant!')}</span></div>` : '';
+      const isMismatchUtr = (r.utr_mismatch === 1 || (r.payment_status && r.payment_status.includes('Mismatch')));
+      const isFlagged = isDupUtr || isMismatchUtr;
 
-      const verifyBtn = st!=='Paid' ? (isDupUtr ? `<button class="verify" style="background:#dc2626; border-color:#ef4444; color:#ffffff; font-weight:900;" onclick="setStatus(${r.id},'Paid')">⚠️ Admin Override Verify</button>` : `<button class="verify" onclick="setStatus(${r.id},'Paid')">✓ Verify Payment</button>`) :
+      let dupWarningBadge = '';
+      if (isDupUtr) {
+        dupWarningBadge = `<div style="margin-top:6px; background:#450a0a; border:1.5px solid #ef4444; color:#fca5a5; font-size:10px; font-weight:800; padding:4px 8px; border-radius:6px; text-align:left;">⚠️ DUPLICATE UTR DETECTED<br><span style="font-weight:600; color:#fee2e2;">${esc(r.utr_warning || 'Same UTR used by another participant!')}</span></div>`;
+      } else if (isMismatchUtr) {
+        dupWarningBadge = `<div style="margin-top:6px; background:#431407; border:1.5px solid #f97316; color:#fdba74; font-size:10px; font-weight:800; padding:4px 8px; border-radius:6px; text-align:left;">⚠️ UTR SCREENSHOT MISMATCH<br><span style="font-weight:600; color:#ffedd5;">${esc(r.utr_warning || 'UTR not detected in uploaded payment screenshot!')}</span></div>`;
+      }
+
+      const verifyBtn = st!=='Paid' ? (isFlagged ? `<button class="verify" style="background:#dc2626; border-color:#ef4444; color:#ffffff; font-weight:900;" onclick="setStatus(${r.id},'Paid')">⚠️ Admin Override Verify</button>` : `<button class="verify" onclick="setStatus(${r.id},'Paid')">✓ Verify Payment</button>`) :
         `<button class="verify" style="background:rgba(149,172,208,.12);color:#c2d2ec;border-color:var(--line)" onclick="setStatus(${r.id},'Pending Verification')">Unverify</button>`;
 
       let ieeeActionBtns = '';
