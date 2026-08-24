@@ -566,16 +566,28 @@ app.get('/api/check-ieee-status', async (req, res) => {
     const q = (req.query.q || req.query.id || '').trim();
     if (!q) return res.status(400).json({ ok: false, error: 'Please enter your Registration ID, Mobile, or Email.' });
 
-    const qClean = q.toLowerCase();
-    const rows = db.prepare('SELECT * FROM registrations ORDER BY id DESC').all();
-    const row = rows.find(r => 
-      String(r.id) === q ||
-      (r.team_id || '').toLowerCase() === qClean ||
-      (r.leader_phone || '').trim() === q ||
-      (r.leader_email || '').toLowerCase() === qClean
-    );
+    const qClean = q.toLowerCase().replace(/\s+/g, '');
+    const qDigits = q.replace(/\D/g, '');
 
-    if (!row) return res.status(404).json({ ok: false, error: 'Registration record not found.' });
+    const rows = db.prepare('SELECT * FROM registrations ORDER BY id DESC').all();
+    const row = rows.find(r => {
+      const regIdStr = String(r.id);
+      const teamIdClean = (r.team_id || '').toLowerCase().replace(/\s+/g, '');
+      const phoneDigits = (r.leader_phone || '').replace(/\D/g, '');
+      const emailClean = (r.leader_email || '').toLowerCase().trim();
+      const ieeeIdDigits = (r.ieee_id || '').replace(/\D/g, '');
+
+      return (
+        regIdStr === q ||
+        teamIdClean === qClean ||
+        (qDigits.length >= 2 && (teamIdClean.endsWith(qDigits) || teamIdClean === `iw26-${qDigits.padStart(4, '0')}`)) ||
+        (phoneDigits.length >= 7 && (phoneDigits === qDigits || phoneDigits.endsWith(qDigits) || qDigits.endsWith(phoneDigits))) ||
+        (emailClean && emailClean === q.toLowerCase().trim()) ||
+        (ieeeIdDigits && qDigits && ieeeIdDigits === qDigits)
+      );
+    });
+
+    if (!row) return res.status(404).json({ ok: false, error: 'Registration record not found. Please check your Registration ID, Mobile, or Email.' });
 
     const isIeee = (row.ieee_member === 'Yes');
     const ieeeStatus = row.ieee_verification_status || (isIeee ? 'Pending Card Verification' : 'N/A');
