@@ -613,8 +613,9 @@ app.get('/api/check-ieee-status', async (req, res) => {
     const ieeeStatus = row.ieee_verification_status || (isIeee ? 'Pending Card Verification' : 'N/A');
 
     let upiData = null;
-    // Generate UPI QR code for all active registrations (as long as card is not rejected)
-    if (row.ieee_verification_status !== 'Card Rejected' && row.payment_status !== 'IEEE Card Rejected') {
+    const isIeeeApproved = (!isIeee || ieeeStatus === 'Card Approved' || row.payment_status === 'Paid');
+    // Generate UPI QR code ONLY if Non-IEEE or IEEE Card is Approved by Admin
+    if (isIeeeApproved && row.ieee_verification_status !== 'Card Rejected' && row.payment_status !== 'IEEE Card Rejected') {
       const note = `InnoWave-2k26 ${row.team_id}`;
       const upiUri = `upi://pay?pa=${encodeURIComponent(UPI_VPA)}&pn=${encodeURIComponent(UPI_PAYEE_NAME)}&am=${row.amount}&cu=INR&tn=${encodeURIComponent(note)}`;
       const qr = await QRCode.toDataURL(upiUri, { margin: 1, width: 320, color: { dark: '#081226', light: '#ffffff' } });

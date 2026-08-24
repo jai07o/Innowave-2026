@@ -1798,6 +1798,16 @@
           badge.textContent = '🔴 IEEE CARD REJECTED';
           badge.style.color = '#ff8f8f';
           actWrap.innerHTML = `<div style="font-size:13.5px; color:#ff8f8f; font-weight:700;">❌ Your IEEE Card proof was marked invalid by Admin. Please contact organizers.</div>`;
+        } else if (data.ieee_verification_status !== 'Card Approved' && data.payment_status !== 'Paid') {
+          badge.textContent = '🟡 IEEE CARD VERIFICATION PENDING';
+          badge.style.color = '#f59e0b';
+          actWrap.innerHTML = `
+            <div style="background:rgba(245, 158, 11, 0.12); border:1.5px solid #f59e0b; border-radius:14px; padding:16px; color:#fef3c7; font-size:13.5px; font-weight:700; line-height:1.55; text-align:center;">
+              ⏳ Your IEEE Membership Card is under review by Admin.<br>
+              Payment access is locked until Admin verifies your IEEE Card proof.<br>
+              <span style="font-size:12px; color:#fde68a; font-weight:600; display:block; margin-top:6px;">Check back here using your Registration ID or Mobile Number after Admin approval to complete your payment!</span>
+            </div>
+          `;
         } else if (data.payment_status === 'Paid') {
           badge.textContent = '🟢 PAID & CONFIRMED';
           badge.style.color = '#00e676';
@@ -1812,14 +1822,13 @@
             </a>
           `;
         } else {
-          const isUnverified = (data.payment_status === 'Pending Verification' || data.payment_status === 'Unverified' || data.payment_status === 'IEEE Verification Needed');
-          badge.textContent = isUnverified ? '🟡 IEEE CARD SUBMITTED — PAYMENT UNLOCKED' : (data.payment_status === 'Pending Payment Confirmation' ? '🟡 UTR SUBMITTED — ADMIN CONFIRMATION PENDING' : '🟢 CARD APPROVED — PAYMENT PENDING');
-          badge.style.color = data.payment_status === 'Pending Payment Confirmation' ? '#f59e0b' : (isUnverified ? '#f59e0b' : '#00d4ff');
+          badge.textContent = '🟢 CARD APPROVED — PAYMENT UNLOCKED';
+          badge.style.color = '#00d4ff';
 
           if (data.upi) {
             actWrap.innerHTML = `
           <div style="font-size:13px; color:var(--text-muted); margin-bottom:8px;">
-            ${isUnverified ? 'Scan QR code below to complete payment (₹100) and submit your 12-digit UTR transaction ID:' : (data.payment_status === 'Pending Payment Confirmation' ? 'UTR submitted & under verification. You can re-view your Payment QR code anytime below:' : 'Your IEEE card is approved! Scan QR code to complete payment and submit UTR:')}
+            Your IEEE card has been approved by Admin! Scan QR code below to complete payment (₹100) and submit your 12-digit UTR transaction ID:
           </div>
           <button type="button" class="btn-primary-lg" style="margin-top:4px; width:100%;" onclick="openPaymentModalWithData()">
             📲 OPEN PAYMENT QR CODE & SUBMIT UTR →
