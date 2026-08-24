@@ -699,47 +699,6 @@ app.post('/api/admin/registrations/:id/verify-ieee-card', requireAdmin, async (r
   return res.status(400).json({ ok: false, error: 'Invalid action' });
 });
 
-// Admin Route: Send Confirmation & WhatsApp Email to Single Participant
-app.post('/api/admin/registrations/:id/send-email', requireAdmin, async (req, res) => {
-  try {
-    const row = db.prepare('SELECT * FROM registrations WHERE id=?').get(req.params.id);
-    if (!row) return res.status(404).json({ ok: false, error: 'Registration record not found.' });
-    if (!row.leader_email) return res.status(400).json({ ok: false, error: 'No email address recorded for participant.' });
-
-    const result = await sendParticipantConfirmationEmail(row);
-    return res.json(result);
-  } catch (e) {
-    console.error(e);
-    return res.status(500).json({ ok: false, error: 'Failed to send confirmation email.' });
-  }
-});
-
-// Admin Route: Send Confirmation & WhatsApp Email to All Participants
-app.post('/api/admin/send-email-all', requireAdmin, async (req, res) => {
-  try {
-    const rows = db.prepare("SELECT * FROM registrations WHERE leader_email IS NOT NULL AND leader_email != ''").all();
-    let sentCount = 0;
-    let failedCount = 0;
-
-    for (const row of rows) {
-      const resMail = await sendParticipantConfirmationEmail(row);
-      if (resMail && resMail.ok) sentCount++;
-      else failedCount++;
-    }
-
-    return res.json({
-      ok: true,
-      total: rows.length,
-      sent: sentCount,
-      failed: failedCount,
-      message: `Emails dispatched to ${sentCount} participant(s).`
-    });
-  } catch (e) {
-    console.error(e);
-    return res.status(500).json({ ok: false, error: 'Failed to send batch emails.' });
-  }
-});
-
 app.delete('/api/admin/registrations/all', requireAdmin, (req, res) => {
   try {
     const info = db.prepare('DELETE FROM registrations').run();
