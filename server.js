@@ -577,24 +577,29 @@ app.get('/api/check-ieee-status', async (req, res) => {
       const emailClean = (r.leader_email || '').toLowerCase().trim();
       const ieeeIdDigits = (r.ieee_id || '').replace(/\D/g, '');
 
+      const refClean = (r.payment_ref || '').toLowerCase().replace(/\s+/g, '');
+      const refDigits = (r.payment_ref || '').replace(/\D/g, '');
+
       return (
         regIdStr === q ||
         teamIdClean === qClean ||
         (qDigits.length >= 2 && (teamIdClean.endsWith(qDigits) || teamIdClean === `iw26-${qDigits.padStart(4, '0')}`)) ||
         (phoneDigits.length >= 7 && (phoneDigits === qDigits || phoneDigits.endsWith(qDigits) || qDigits.endsWith(phoneDigits))) ||
         (emailClean && emailClean === q.toLowerCase().trim()) ||
-        (ieeeIdDigits && qDigits && ieeeIdDigits === qDigits)
+        (ieeeIdDigits && qDigits && ieeeIdDigits === qDigits) ||
+        (refClean && refClean === qClean) ||
+        (refDigits && qDigits.length >= 6 && (refDigits === qDigits || refDigits.endsWith(qDigits)))
       );
     });
 
-    if (!row) return res.status(404).json({ ok: false, error: 'Registration record not found. Please check your Registration ID, Mobile, or Email.' });
+    if (!row) return res.status(404).json({ ok: false, error: 'Registration record not found. Please check your Registration ID, Mobile, Email, IEEE ID, or UTR Reference.' });
 
     const isIeee = (row.ieee_member === 'Yes');
     const ieeeStatus = row.ieee_verification_status || (isIeee ? 'Pending Card Verification' : 'N/A');
 
     let upiData = null;
-    // Generate UPI QR code whenever payment is pending or approved
-    if (!isIeee || ieeeStatus === 'Card Approved' || row.payment_status === 'IEEE Card Approved - Payment Pending' || row.payment_status === 'Pending Payment Confirmation' || row.payment_status === 'Pending' || row.payment_status === 'Paid') {
+    // Generate UPI QR code for all active registrations (as long as card is not rejected)
+    if (row.ieee_verification_status !== 'Card Rejected' && row.payment_status !== 'IEEE Card Rejected') {
       const note = `InnoWave-2k26 ${row.team_id}`;
       const upiUri = `upi://pay?pa=${encodeURIComponent(UPI_VPA)}&pn=${encodeURIComponent(UPI_PAYEE_NAME)}&am=${row.amount}&cu=INR&tn=${encodeURIComponent(note)}`;
       const qr = await QRCode.toDataURL(upiUri, { margin: 1, width: 320, color: { dark: '#081226', light: '#ffffff' } });
