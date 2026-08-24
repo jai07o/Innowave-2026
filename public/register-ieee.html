@@ -1799,7 +1799,7 @@
           badge.style.color = '#ff8f8f';
           actWrap.innerHTML = `<div style="font-size:13.5px; color:#ff8f8f; font-weight:700;">❌ Your IEEE Card proof was marked invalid by Admin. Please contact organizers.</div>`;
         } else if (data.ieee_verification_status !== 'Card Approved' && data.payment_status !== 'Paid') {
-          badge.textContent = '🟡 IEEE CARD VERIFICATION PENDING';
+          badge.textContent = '🟡 IEEE CARD VERIFICATION UNDER PENDING';
           badge.style.color = '#f59e0b';
           actWrap.innerHTML = `
             <div style="background:rgba(245, 158, 11, 0.12); border:1.5px solid #f59e0b; border-radius:14px; padding:16px; color:#fef3c7; font-size:13.5px; font-weight:700; line-height:1.55; text-align:center;">
@@ -1822,7 +1822,7 @@
             </a>
           `;
         } else {
-          badge.textContent = '🟢 CARD APPROVED — PAYMENT UNLOCKED';
+          badge.textContent = '🟡 IEEE CARD SUBMITTED — PAYMENT UNLOCKED';
           badge.style.color = '#00d4ff';
 
           if (data.upi) {

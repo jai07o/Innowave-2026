@@ -329,7 +329,11 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
 
   <header class="bar">
     <div class="in">
-      <div class="title" style="display:flex; align-items:center; gap:10px;"><img src="assets/logo_college.png" alt="PSCMRCET Logo" style="height:32px; width:32px; object-fit:contain; border-radius:50%; filter:drop-shadow(0 0 6px rgba(0,212,255,0.4)); image-rendering:-webkit-optimize-contrast;">InnoWave<span class="y">2k26</span> · Registrations</div>
+      <div class="title" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <img src="assets/logo_college.png" alt="PSCMRCET Logo" style="height:32px; width:32px; object-fit:contain; border-radius:50%; filter:drop-shadow(0 0 6px rgba(0,212,255,0.4)); image-rendering:-webkit-optimize-contrast;">
+        <span>InnoWave<span class="y">2k26</span> · Registrations</span>
+        <span style="font-size:11px; font-weight:800; color:#00e676; background:rgba(0, 230, 118, 0.15); border:1px solid #00e676; padding:3px 8px; border-radius:12px; display:inline-flex; align-items:center; gap:4px; font-family:'Inter',sans-serif;">🟢 LIVE AUTO-REFRESHING (5s)</span>
+      </div>
       <div class="actions">
         <button class="btn" id="themeToggleBtn" onclick="toggleTheme()" style="padding:6px 14px;">☀️ LIGHT</button>
         <button class="btn" onclick="loadData()">↻ Refresh</button>
@@ -423,11 +427,19 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
       else err.textContent = j.error||'Incorrect password';
     }catch(e){ err.textContent='Network error'; }
   }
-  function logout(){ sessionStorage.removeItem('iw_token'); TOKEN=''; location.reload(); }
+  let autoRefreshInterval = null;
+  function logout(){ if(autoRefreshInterval) clearInterval(autoRefreshInterval); sessionStorage.removeItem('iw_token'); TOKEN=''; location.reload(); }
   function showDash(){
     document.getElementById('loginWrap').style.display='none';
     document.getElementById('dash').style.display='block';
     loadData();
+    if(!autoRefreshInterval){
+      autoRefreshInterval = setInterval(()=>{
+        if(TOKEN && document.getElementById('dash').style.display !== 'none'){
+          loadData();
+        }
+      }, 5000); // Live auto-update every 5 seconds
+    }
   }
   async function loadData(){
     try{
