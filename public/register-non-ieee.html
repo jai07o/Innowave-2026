@@ -1202,7 +1202,11 @@
           <div class="form-group">
             <label>College / Institution *</label>
             <input type="text" id="collegeName" required placeholder="Enter your college / institution name"
-              oninput="updateDynamicFee()">
+              oninput="updateDynamicFee(); checkPscmrAdmissionField();">
+          </div>
+          <div class="form-group" id="pscmrAdmissionWrap" style="display:none;">
+            <label style="color:#00e676; font-size:13px; font-weight:800;">College Admission / Roll Number *</label>
+            <input type="text" id="rollNo" placeholder="Enter your PSCMR Admission / Roll Number (e.g. 22HP1A0501)">
           </div>
           <div class="form-group">
             <label>Branch / Department</label>
@@ -1505,9 +1509,26 @@
     let pendingRegId = null;
     let uploadedScreenshotBase64 = '';
 
-    function isPscmrCollegeName(name) {
-      const cn = (name || '').toLowerCase();
-      return cn.includes('pscmr') || cn.includes('potti sriramulu') || cn.includes('chalavadi');
+    function isPscmrCollegeName(cn) {
+      const c = (cn || '').toLowerCase();
+      return c.includes('pscmr') || c.includes('potti sriramulu') || c.includes('chalavadi') || c.includes('mallikarjuna rao');
+    }
+
+    function checkPscmrAdmissionField() {
+      const collegeInput = document.getElementById('collegeName')?.value || '';
+      const isPscmr = isPscmrCollegeName(collegeInput);
+      const wrap = document.getElementById('pscmrAdmissionWrap');
+      const rollInput = document.getElementById('rollNo');
+      if (wrap && rollInput) {
+        if (isPscmr) {
+          wrap.style.display = 'block';
+          rollInput.required = true;
+        } else {
+          wrap.style.display = 'none';
+          rollInput.required = false;
+          rollInput.value = '';
+        }
+      }
     }
 
     function updateDynamicFee() {
@@ -1516,6 +1537,7 @@
       currentFee = isPscmr ? 100 : 200;
       const payBtnFee = document.getElementById('payBtnFee');
       if (payBtnFee) payBtnFee.textContent = `₹${currentFee}`;
+      checkPscmrAdmissionField();
     }
 
     function returnToEditForm() {
@@ -1540,6 +1562,12 @@
       const collegeName = document.getElementById('collegeName').value.trim();
       const branch = document.getElementById('branch').value.trim();
       const year = document.getElementById('year').value;
+      const rollNo = document.getElementById('rollNo') ? document.getElementById('rollNo').value.trim() : '';
+
+      if (isPscmrCollegeName(collegeName) && !rollNo) {
+        showValidationErrorModal('⚠️ ADMISSION / ROLL NUMBER REQUIRED', 'PSCMR CET students must provide their College Admission / Roll Number to register.');
+        return;
+      }
 
       const selectedEvents = ['Technical Quiz', 'Coding Challenge', 'Tech Treasure Hunt', 'Project Expo', 'Prompt Engineering', 'Reels (1 Min)'];
 
@@ -1553,6 +1581,7 @@
         leader_email: leaderEmail,
         leader_phone: leaderPhone,
         college_name: collegeName,
+        roll_no: rollNo,
         branch: branch,
         year: year,
         ieee_member: 'No',

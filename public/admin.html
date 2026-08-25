@@ -522,7 +522,7 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
         <td>${payBadge(st)}<br><span class="amt" style="font-size:13px">₹${esc(r.amount||0)}</span>${r.payment_ref?`<br><span class="muted" style="font-size:11px">UTR: ${esc(r.payment_ref)}</span>`:''}${dupWarningBadge}${payProofBtn}</td>
         <td><b>${esc(r.leader_name)}</b></td>
         <td><a href="mailto:${esc(r.leader_email)}">${esc(r.leader_email)}</a><br><span class="muted">${esc(r.leader_phone)}</span></td>
-        <td>${esc(r.college_name||'—')}<br><span class="muted">${esc(r.branch||'—')} (${esc(r.year||'')})</span></td>
+        <td>${esc(r.college_name||'—')}${r.roll_no ? `<br><span style="font-size:11px; font-weight:800; color:#00e676; background:rgba(0,230,118,0.1); padding:2px 6px; border-radius:4px; display:inline-block; margin-top:2px;">Adm/Roll: ${esc(r.roll_no)}</span>` : ''}<br><span class="muted">${esc(r.branch||'—')} (${esc(r.year||'')})</span></td>
         <td>${ieeeLabel}${r.ieee_id?`<br><span class="muted" style="font-size:11px">ID: ${esc(r.ieee_id)}</span>`:''}<br><span style="font-size:11px; color:var(--accent); font-weight:700;">${esc(ieeeStatus)}</span>${ieeeMismatchBadge}</td>
         <td>${ieeeCardBtn}</td>
         <td class="muted" style="font-size:12.5px;white-space:nowrap">${esc(when)}</td>
