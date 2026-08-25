@@ -379,15 +379,7 @@ app.post('/api/register', async (req, res) => {
       }
     }
 
-    // 3. Check Participant Name Duplicate (case-insensitive)
-    if (cleanName.length > 2) {
-      const existingName = allRows.find(r => (r.leader_name || '').trim().toLowerCase() === cleanName);
-      if (existingName) {
-        errors.push(`🚫 DUPLICATE REGISTRATION BLOCKED: Participant Name '${v.leader_name}' is already registered under Registration ID '${existingName.team_id}'. Duplicate registrations are strictly prohibited.`);
-      }
-    }
-
-    // 4. Check IEEE Membership ID Duplicate
+    // 3. Check IEEE Membership ID Duplicate
     if (cleanIeee.length > 3) {
       const existingIeee = allRows.find(r => (r.ieee_id || '').trim() === cleanIeee);
       if (existingIeee) {
@@ -659,7 +651,16 @@ app.post('/api/admin/login', (req, res) => {
 });
 
 app.get('/api/admin/registrations', requireAdmin, (req, res) => {
-  const rows = db.prepare(`SELECT * FROM registrations ORDER BY id DESC`).all();
+  const allRows = db.prepare(`SELECT * FROM registrations ORDER BY id DESC`).all();
+  // Filter only registrations after payment completion, UTR submission, or IEEE Card proof submission
+  const rows = allRows.filter(r => 
+    r.payment_status === 'Paid' ||
+    (r.payment_ref && String(r.payment_ref).trim().length >= 4) ||
+    r.payment_screenshot ||
+    r.payment_status === 'Pending Verification' ||
+    r.payment_status === 'Pending Payment Confirmation' ||
+    (r.ieee_member === 'Yes' && r.ieee_card && r.ieee_card.length > 20)
+  );
   const totalTeams = rows.length;
 
   let ieeeParticipants = 0;
