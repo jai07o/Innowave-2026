@@ -1410,8 +1410,8 @@
       <div class="fee-slot-card">
         <div class="fee-note">
           1. Fill in your details, IEEE ID Number & Upload your <strong>IEEE Membership Card</strong>.<br>
-          2. Our Admin team will manually verify your IEEE Card.<br>
-          3. Once approved, your active <strong>Payment QR Code</strong> will be unlocked under the Status Lookup below!
+          2. ⚠️ <strong>CRITICAL REQUIREMENT</strong>: Your <strong>Participant Full Name</strong> and <strong>IEEE Membership Number</strong> MUST EXACTLY MATCH your uploaded IEEE Card proof screenshot.<br>
+          3. Pay via UPI QR code and submit your 12-digit UTR transaction ID for instant confirmation!
         </div>
       </div>
 
@@ -1421,14 +1421,17 @@
           <div class="form-group">
             <label>Participant Full Name *</label>
             <input type="text" id="leaderName" required placeholder="Enter your full name">
+            <span style="font-size:11px; color:#f59e0b; font-weight:700; display:block; margin-top:3px;">⚠️ Must EXACTLY match the name on your uploaded IEEE Membership Card details.</span>
           </div>
           <div class="form-group">
             <label>Email Address *</label>
             <input type="email" id="leaderEmail" required placeholder="email@example.com">
+            <span style="font-size:11.5px; color:var(--text-muted); display:block; margin-top:3px;">🔒 Unique email required (no duplicate emails allowed).</span>
           </div>
           <div class="form-group">
             <label>Mobile Number *</label>
             <input type="tel" id="leaderPhone" required placeholder="10-digit mobile number">
+            <span style="font-size:11.5px; color:#00e676; font-weight:600; display:block; margin-top:3px;">📱 Multiple registrations permitted per mobile phone number.</span>
           </div>
           <div class="form-group">
             <label>College / Institution *</label>
@@ -1456,6 +1459,7 @@
           <div class="form-group full">
             <label>IEEE Membership Number (ID) *</label>
             <input type="text" id="ieeeId" required placeholder="Enter your 8-digit IEEE Membership Number">
+            <span style="font-size:11px; color:#f59e0b; font-weight:700; display:block; margin-top:3px;">⚠️ Must EXACTLY match the IEEE Membership Number shown on your uploaded proof.</span>
           </div>
 
           <div class="form-group full">
@@ -1976,10 +1980,13 @@
         }
         pendingRegId = data.id;
         document.getElementById('mainRegForm').style.display = 'none';
-        document.getElementById('ieeeSubmittedRegId').textContent = data.team_id;
-        document.getElementById('statusQueryInput').value = data.team_id;
-        document.getElementById('ieeeSuccessBox').style.display = 'block';
-        document.getElementById('ieeeSuccessBox').scrollIntoView({ behavior: 'smooth' });
+        if (data.upi) {
+          document.getElementById('payAmountDisplay').textContent = `₹${data.amount}`;
+          document.getElementById('qrImgDisplay').src = data.upi.qr;
+          document.getElementById('displayUpiVpa').textContent = data.upi.vpa;
+          document.getElementById('paymentModal').style.display = 'block';
+          document.getElementById('paymentModal').scrollIntoView({ behavior: 'smooth' });
+        }
       } catch (err) {
         console.error(err);
         if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = origText; }

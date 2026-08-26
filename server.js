@@ -66,7 +66,7 @@ async function verifyUtrMatchesScreenshot(utrRef, screenshotBase64) {
   }
 }
 
-async function verifyIeeeCardMatchesScreenshot(ieeeId, cardBase64) {
+async function verifyIeeeCardMatchesScreenshot(ieeeId, leaderName, cardBase64) {
   try {
     if (!ieeeId || !cardBase64 || !cardBase64.includes('base64,')) {
       return { match: false, text: '' };
@@ -81,10 +81,20 @@ async function verifyIeeeCardMatchesScreenshot(ieeeId, cardBase64) {
     const ret = await worker.recognize(imageBuffer);
     const resultText = ret.data.text || '';
 
-    const cleanExtractedText = resultText.replace(/[\s\-\:\/]/g, '');
-    const isMatch = cleanExtractedText.includes(cleanId);
-    console.log(`[OCR IEEE Card Match Check] Target: ${cleanId} | Matched: ${isMatch}`);
-    return { match: isMatch, text: resultText };
+    const cleanExtractedText = resultText.replace(/[\s\-\:\/]/g, '').toLowerCase();
+    const cleanIdMatch = cleanExtractedText.includes(cleanId.toLowerCase());
+
+    let nameMatch = true;
+    if (leaderName && leaderName.trim().length > 2) {
+      const nameParts = leaderName.trim().toLowerCase().split(/\s+/).filter(p => p.length > 2);
+      if (nameParts.length > 0) {
+        nameMatch = nameParts.some(part => cleanExtractedText.includes(part));
+      }
+    }
+
+    const isMatch = cleanIdMatch && nameMatch;
+    console.log(`[OCR IEEE Card Check] Target ID: ${cleanId} | Name: ${leaderName} | ID Match: ${cleanIdMatch} | Name Match: ${nameMatch} | Overall: ${isMatch}`);
+    return { match: isMatch, idMatch: cleanIdMatch, nameMatch: nameMatch, text: resultText };
   } catch (e) {
     console.error('[OCR IEEE Card Match Error]', e.message);
     return { match: false, error: e.message };
@@ -353,33 +363,26 @@ app.post('/api/register', async (req, res) => {
       errors.push('Please upload your IEEE Membership Card / Proof.');
     }
 
-    // Strict Duplicate Prevention (Phone, Email, Participant Name, IEEE ID)
-    const cleanPhone = String(v.leader_phone || '').replace(/\D/g, '').slice(-10);
+    // Duplicate Checks:
+    // 1. Email Address (STRICT UNIQUE - NO EMAIL CLONING ALLOWED)
+    // 2. IEEE Membership ID (STRICT UNIQUE)
+    // (Phone Number & Participant Name CAN BE CLONED / DUPLICATED for multiple event registrations)
     const cleanEmail = (v.leader_email || '').trim().toLowerCase();
-    const cleanName = (v.leader_name || '').trim().toLowerCase();
     const cleanIeee = (v.ieee_id || '').trim();
 
     const existingId = b.existing_id ? parseInt(b.existing_id, 10) : null;
     const allRows = db.prepare(`SELECT id, team_id, leader_phone, leader_name, leader_email, ieee_id FROM registrations`).all()
       .filter(r => !existingId || r.id !== existingId);
 
-    // 1. Check Phone Number Duplicate (match clean 10 digits)
-    if (cleanPhone.length === 10) {
-      const existingPhone = allRows.find(r => String(r.leader_phone || '').replace(/\D/g, '').slice(-10) === cleanPhone);
-      if (existingPhone) {
-        errors.push(`🚫 DUPLICATE REGISTRATION BLOCKED: Phone number '${v.leader_phone}' is already registered under Registration ID '${existingPhone.team_id}' (${existingPhone.leader_name}). Duplicate registrations are strictly prohibited.`);
-      }
-    }
-
-    // 2. Check Email Address Duplicate (case-insensitive)
+    // Check Email Address Duplicate (case-insensitive - NO CLONING ALLOWED)
     if (cleanEmail) {
       const existingEmail = allRows.find(r => (r.leader_email || '').trim().toLowerCase() === cleanEmail);
       if (existingEmail) {
-        errors.push(`🚫 DUPLICATE REGISTRATION BLOCKED: Email '${v.leader_email}' is already registered under Registration ID '${existingEmail.team_id}' (${existingEmail.leader_name}).`);
+        errors.push(`🚫 DUPLICATE REGISTRATION BLOCKED: Email '${v.leader_email}' is already registered under Registration ID '${existingEmail.team_id}' (${existingEmail.leader_name}). Duplicate email addresses are not allowed.`);
       }
     }
 
-    // 3. Check IEEE Membership ID Duplicate
+    // Check IEEE Membership ID Duplicate
     if (cleanIeee.length > 3) {
       const existingIeee = allRows.find(r => (r.ieee_id || '').trim() === cleanIeee);
       if (existingIeee) {
@@ -392,27 +395,30 @@ app.post('/api/register', async (req, res) => {
     const { amount, label } = computeBrochureFee(v.ieee_count, v.non_ieee_count, v.college_name);
     const isIeeeMember = (v.ieee_member === 'Yes');
     let ieeeStatus = isIeeeMember ? 'Pending Card Verification' : 'N/A';
-    let initialPaymentStatus = isIeeeMember ? 'IEEE Verification Needed' : 'Pending Payment Confirmation';
+    let initialPaymentStatus = 'Pending Payment Confirmation';
     let ieeeOcrMismatch = 0;
     let ieeeWarning = null;
 
     if (isIeeeMember && v.ieee_card && v.ieee_id) {
       try {
-        const ocrRes = await verifyIeeeCardMatchesScreenshot(v.ieee_id, v.ieee_card);
+        const ocrRes = await verifyIeeeCardMatchesScreenshot(v.ieee_id, v.leader_name, v.ieee_card);
         if (ocrRes.match) {
-          ieeeStatus = 'Pending Card Verification (IEEE ID OCR Verified)';
+          ieeeStatus = 'Pending Card Verification (IEEE ID & Name OCR Verified)';
         } else {
-          // 🚫 BLOCK SUBMISSION: Pop up error alert on frontend and do NOT send to Admin/DB!
+          // 🚫 BLOCK SUBMISSION: Pop up error alert on frontend if IEEE ID / Name fails to match uploaded card screenshot
+          let mismatchDetails = [];
+          if (!ocrRes.idMatch) mismatchDetails.push(`• IEEE Membership ID '${v.ieee_id}' was not detected in card image.`);
+          if (!ocrRes.nameMatch) mismatchDetails.push(`• Participant Name '${v.leader_name}' was not detected in card image.`);
           return res.status(400).json({
             ok: false,
-            errors: [`⚠️ IEEE CARD ID MISMATCH DETECTED:\n\nThe entered IEEE Membership ID '${v.ieee_id}' was NOT found inside your uploaded IEEE Card proof screenshot.\n\nPlease check your IEEE Membership ID number or re-upload a clear image of your official IEEE Card.`]
+            errors: [`⚠️ IEEE CARD PROOF MISMATCH DETECTED:\n\n${mismatchDetails.join('\n')}\n\nPlease ensure your Participant Name and IEEE Membership ID EXACTLY MATCH your uploaded IEEE Membership Card screenshot.`]
           });
         }
       } catch (err) {
         console.error('[IEEE Card OCR Error]', err.message);
         return res.status(400).json({
           ok: false,
-          errors: [`⚠️ IEEE CARD OCR UNABLE TO VERIFY:\n\nUnable to read IEEE Membership ID from uploaded card image. Please re-upload a clear, high-resolution screenshot of your official IEEE Card.`]
+          errors: [`⚠️ IEEE CARD OCR UNABLE TO VERIFY:\n\nUnable to read IEEE Membership details from uploaded card image. Please re-upload a clear, high-resolution screenshot of your official IEEE Card.`]
         });
       }
     }
@@ -447,20 +453,7 @@ app.post('/api/register', async (req, res) => {
       regId = info.lastInsertRowid;
     }
 
-    if (isIeeeMember) {
-      return res.json({
-        ok: true,
-        id: regId,
-        team_id,
-        amount,
-        fee_label: label,
-        is_ieee: true,
-        ieee_verification_status: ieeeStatus,
-        message: ieeeOcrMismatch ? 'Your IEEE Membership Card proof has been submitted. Notice: Entered IEEE ID does not match card image text and is pending Admin review.' : 'Your IEEE Membership Card proof has been submitted for Admin Verification. Once verified by our team, your payment QR code will be activated!'
-      });
-    }
-
-    // Build UPI intent + QR for Non-IEEE direct payment
+    // Build UPI intent + QR code for direct payment (IEEE & Non-IEEE members)
     const note = `InnoWave-2k26 ${team_id}`;
     const upiUri = `upi://pay?pa=${encodeURIComponent(UPI_VPA)}&pn=${encodeURIComponent(UPI_PAYEE_NAME)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`;
     const qr = await QRCode.toDataURL(upiUri, { margin: 1, width: 320, color: { dark: '#081226', light: '#ffffff' } });
@@ -471,7 +464,8 @@ app.post('/api/register', async (req, res) => {
       team_id,
       amount,
       fee_label: label,
-      is_ieee: false,
+      is_ieee: isIeeeMember,
+      ieee_verification_status: ieeeStatus,
       upi: { vpa: UPI_VPA, name: UPI_PAYEE_NAME, note, upiUri, qr }
     });
   } catch (e) {
