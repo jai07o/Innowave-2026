@@ -157,11 +157,13 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'innowave2k26';
 const UPI_VPA = process.env.UPI_VPA || '6309419599@axl';          // <-- Collection UPI ID
 const UPI_PAYEE_NAME = process.env.UPI_PAYEE_NAME || 'PSCMR IEEE Student Branch';
 
-// ---------- Database ----------
-const DATA_DIR = path.join(__dirname, 'data');
+// ---------- Database & Persistent Storage ----------
+const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 const db = new Database(path.join(DATA_DIR, 'innowave.db'));
 db.pragma('journal_mode = WAL');
+db.pragma('synchronous = NORMAL');
+db.pragma('foreign_keys = ON');
 
 db.exec(`
 CREATE TABLE IF NOT EXISTS registrations (

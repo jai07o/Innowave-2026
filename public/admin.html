@@ -607,7 +607,7 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
 </div>
 
 <script>
-  let TOKEN = sessionStorage.getItem('iw_token') || '';
+  let TOKEN = localStorage.getItem('iw_token') || sessionStorage.getItem('iw_token') || '';
   let DATA = [];
 
   async function doLogin(){
@@ -617,12 +617,23 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
     try{
       const r = await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})});
       const j = await r.json();
-      if(j.ok){ TOKEN=j.token; sessionStorage.setItem('iw_token',TOKEN); showDash(); }
+      if(j.ok){ 
+        TOKEN=j.token; 
+        localStorage.setItem('iw_token', TOKEN); 
+        sessionStorage.setItem('iw_token', TOKEN); 
+        showDash(); 
+      }
       else err.textContent = j.error||'Incorrect password';
     }catch(e){ err.textContent='Network error'; }
   }
   let autoRefreshInterval = null;
-  function logout(){ if(autoRefreshInterval) clearInterval(autoRefreshInterval); sessionStorage.removeItem('iw_token'); TOKEN=''; location.reload(); }
+  function logout(){ 
+    if(autoRefreshInterval) clearInterval(autoRefreshInterval); 
+    localStorage.removeItem('iw_token'); 
+    sessionStorage.removeItem('iw_token'); 
+    TOKEN=''; 
+    location.reload(); 
+  }
   function showDash(){
     document.getElementById('loginWrap').style.display='none';
     document.getElementById('dash').style.display='block';
