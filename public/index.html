@@ -2825,9 +2825,8 @@
         border-radius: 18px !important;
       }
 
-      /* Mobile Patrons & Coordinators Clean Responsive Layout */
-      .patrons-card-grid,
-      .contacts-grid {
+      /* Mobile Patrons & Coordinators Responsive Layout (2-Column Grid for Coordinators) */
+      .patrons-card-grid {
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
@@ -2835,11 +2834,16 @@
         width: 100% !important;
       }
 
-      .patron-card,
-      .contact-card {
+      .contacts-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+        width: 100% !important;
+      }
+
+      .patron-card {
         width: 100% !important;
         max-width: 440px !important;
-        min-width: 0 !important;
         padding: 14px 16px !important;
         text-align: center !important;
         border-radius: 16px !important;
@@ -2847,20 +2851,41 @@
         margin: 0 auto !important;
       }
 
+      .contact-card {
+        width: 100% !important;
+        padding: 12px 10px !important;
+        text-align: center !important;
+        border-radius: 14px !important;
+        box-sizing: border-box !important;
+      }
+
+      .contact-card .contact-name {
+        font-size: 11.5px !important;
+        font-weight: 800 !important;
+        line-height: 1.25 !important;
+        margin-bottom: 6px !important;
+      }
+
       .contact-card .coordinator-phone-wrap {
         display: flex !important;
+        flex-direction: column !important;
         align-items: center !important;
-        justify-content: space-between !important;
+        justify-content: center !important;
+        gap: 6px !important;
         width: 100% !important;
-        margin-top: 8px !important;
-        padding-top: 8px !important;
-        flex-wrap: nowrap !important;
+        margin-top: 6px !important;
+        padding-top: 6px !important;
+        border-top: 1px dashed rgba(255, 255, 255, 0.1) !important;
+      }
+
+      .contact-card .coordinator-number {
+        font-size: 11px !important;
+        font-weight: 700 !important;
       }
 
       .contacts-grid .contact-card:last-child {
-        grid-column: auto !important;
-        width: 100% !important;
-        max-width: 440px !important;
+        grid-column: 1 / -1 !important;
+        max-width: 320px !important;
         margin: 0 auto !important;
       }
 
