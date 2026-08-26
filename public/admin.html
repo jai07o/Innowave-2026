@@ -297,7 +297,28 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
 [data-theme="light"] th, body.light-theme th, [data-theme="light"] table th, body.light-theme table th { background: #0f172a !important; color: #ffffff !important; font-weight: 800 !important; text-transform: uppercase; letter-spacing: 0.5px; }
 [data-theme="light"] td, body.light-theme td, [data-theme="light"] table td, body.light-theme table td { color: #09090b !important; font-weight: 600 !important; border-bottom: 1.5px solid #cbd5e1 !important; }
 [data-theme="light"] tr:hover td, body.light-theme tr:hover td { background: #eff6ff !important; }
-[data-theme="light"] input, [data-theme="light"] select, body.light-theme input, body.light-theme select { background: #ffffff !important; color: #09090b !important; border: 2.5px solid #64748b !important; font-weight: 700 !important; }
+    @media (max-width: 768px) {
+      .accreditation-header-wrapper {
+        padding: 4px 0 !important;
+      }
+      .accreditation-header-wrapper img {
+        height: 75px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        object-fit: contain !important;
+      }
+    }
+    @media (max-width: 480px) {
+      .accreditation-header-wrapper {
+        padding: 2px 0 !important;
+      }
+      .accreditation-header-wrapper img {
+        height: 60px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        object-fit: contain !important;
+      }
+    }
 </style>
 </head>
 <body>
