@@ -1854,8 +1854,13 @@
     }
     animate();
 
-    // Form & Dynamic Fee
+    // Form & Dynamic Fee & Global Upload State
+    let uploadedIeeeCardBase64 = null;
+    let uploadedScreenshotBase64 = null;
+    let pendingRegId = null;
+    let lastStatusData = null;
     let currentFee = 50;
+
     function isPscmrCollegeName(cn) {
       const c = (cn || '').toLowerCase();
       return c.includes('pscmr') || c.includes('potti sriramulu') || c.includes('chalavadi') || c.includes('mallikarjuna rao');
