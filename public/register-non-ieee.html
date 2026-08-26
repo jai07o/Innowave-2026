@@ -2014,24 +2014,28 @@
         const actWrap = document.getElementById('resActionWrap');
         lastStatusData = data;
 
-        if (data.payment_status === 'Paid') {
-          badge.textContent = '🟢 PAID & CONFIRMED';
-          badge.style.color = '#00e676';
+        if (data.payment_status === 'Paid' || data.payment_status === 'Pending Payment Confirmation' || data.payment_status === 'Verification Submitted') {
+          badge.textContent = data.payment_status === 'Paid' ? '🟢 PAID & CONFIRMED' : '🟡 PAYMENT VERIFICATION SUBMITTED';
+          badge.style.color = data.payment_status === 'Paid' ? '#00e676' : '#00d4ff';
           actWrap.innerHTML = `
-            <div style="font-size:14px; color:#00e676; font-weight:700; margin-bottom:10px;">✓ Registration & Payment Verified & Confirmed!</div>
-            <button type="button" class="btn-primary-lg" style="width:100%; background:linear-gradient(135deg, #00e676 0%, #00b0ff 100%); color:#041220; font-weight:800; border:none; padding:12px;" onclick="openReceiptFromStatus()">
+            <div style="font-size:14px; color:#00e676; font-weight:700; margin-bottom:10px;">✓ Registration & Payment Submitted!</div>
+            <button type="button" class="btn-primary-lg" style="width:100%; background:linear-gradient(135deg, #00e676 0%, #00b0ff 100%); color:#041220; font-weight:800; border:none; padding:12px; margin-bottom:10px;" onclick="openReceiptFromStatus()">
               🧾 VIEW & DOWNLOAD OFFICIAL RECEIPT SLIP →
             </button>
+            <a href="https://chat.whatsapp.com/G2WlPqnRVYdIvVti3gZL2S?s=cl&p=a&ilr=0" target="_blank"
+              style="display:flex; align-items:center; justify-content:center; gap:8px; background:linear-gradient(135deg, #25d366 0%, #128c7e 100%); color:#ffffff; font-weight:900; font-size:13.5px; text-decoration:none; padding:12px; border-radius:12px; box-shadow:0 4px 15px rgba(37,211,102,0.35);">
+              💬 JOIN OFFICIAL INNOWAVE-2K26 WHATSAPP GROUP →
+            </a>
           `;
         } else {
           const isUnverified = (data.payment_status === 'Pending Verification' || data.payment_status === 'Unverified');
-          badge.textContent = isUnverified ? '🟡 UNVERIFIED — PENDING ADMIN VERIFICATION' : (data.payment_status === 'Pending Payment Confirmation' ? '🟡 UTR SUBMITTED — ADMIN CONFIRMATION PENDING' : '🟡 PAYMENT PENDING');
+          badge.textContent = isUnverified ? '🟡 UNVERIFIED — PENDING ADMIN VERIFICATION' : '🟡 PAYMENT PENDING';
           badge.style.color = '#f59e0b';
 
           if (data.upi) {
             actWrap.innerHTML = `
           <div style="font-size:13px; color:var(--text-muted); margin-bottom:8px;">
-            ${isUnverified ? '⚠️ Payment status is Unverified by Admin. Official receipt slip is locked until Admin verifies payment.' : (data.payment_status === 'Pending Payment Confirmation' ? 'UTR submitted & under verification. You can re-view your Payment QR code anytime below:' : 'Scan QR code to complete payment and submit UTR:')}
+            ${isUnverified ? '⚠️ Payment status is Unverified by Admin. Official receipt slip is locked until Admin verifies payment.' : 'Scan QR code to complete payment and submit UTR:'}
           </div>
           <button type="button" class="btn-primary-lg" style="margin-top:4px; width:100%;" onclick="openPaymentModalWithData()">
             📲 OPEN PAYMENT QR CODE & SUBMIT UTR →
