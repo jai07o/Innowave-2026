@@ -432,7 +432,7 @@ app.post('/api/register', async (req, res) => {
       try {
         const ocrRes = await verifyIeeeCardMatchesScreenshot(v.ieee_id, v.leader_name, v.ieee_card);
         if (ocrRes.match) {
-          ieeeStatus = 'Pending Card Verification (AI Verified - IEEE ID & Name Matched)';
+          ieeeStatus = 'Card Approved (AI Verified - IEEE ID & Name Matched)';
           ieeeOcrMismatch = 0;
         } else {
           ieeeStatus = 'Pending Card Verification (Admin Review Required)';
