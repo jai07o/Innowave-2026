@@ -2799,22 +2799,43 @@
         border-radius: 18px !important;
       }
 
-      /* Mobile Chief Patrons & Co-ordinators Compact 2-Column Grid */
+      /* Mobile Patrons & Coordinators Clean Responsive Layout */
       .patrons-card-grid,
       .contacts-grid {
-        display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 8px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 12px !important;
+        width: 100% !important;
       }
 
       .patron-card,
       .contact-card {
         width: 100% !important;
+        max-width: 440px !important;
         min-width: 0 !important;
-        max-width: 100% !important;
-        padding: 10px 6px !important;
+        padding: 14px 16px !important;
         text-align: center !important;
-        border-radius: 10px !important;
+        border-radius: 16px !important;
+        box-sizing: border-box !important;
+        margin: 0 auto !important;
+      }
+
+      .contact-card .coordinator-phone-wrap {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+        margin-top: 8px !important;
+        padding-top: 8px !important;
+        flex-wrap: nowrap !important;
+      }
+
+      .contacts-grid .contact-card:last-child {
+        grid-column: auto !important;
+        width: 100% !important;
+        max-width: 440px !important;
+        margin: 0 auto !important;
       }
 
       /* Mobile Global High Vertical Gap Reduction */
@@ -2861,22 +2882,6 @@
       .fee-slot-card {
         padding: 12px 8px !important;
         margin-bottom: 14px !important;
-      }
-
-      .contacts-grid {
-        gap: 10px !important;
-      }
-
-      .contact-card {
-        padding: 12px 8px !important;
-      }
-
-      .contacts-grid .contact-card:last-child {
-        grid-column: 1 / -1 !important;
-        justify-self: center !important;
-        width: 100% !important;
-        max-width: 280px !important;
-        margin: 0 auto !important;
       }
 
       /* Mobile Modal & Popup Overlays */
