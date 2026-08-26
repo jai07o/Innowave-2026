@@ -582,7 +582,8 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
 <div class="modal-overlay" id="proofModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:1000; align-items:center; justify-content:center; padding:20px;">
   <div style="background:var(--bg-panel); border:1.5px solid var(--accent); border-radius:12px; max-width:650px; width:100%; padding:24px; text-align:center; position:relative;">
     <button onclick="closeProofModal()" style="position:absolute; top:16px; right:16px; background:none; border:none; color:#fff; font-size:22px; cursor:pointer;">✕</button>
-    <h3 style="font-family:'Space Grotesk',sans-serif; color:var(--accent); font-size:18px; margin-bottom:14px;" id="proofTitle">IEEE Membership Card Proof</h3>
+    <h3 style="font-family:'Space Grotesk',sans-serif; color:var(--accent); font-size:18px; margin-bottom:12px;" id="proofTitle">IEEE Membership Card Proof</h3>
+    <div id="proofHeaderInfo" style="margin-bottom:14px; padding:12px; background:rgba(0,212,255,0.06); border:1px solid rgba(0,212,255,0.2); border-radius:10px; display:none; flex-wrap:wrap; justify-content:center; gap:12px; font-size:14px;"></div>
     <div style="max-height:70vh; overflow:auto; border-radius:8px; border:1px solid var(--border); background:#000; padding:10px;">
       <img id="proofImg" src="" style="max-width:100%; height:auto; display:inline-block;" alt="Proof Image">
     </div>
@@ -729,11 +730,28 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
     }).join('');
   }
 
+  function isPscmrCollege(college) {
+    if (!college) return false;
+    const c = String(college).toLowerCase();
+    return c.includes('pscmr') || c.includes('pscmrcet') || c.includes('potti sriramulu') || c.includes('chalavadi');
+  }
+
   function viewPaymentProofModal(teamId, id) {
     const row = DATA.find(r => r.id === id);
     if (!row || !row.payment_screenshot) { alert('No payment screenshot proof uploaded for this participant.'); return; }
     document.getElementById('proofTitle').textContent = `Payment Proof Screenshot — ${teamId} (${row.leader_name})`;
     document.getElementById('proofImg').src = row.payment_screenshot;
+
+    const infoBox = document.getElementById('proofHeaderInfo');
+    if (infoBox) {
+      infoBox.innerHTML = `
+        <div style="background:rgba(0,230,118,0.15); padding:8px 14px; border-radius:8px; border:1px solid #00e676; color:#ffffff; font-weight:800; font-size:13.5px; display:flex; align-items:center; gap:6px;">
+          💳 <span style="color:#b9f6ca;">Submitted 12-Digit UTR:</span> <span style="color:#00e676; font-size:15px;">${esc(row.payment_ref || 'N/A')}</span>
+        </div>
+      `;
+      infoBox.style.display = 'flex';
+    }
+
     document.getElementById('proofModalActions').innerHTML = `
       <button class="btn gold" onclick="setStatus(${id},'Paid'); closeProofModal();">✓ Verify & Confirm Payment</button>
       <button class="btn" style="border-color:#cbd5e1; color:#cbd5e1;" onclick="closeProofModal();">Close</button>
@@ -746,6 +764,29 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
     if (!row || !row.ieee_card) { alert('No card proof uploaded for this participant.'); return; }
     document.getElementById('proofTitle').textContent = `IEEE Membership Card Proof — ${teamId} (${row.leader_name})`;
     document.getElementById('proofImg').src = row.ieee_card;
+
+    const isPscmr = isPscmrCollege(row.college_name);
+    const infoBox = document.getElementById('proofHeaderInfo');
+
+    if (infoBox) {
+      let infoHtml = `
+        <div style="background:rgba(0,212,255,0.15); padding:8px 14px; border-radius:8px; border:1px solid #00d4ff; color:#ffffff; font-weight:800; font-size:13.5px; display:flex; align-items:center; gap:6px;">
+          🔢 <span style="color:#a5f3fc;">IEEE ID Number:</span> <span style="color:#00d4ff; font-size:15px;">${esc(row.ieee_id || 'N/A')}</span>
+        </div>
+      `;
+
+      if (isPscmr) {
+        infoHtml += `
+          <div style="background:rgba(0,230,118,0.15); padding:8px 14px; border-radius:8px; border:1px solid #00e676; color:#ffffff; font-weight:800; font-size:13.5px; display:flex; align-items:center; gap:6px;">
+            🎓 <span style="color:#b9f6ca;">PSCMR Admission / Roll No:</span> <span style="color:#00e676; font-size:15px;">${esc(row.roll_no || 'N/A')}</span>
+          </div>
+        `;
+      }
+
+      infoBox.innerHTML = infoHtml;
+      infoBox.style.display = 'flex';
+    }
+
     document.getElementById('proofModalActions').innerHTML = `
       <button class="btn gold" onclick="verifyIeeeCard(${id},'approve'); closeProofModal();">✓ Approve IEEE Card & Activate Payment QR</button>
       <button class="btn" style="border-color:#ff8f8f; color:#ff8f8f;" onclick="verifyIeeeCard(${id},'reject'); closeProofModal();">✕ Reject IEEE Card</button>
@@ -755,6 +796,8 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
 
   function closeProofModal() {
     document.getElementById('proofModal').style.display = 'none';
+    const infoBox = document.getElementById('proofHeaderInfo');
+    if (infoBox) { infoBox.innerHTML = ''; infoBox.style.display = 'none'; }
   }
 
   async function openAdminIdCard(id) {
