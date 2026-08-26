@@ -512,19 +512,15 @@ app.post('/api/register/:id/confirm', async (req, res) => {
       });
     }
 
+    paymentStatus = 'Pending Verification';
     try {
       const ocrResult = await verifyUtrMatchesScreenshot(cleanRef, screenshot);
-      if (ocrResult.match) {
-        paymentStatus = 'Paid';
-        autoVerified = true;
-      } else {
-        paymentStatus = 'Pending Verification';
+      if (!ocrResult.match) {
         utrMismatch = 1;
         utrWarning = 'UTR number not auto-detected in screenshot. Pending manual Admin review.';
       }
     } catch (err) {
       console.error('[UTR OCR Error]', err.message);
-      paymentStatus = 'Pending Verification';
       utrMismatch = 1;
     }
 

@@ -1668,35 +1668,35 @@
       <button class="modal-close" onclick="closeCongratulationsModal()"
         style="position:absolute; top:14px; right:14px; background:rgba(255,255,255,0.1); border:none; color:var(--text-muted); width:32px; height:32px; border-radius:50%; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
 
-      <div style="font-size:50px; line-height:1; margin-bottom:10px;">🎉 🏆 🎊</div>
+      <div style="font-size:50px; line-height:1; margin-bottom:10px;">📋 🛡️ 📲</div>
       <h2 class="font-space"
-        style="color:#00e676; font-size:24px; font-weight:800; margin-bottom:6px; text-shadow:0 0 15px rgba(0,230,118,0.5);">
-        CONGRATULATIONS!</h2>
+        style="color:#f59e0b; font-size:24px; font-weight:800; margin-bottom:6px; text-shadow:0 0 15px rgba(245,158,11,0.5);">
+        PAYMENT SUBMITTED!</h2>
       <div
-        style="font-size:13px; font-weight:800; color:#f59e0b; margin-bottom:14px; letter-spacing:0.5px; text-transform:uppercase;">
-        YOUR REGISTRATION HAS BEEN SUBMITTED!</div>
+        style="font-size:13px; font-weight:800; color:#00d4ff; margin-bottom:14px; letter-spacing:0.5px; text-transform:uppercase;">
+        SENT TO ADMIN PAGE FOR VERIFICATION & APPROVAL</div>
 
       <p style="color:var(--text-muted); font-size:13px; margin-bottom:18px; line-height:1.5;">
-        Welcome to <b>INNOWAVE-2026 Engineer's Day Celebration</b>! Your payment reference has been successfully
-        submitted and saved.
+        Thank you! Your payment proof and 12-digit UTR reference ID have been submitted to the <b>Admin Team</b>.
+        Our organizers will verify your transaction in the Admin Panel and approve your registration receipt.
       </p>
 
       <!-- Registration Summary Card -->
       <div
-        style="background:rgba(255,255,255,0.05); border:1px solid rgba(0,230,118,0.3); border-radius:16px; padding:18px 14px; margin-bottom:20px; text-align:left; font-size:13.5px; display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        style="background:rgba(255,255,255,0.05); border:1px solid rgba(245,158,11,0.4); border-radius:16px; padding:18px 14px; margin-bottom:20px; text-align:left; font-size:13.5px; display:grid; grid-template-columns:1fr 1fr; gap:12px;">
         <div
-          style="grid-column: span 2; background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.3); padding:10px 14px; border-radius:12px; display:flex; justify-content:space-between; align-items:center;">
+          style="grid-column: span 2; background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.4); padding:10px 14px; border-radius:12px; display:flex; justify-content:space-between; align-items:center;">
           <div>
             <div
               style="color:#94a3b8; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
               YOUR REGISTRATION ID</div>
             <div id="popTeamId"
-              style="color:#00e676; font-size:22px; font-weight:900; font-family:'Space Grotesk',sans-serif;">IW26-XXXX
+              style="color:#00d4ff; font-size:22px; font-weight:900; font-family:'Space Grotesk',sans-serif;">IW26-XXXX
             </div>
           </div>
           <div
-            style="background:#00e676; color:#031527; font-weight:900; font-size:11.5px; padding:5px 10px; border-radius:8px;">
-            ✓ SUBMITTED
+            style="background:#f59e0b; color:#031527; font-weight:900; font-size:11.5px; padding:5px 10px; border-radius:8px;">
+            ⏳ ADMIN REVIEW
           </div>
         </div>
 
@@ -1707,8 +1707,8 @@
         <div>
           <div style="color:var(--text-muted); font-size:11.5px;">Payment Status:</div>
           <div id="popStatus"
-            style="color:#2e7d32; font-weight:800; font-size:12.5px; background:#e8f5e9; padding:3px 8px; border-radius:6px; display:inline-block; margin-top:2px;">
-            ✓ Payment Successful</div>
+            style="color:#d97706; font-weight:800; font-size:12.5px; background:#fef3c7; padding:3px 8px; border-radius:6px; display:inline-block; margin-top:2px;">
+            ⏳ Pending Admin Verification</div>
         </div>
         <div style="grid-column: span 2;">
           <div style="color:var(--text-muted); font-size:11.5px;">UPI Reference (UTR):</div>
@@ -1717,9 +1717,8 @@
       </div>
 
       <div
-        style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:10px; padding:10px; margin-bottom:18px; font-size:12px; color:#f59e0b; text-align:center; font-weight:600;">
-        ℹ️ Note: Official ID cards & Delegate Passes are printed and issued exclusively by event organizers at the admin
-        desk / event venue.
+        style="background:rgba(0,212,255,0.1); border:1px solid rgba(0,212,255,0.3); border-radius:10px; padding:10px; margin-bottom:18px; font-size:12px; color:#00d4ff; text-align:center; font-weight:600;">
+        ℹ️ Once approved by Admin, your official receipt slip can be viewed anytime using your Registration ID!
       </div>
 
       <!-- WhatsApp Group Join CTA -->
@@ -2281,7 +2280,7 @@
         if (document.getElementById('popTeamId')) document.getElementById('popTeamId').textContent = data.team_id;
         if (document.getElementById('popName')) document.getElementById('popName').textContent = data.leader_name;
         if (document.getElementById('popRef')) document.getElementById('popRef').textContent = ref;
-        if (document.getElementById('popStatus')) document.getElementById('popStatus').textContent = '✓ Payment Successful';
+        if (document.getElementById('popStatus')) document.getElementById('popStatus').textContent = '⏳ Pending Admin Verification';
 
         const congModal = document.getElementById('congratulationsModal');
         if (congModal) congModal.style.display = 'flex';
