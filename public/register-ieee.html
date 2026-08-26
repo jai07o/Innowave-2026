@@ -1527,8 +1527,8 @@
         </div>
 
         <div style="text-align:center; margin-top:24px;">
-          <button type="submit" class="btn-primary-lg" id="submitBtn">
-            🛡️ SUBMIT FOR ADMIN VERIFICATION →
+          <button type="submit" class="btn-primary-lg" id="submitBtn" style="min-width:320px; font-size:16px; font-weight:800; padding:18px 36px; border-radius:14px; background:linear-gradient(135deg, #00d4ff 0%, #0052cc 100%); box-shadow:0 8px 30px rgba(0, 212, 255, 0.4); border:none; cursor:pointer; color:#ffffff;">
+            ⚡ VERIFY IEEE CARD & PROCEED TO PAYMENT →
           </button>
         </div>
       </form>
@@ -1980,6 +1980,21 @@
         return;
       }
 
+      if (!uploadedIeeeCardBase64) {
+        const fileInput = document.getElementById('ieeeCard');
+        if (fileInput && fileInput.files && fileInput.files[0]) {
+          uploadedIeeeCardBase64 = await compressImageFile(fileInput.files[0]);
+          if (!uploadedIeeeCardBase64) {
+            uploadedIeeeCardBase64 = await new Promise((resolve) => {
+              const reader = new FileReader();
+              reader.onload = ev => resolve(ev.target.result);
+              reader.onerror = () => resolve(null);
+              reader.readAsDataURL(fileInput.files[0]);
+            });
+          }
+        }
+      }
+
       if (!ieeeId || !uploadedIeeeCardBase64) {
         showValidationErrorModal('⚠️ MISSING IEEE CARD DETAILS', 'Please provide your IEEE Membership ID number and upload your IEEE Card proof screenshot image.');
         return;
@@ -2012,7 +2027,7 @@
       const origText = submitBtn ? submitBtn.innerHTML : '';
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '⏳ SUBMITTING REGISTRATION... PLEASE WAIT';
+        submitBtn.innerHTML = '⚡ RUNNING INSTANT AI ANALYSIS & SUBMITTING...';
       }
 
       try {
@@ -2024,18 +2039,22 @@
         const data = await res.json();
         if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = origText; }
         if (!data.ok) {
-          showValidationErrorModal('⚠️ REGISTRATION / MISMATCH ALERT', data.errors ? data.errors : (data.error || 'Registration failed. Please check your form details.'));
+          showValidationErrorModal('⚠️ REGISTRATION ALERT', data.errors ? data.errors : (data.error || 'Registration failed. Please check your form details.'));
           return;
         }
         pendingRegId = data.id;
         document.getElementById('mainRegForm').style.display = 'none';
-        if (data.upi) {
-          resetPaymentScreenshotModal();
-          document.getElementById('payAmountDisplay').textContent = `₹${data.amount}`;
-          document.getElementById('qrImgDisplay').src = data.upi.qr;
-          document.getElementById('displayUpiVpa').textContent = data.upi.vpa;
-          document.getElementById('paymentModal').style.display = 'block';
-          document.getElementById('paymentModal').scrollIntoView({ behavior: 'smooth' });
+
+        // Show IEEE Card Submitted Confirmation Box
+        const successBox = document.getElementById('ieeeSuccessBox');
+        if (successBox) {
+          document.getElementById('ieeeSubmittedRegId').textContent = data.team_id;
+          successBox.style.display = 'block';
+          successBox.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        if (document.getElementById('statusQueryInput')) {
+          document.getElementById('statusQueryInput').value = data.team_id;
         }
       } catch (err) {
         console.error(err);

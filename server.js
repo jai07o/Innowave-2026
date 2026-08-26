@@ -35,11 +35,14 @@ async function getTesseractWorker() {
     })().catch(err => {
       console.error('[Tesseract.js Init Error]', err);
       tesseractWorkerPromise = null;
-      throw err;
+      return null;
     });
   }
   return tesseractWorkerPromise;
 }
+
+// Pre-initialize Tesseract OCR worker on server startup in background
+getTesseractWorker().catch(e => console.log('[Tesseract.js Lazy Init] Loading on demand.'));
 
 async function verifyUtrMatchesScreenshot(utrRef, screenshotBase64) {
   try {
@@ -52,14 +55,19 @@ async function verifyUtrMatchesScreenshot(utrRef, screenshotBase64) {
     const base64Data = screenshotBase64.split('base64,')[1];
     const imageBuffer = Buffer.from(base64Data, 'base64');
 
-    const worker = await getTesseractWorker();
-    const ret = await worker.recognize(imageBuffer);
-    const resultText = ret.data.text || '';
+    const ocrTask = (async () => {
+      const worker = await getTesseractWorker();
+      if (!worker) return { match: false, text: '' };
+      const ret = await worker.recognize(imageBuffer);
+      const resultText = ret.data.text || '';
+      const cleanExtractedText = resultText.replace(/[\s\-\:\/]/g, '');
+      const isMatch = cleanExtractedText.includes(cleanUtr);
+      console.log(`[OCR UTR Match Check] Target: ${cleanUtr} | Matched: ${isMatch}`);
+      return { match: isMatch, text: resultText };
+    })();
 
-    const cleanExtractedText = resultText.replace(/[\s\-\:\/]/g, '');
-    const isMatch = cleanExtractedText.includes(cleanUtr);
-    console.log(`[OCR UTR Match Check] Target: ${cleanUtr} | Matched: ${isMatch}`);
-    return { match: isMatch, text: resultText };
+    const timeoutTask = new Promise(resolve => setTimeout(() => resolve({ match: false, timeout: true }), 1200));
+    return await Promise.race([ocrTask, timeoutTask]);
   } catch (e) {
     console.error('[OCR UTR Match Error]', e.message);
     return { match: false, error: e.message };
@@ -77,24 +85,30 @@ async function verifyIeeeCardMatchesScreenshot(ieeeId, leaderName, cardBase64) {
     const base64Data = cardBase64.split('base64,')[1];
     const imageBuffer = Buffer.from(base64Data, 'base64');
 
-    const worker = await getTesseractWorker();
-    const ret = await worker.recognize(imageBuffer);
-    const resultText = ret.data.text || '';
+    const ocrTask = (async () => {
+      const worker = await getTesseractWorker();
+      if (!worker) return { match: false, text: '' };
+      const ret = await worker.recognize(imageBuffer);
+      const resultText = ret.data.text || '';
 
-    const cleanExtractedText = resultText.replace(/[\s\-\:\/]/g, '').toLowerCase();
-    const cleanIdMatch = cleanExtractedText.includes(cleanId.toLowerCase());
+      const cleanExtractedText = resultText.replace(/[\s\-\:\/]/g, '').toLowerCase();
+      const cleanIdMatch = cleanExtractedText.includes(cleanId.toLowerCase());
 
-    let nameMatch = true;
-    if (leaderName && leaderName.trim().length > 2) {
-      const nameParts = leaderName.trim().toLowerCase().split(/\s+/).filter(p => p.length > 2);
-      if (nameParts.length > 0) {
-        nameMatch = nameParts.some(part => cleanExtractedText.includes(part));
+      let nameMatch = true;
+      if (leaderName && leaderName.trim().length > 2) {
+        const nameParts = leaderName.trim().toLowerCase().split(/\s+/).filter(p => p.length > 2);
+        if (nameParts.length > 0) {
+          nameMatch = nameParts.some(part => cleanExtractedText.includes(part));
+        }
       }
-    }
 
-    const isMatch = cleanIdMatch && nameMatch;
-    console.log(`[OCR IEEE Card Check] Target ID: ${cleanId} | Name: ${leaderName} | ID Match: ${cleanIdMatch} | Name Match: ${nameMatch} | Overall: ${isMatch}`);
-    return { match: isMatch, idMatch: cleanIdMatch, nameMatch: nameMatch, text: resultText };
+      const isMatch = cleanIdMatch && nameMatch;
+      console.log(`[OCR IEEE Card Check] Target ID: ${cleanId} | Name: ${leaderName} | ID Match: ${cleanIdMatch} | Name Match: ${nameMatch} | Overall: ${isMatch}`);
+      return { match: isMatch, idMatch: cleanIdMatch, nameMatch: nameMatch, text: resultText };
+    })();
+
+    const timeoutTask = new Promise(resolve => setTimeout(() => resolve({ match: false, timeout: true }), 1200));
+    return await Promise.race([ocrTask, timeoutTask]);
   } catch (e) {
     console.error('[OCR IEEE Card Match Error]', e.message);
     return { match: false, error: e.message };
@@ -413,23 +427,17 @@ app.post('/api/register', async (req, res) => {
       try {
         const ocrRes = await verifyIeeeCardMatchesScreenshot(v.ieee_id, v.leader_name, v.ieee_card);
         if (ocrRes.match) {
-          ieeeStatus = 'Pending Card Verification (IEEE ID & Name OCR Verified)';
+          ieeeStatus = 'Pending Card Verification (AI Verified - IEEE ID & Name Matched)';
+          ieeeOcrMismatch = 0;
         } else {
-          // 🚫 BLOCK SUBMISSION: Pop up error alert on frontend if IEEE ID / Name fails to match uploaded card screenshot
-          let mismatchDetails = [];
-          if (!ocrRes.idMatch) mismatchDetails.push(`• IEEE Membership ID '${v.ieee_id}' was not detected in card image.`);
-          if (!ocrRes.nameMatch) mismatchDetails.push(`• Participant Name '${v.leader_name}' was not detected in card image.`);
-          return res.status(400).json({
-            ok: false,
-            errors: [`⚠️ IEEE CARD PROOF MISMATCH DETECTED:\n\n${mismatchDetails.join('\n')}\n\nPlease ensure your Participant Name and IEEE Membership ID EXACTLY MATCH your uploaded IEEE Membership Card screenshot.`]
-          });
+          ieeeStatus = 'Pending Card Verification (Admin Review Required)';
+          ieeeOcrMismatch = 1;
+          ieeeWarning = 'IEEE Card details require Admin verification.';
         }
       } catch (err) {
         console.error('[IEEE Card OCR Error]', err.message);
-        return res.status(400).json({
-          ok: false,
-          errors: [`⚠️ IEEE CARD OCR UNABLE TO VERIFY:\n\nUnable to read IEEE Membership details from uploaded card image. Please re-upload a clear, high-resolution screenshot of your official IEEE Card.`]
-        });
+        ieeeStatus = 'Pending Card Verification (Admin Review Required)';
+        ieeeOcrMismatch = 1;
       }
     }
 
@@ -521,24 +529,19 @@ app.post('/api/register/:id/confirm', async (req, res) => {
     }
 
     try {
-      // 🔍 OCR Screenshot Text Verification: Check if UTR is present inside uploaded payment screenshot!
       const ocrResult = await verifyUtrMatchesScreenshot(cleanRef, screenshot);
       if (ocrResult.match) {
         paymentStatus = 'Paid';
         autoVerified = true;
       } else {
-        // 🚫 BLOCK SUBMISSION: UTR Screenshot Mismatch error popup alert on frontend!
-        return res.status(400).json({
-          ok: false,
-          errors: [`⚠️ PAYMENT SCREENSHOT MISMATCH DETECTED:\n\nThe entered 12-digit UTR number '${ref}' was NOT found inside your uploaded payment screenshot image.\n\nPlease check your 12-digit UPI reference ID or re-upload a clear payment screenshot.`]
-        });
+        paymentStatus = 'Pending Verification';
+        utrMismatch = 1;
+        utrWarning = 'UTR number not auto-detected in screenshot. Pending manual Admin review.';
       }
     } catch (err) {
       console.error('[UTR OCR Error]', err.message);
-      return res.status(400).json({
-        ok: false,
-        errors: [`⚠️ PAYMENT SCREENSHOT OCR UNABLE TO VERIFY:\n\nUnable to read UTR number from uploaded payment screenshot. Please re-upload a clear, high-resolution screenshot of your UPI payment.`]
-      });
+      paymentStatus = 'Pending Verification';
+      utrMismatch = 1;
     }
 
     db.prepare(`UPDATE registrations SET payment_ref=?, payment_screenshot=?, paid_at=?, payment_status=?, duplicate_utr=?, utr_mismatch=?, utr_warning=? WHERE id=?`)

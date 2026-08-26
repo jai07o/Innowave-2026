@@ -3421,8 +3421,8 @@
         margin: 0 !important;
         padding: 0 !important;
         object-fit: fill !important;
-        image-rendering: -webkit-optimize-contrast !important;
       }
+    }
   </style>
 </head>
 
@@ -4844,68 +4844,17 @@
     let currentFee = 100;
 
     function selectMembership(type) {
-      selectedMembership = type;
-      const optIeee = document.getElementById('optIeee');
-      const optNonIeee = document.getElementById('optNonIeee');
-      const ieeeIdWrap = document.getElementById('ieeeIdWrap');
-
       if (type === 'IEEE') {
-        optIeee.classList.add('active');
-        optNonIeee.classList.remove('active');
-        currentFee = 100;
-        ieeeIdWrap.style.display = 'block'; // Show IEEE ID field for IEEE Member
+        window.location.href = 'register-ieee.html';
       } else {
-        optNonIeee.classList.add('active');
-        optIeee.classList.remove('active');
-        currentFee = 200;
-        ieeeIdWrap.style.display = 'none';  // Hide IEEE ID field for Non-IEEE Member
-        document.getElementById('ieeeId').value = '';
+        window.location.href = 'register-non-ieee.html';
       }
-      document.getElementById('payBtnFee').textContent = '₹' + currentFee;
-    }
-
-    let currentRegistration = null;
-    async function submitRegistration(e) {
-      e.preventDefault();
-
-      const ieeeIdVal = document.getElementById('ieeeId').value.trim();
-      if (selectedMembership === 'IEEE' && !ieeeIdVal) {
-        alert('Please enter your IEEE Membership Number.');
-        return;
-      }
-
-      const payload = {
-        leader_name: document.getElementById('leaderName').value,
-        leader_email: document.getElementById('leaderEmail').value,
-        leader_phone: document.getElementById('leaderPhone').value,
-        college_name: document.getElementById('collegeName').value,
-        branch: document.getElementById('branch').value,
-        year: document.getElementById('year').value,
-        ieee_id: selectedMembership === 'IEEE' ? ieeeIdVal : '',
-        ieee_count: selectedMembership === 'IEEE' ? 1 : 0,
-        non_ieee_count: selectedMembership === 'NON-IEEE' ? 1 : 0,
-        events_selected: ['INNOWAVE-2K26 Engineer\'s Day Events']
-      };
-
-      try {
-        const res = await fetch('/api/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        if (data.ok) {
-          currentRegistration = data;
-          document.getElementById('payAmountDisplay').textContent = '₹' + data.amount;
-          document.getElementById('paymentModal').style.display = 'block';
-        } else {
-          alert('Error: ' + (data.errors ? data.errors.join('\n') : 'Registration failed'));
-        }
-      } catch (err) { alert('Network error.'); }
     }
 
     async function confirmUtr() {
-      const utr = document.getElementById('utrRef').value.trim();
+      const utrEl = document.getElementById('utrRef');
+      if (!utrEl) return;
+      const utr = utrEl.value.trim();
       if (!utr || utr.length < 6) { alert('Please enter a valid 12-digit UTR / UPI Reference ID.'); return; }
       try {
         const res = await fetch(`/api/register/${currentRegistration.id}/confirm`, {
@@ -4915,51 +4864,16 @@
         });
         const data = await res.json();
         if (data.ok) {
-          document.getElementById('paymentModal').style.display = 'none';
+          if (document.getElementById('paymentModal')) document.getElementById('paymentModal').style.display = 'none';
 
-          // Populate Printable Receipt Slip
-          document.getElementById('slipTeamId').textContent = data.team_id;
-          document.getElementById('slipLeader').textContent = data.leader_name;
-          document.getElementById('slipAmount').textContent = '₹' + data.amount;
-          document.getElementById('slipRef').textContent = utr;
-          document.getElementById('slipCategory').textContent = selectedMembership === 'IEEE' ? 'IEEE Member (₹100)' : 'Non-IEEE Member (₹200)';
-          document.getElementById('slipIeeeId').textContent = selectedMembership === 'IEEE' ? (document.getElementById('ieeeId').value.trim() || 'N/A') : 'Non-IEEE Participant';
+          if (document.getElementById('slipTeamId')) document.getElementById('slipTeamId').textContent = data.team_id;
+          if (document.getElementById('slipLeader')) document.getElementById('slipLeader').textContent = data.leader_name;
+          if (document.getElementById('slipAmount')) document.getElementById('slipAmount').textContent = '₹' + data.amount;
+          if (document.getElementById('slipRef')) document.getElementById('slipRef').textContent = utr;
 
-          const statusEl = document.getElementById('slipStatusBadge');
-          const popStatusEl = document.getElementById('popStatus');
-
-          if (data.payment_status === 'Paid') {
-            statusEl.textContent = '✓ Payment Successful';
-            statusEl.style.background = '#e8f5e9';
-            statusEl.style.color = '#2e7d32';
-            statusEl.style.border = '1px solid #a5d6a7';
-
-            popStatusEl.textContent = '✓ Payment Successful';
-            popStatusEl.style.background = '#e8f5e9';
-            popStatusEl.style.color = '#2e7d32';
-          } else {
-            statusEl.textContent = '⏳ Pending Verification';
-            statusEl.style.background = '#fff8e1';
-            statusEl.style.color = '#f57f17';
-            statusEl.style.border = '1px solid #ffe082';
-
-            popStatusEl.textContent = '⏳ Pending Verification';
-            popStatusEl.style.background = '#fff8e1';
-            popStatusEl.style.color = '#f57f17';
-          }
-
-          document.getElementById('successSlip').style.display = 'block';
-
-          // Populate & Display Congratulations Popup Modal
-          document.getElementById('popTeamId').textContent = data.team_id;
-          document.getElementById('popName').textContent = data.leader_name;
-          document.getElementById('popAmount').textContent = '₹' + data.amount;
-          document.getElementById('popRef').textContent = utr;
-          document.getElementById('congratulationsModal').style.display = 'flex';
-
-          // Trigger Vibrant Full-Screen Confetti Particle Blast Animation
+          if (document.getElementById('successSlip')) document.getElementById('successSlip').style.display = 'block';
+          if (document.getElementById('congratulationsModal')) document.getElementById('congratulationsModal').style.display = 'flex';
           triggerConfettiBlast();
-
         } else {
           alert('Error: ' + (data.errors ? data.errors.join('\n') : 'Verification failed.'));
         }
@@ -5052,24 +4966,28 @@
     }
 
     function closeCongratulationsModal() {
-      document.getElementById('congratulationsModal').style.display = 'none';
+      const el = document.getElementById('congratulationsModal');
+      if (el) el.style.display = 'none';
     }
 
     function viewAndPrintReceipt() {
       closeCongratulationsModal();
       const slipEl = document.getElementById('successSlip');
-      slipEl.scrollIntoView({ behavior: 'smooth' });
+      if (slipEl) slipEl.scrollIntoView({ behavior: 'smooth' });
       setTimeout(() => window.print(), 400);
     }
 
     function resetRegistrationForm() {
-      document.getElementById('mainRegForm').reset();
-      document.getElementById('utrRef').value = '';
-      document.getElementById('paymentModal').style.display = 'none';
-      document.getElementById('successSlip').style.display = 'none';
+      const regForm = document.getElementById('mainRegForm');
+      if (regForm) regForm.reset();
+      const utr = document.getElementById('utrRef');
+      if (utr) utr.value = '';
+      const payModal = document.getElementById('paymentModal');
+      if (payModal) payModal.style.display = 'none';
+      const slip = document.getElementById('successSlip');
+      if (slip) slip.style.display = 'none';
       closeCongratulationsModal();
-      selectMembership('IEEE');
-      document.getElementById('register').scrollIntoView({ behavior: 'smooth' });
+      window.location.href = 'register-ieee.html';
     }
 
     const eventDetailsData = {
