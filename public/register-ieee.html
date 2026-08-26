@@ -1981,6 +1981,7 @@
         pendingRegId = data.id;
         document.getElementById('mainRegForm').style.display = 'none';
         if (data.upi) {
+          resetPaymentScreenshotModal();
           document.getElementById('payAmountDisplay').textContent = `₹${data.amount}`;
           document.getElementById('qrImgDisplay').src = data.upi.qr;
           document.getElementById('displayUpiVpa').textContent = data.upi.vpa;
@@ -2078,6 +2079,7 @@
       const data = lastStatusData;
       if (!data) return;
       pendingRegId = data.id;
+      resetPaymentScreenshotModal();
       if (document.getElementById('payAmountDisplay')) document.getElementById('payAmountDisplay').textContent = `₹${data.amount}`;
       if (data.upi) {
         if (data.upi.qr) document.getElementById('qrImgDisplay').src = data.upi.qr;
@@ -2361,6 +2363,12 @@
       });
 
       window.addEventListener('paste', (e) => {
+        const payModal = document.getElementById('paymentModal');
+        const isPayModalOpen = payModal && (payModal.style.display === 'block' || payModal.style.display === 'flex');
+
+        if (inputId === 'paymentProofInput' && !isPayModalOpen) return;
+        if (inputId === 'ieeeCard' && isPayModalOpen) return;
+
         const items = (e.clipboardData || (e.originalEvent && e.originalEvent.clipboardData))?.items;
         if (!items) return;
         for (let i = 0; i < items.length; i++) {
@@ -2376,6 +2384,21 @@
           }
         }
       });
+    }
+
+    function resetPaymentScreenshotModal() {
+      uploadedScreenshotBase64 = null;
+      const input = document.getElementById('paymentProofInput');
+      if (input) input.value = '';
+      const utrInput = document.getElementById('utrRef');
+      if (utrInput) utrInput.value = '';
+      const img = document.getElementById('screenshotPreviewImg');
+      if (img) {
+        img.src = '';
+        img.removeAttribute('src');
+      }
+      const wrap = document.getElementById('screenshotPreviewWrap');
+      if (wrap) wrap.style.display = 'none';
     }
 
     document.addEventListener('DOMContentLoaded', () => {
