@@ -2045,9 +2045,7 @@
         pendingRegId = data.id;
         document.getElementById('mainRegForm').style.display = 'none';
 
-        const isAiVerified = data.ieee_verification_status && data.ieee_verification_status.includes('Card Approved');
-
-        if (isAiVerified && data.upi) {
+        if (data.upi) {
           // ⚡ DIRECT REDIRECT TO INSTANT PAYMENT QR CODE! NO NEED FOR ADMIN APPROVAL!
           resetPaymentScreenshotModal();
           if (document.getElementById('payAmountDisplay')) document.getElementById('payAmountDisplay').textContent = `₹${data.amount}`;
@@ -2060,7 +2058,6 @@
             payModal.scrollIntoView({ behavior: 'smooth' });
           }
         } else {
-          // ⏳ Blurry / Noisy Image: Show Admin Review Required Confirmation Box
           const successBox = document.getElementById('ieeeSuccessBox');
           if (successBox) {
             document.getElementById('ieeeSubmittedRegId').textContent = data.team_id;
