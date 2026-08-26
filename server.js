@@ -646,14 +646,13 @@ app.post('/api/admin/login', (req, res) => {
 
 app.get('/api/admin/registrations', requireAdmin, (req, res) => {
   const allRows = db.prepare(`SELECT * FROM registrations ORDER BY id DESC`).all();
-  // Filter only registrations after payment completion, UTR submission, or IEEE Card proof submission
+  // Filter ONLY registrations after completion of details AND payment submission
   const rows = allRows.filter(r => 
     r.payment_status === 'Paid' ||
-    (r.payment_ref && String(r.payment_ref).trim().length >= 4) ||
-    r.payment_screenshot ||
     r.payment_status === 'Pending Verification' ||
-    r.payment_status === 'Pending Payment Confirmation' ||
-    (r.ieee_member === 'Yes' && r.ieee_card && r.ieee_card.length > 20)
+    r.payment_status === 'Verification Submitted' ||
+    (r.payment_ref && String(r.payment_ref).trim().length >= 4) ||
+    (r.payment_screenshot && String(r.payment_screenshot).length > 20)
   );
   const totalTeams = rows.length;
 
