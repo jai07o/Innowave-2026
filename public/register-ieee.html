@@ -30,16 +30,16 @@
     }
 
     [data-theme="light"] {
-      --bg-primary: #f8fafc;
-      --bg-panel: #ffffff;
-      --border: #cbd5e1;
-      --accent: #2563eb;
-      --accent-blue: #1d4ed8;
+      --bg-primary: #f0f4f8;
+      --bg-panel: rgba(255, 255, 255, 0.85);
+      --border: rgba(148, 163, 184, 0.4);
+      --accent: #0284c7;
+      --accent-blue: #2563eb;
       --gold: #d97706;
-      --accent-dim: rgba(37, 99, 235, 0.08);
+      --accent-dim: rgba(2, 132, 199, 0.12);
       --warn: #e11d48;
-      --text-primary: #09090b;
-      --text-muted: #1e293b;
+      --text-primary: #0f172a;
+      --text-muted: #334155;
     }
 
     * {
@@ -54,7 +54,16 @@
     }
 
     html[data-theme="light"] {
-      background: #f4f6fc !important;
+      background: #f0f4f8 !important;
+      background-image: 
+        radial-gradient(at 10% 20%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
+        radial-gradient(at 90% 10%, rgba(129, 140, 248, 0.15) 0px, transparent 50%),
+        radial-gradient(at 50% 80%, rgba(52, 211, 153, 0.12) 0px, transparent 50%),
+        radial-gradient(#cbd5e1 1.2px, transparent 1.2px), 
+        radial-gradient(#cbd5e1 1.2px, #f0f4f8 1.2px) !important;
+      background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px !important;
+      background-position: 0 0, 0 0, 0 0, 0 0, 20px 20px !important;
+      background-attachment: fixed !important;
     }
 
     html[data-theme="dark"] {
@@ -1366,6 +1375,13 @@
 </head>
 
 <body>
+
+  <!-- Floating 3D Glowing Light Mode Animated Orbs -->
+  <div class="light-mode-3d-bg light-mode-only">
+    <div class="light-orb orb-1"></div>
+    <div class="light-orb orb-2"></div>
+    <div class="light-orb orb-3"></div>
+  </div>
 
   <canvas id="webgl-canvas"></canvas>
   <canvas id="confettiCanvas"
