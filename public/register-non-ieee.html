@@ -143,18 +143,22 @@
       --card-bg: #ffffff !important;
     }
 
-    /* Registration Panels & Cards in Light Mode */
+    /* Registration Panels & Cards in 3D Light Mode (Pure Crystal White & Electric Cyan Theme) */
     [data-theme="light"] .registration-panel,
     [data-theme="light"] .reg-card,
     [data-theme="light"] .form-section,
     [data-theme="light"] .fee-slot-card,
+    [data-theme="light"] .modal-content,
     body.light-theme .registration-panel,
     body.light-theme .reg-card,
     body.light-theme .form-section,
-    body.light-theme .fee-slot-card {
-      background: #ffffff !important;
-      border: 1.5px solid #cbd5e1 !important;
-      box-shadow: 0 14px 45px rgba(15, 23, 42, 0.08) !important;
+    body.light-theme .fee-slot-card,
+    body.light-theme .modal-content {
+      background: rgba(255, 255, 255, 0.94) !important;
+      backdrop-filter: blur(24px) !important;
+      border: 2px solid rgba(2, 132, 199, 0.35) !important;
+      box-shadow: 0 20px 50px -10px rgba(2, 132, 199, 0.16), inset 0 2px 0 #ffffff !important;
+      border-radius: 24px !important;
       color: #0f172a !important;
     }
 
