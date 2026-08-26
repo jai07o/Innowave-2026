@@ -303,25 +303,39 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
 [data-theme="light"] p, body.light-theme p { color: #1e293b !important; font-weight: 600 !important; }
 [data-theme="light"] input, body.light-theme input { background: #ffffff !important; color: #09090b !important; border: 2.5px solid #64748b !important; font-weight: 700 !important; }
     @media (max-width: 768px) {
-      .accreditation-header-wrapper {
-        padding: 4px 0 !important;
+      header.accreditation-header-wrapper {
+        height: auto !important;
+        max-height: 65px !important;
+        padding: 2px 0 !important;
+        margin: 0 !important;
+        overflow: hidden !important;
       }
-      .accreditation-header-wrapper img {
-        height: 75px !important;
+      header.accreditation-header-wrapper img {
+        height: 60px !important;
+        max-height: 60px !important;
         width: 100% !important;
         max-width: 100% !important;
         object-fit: contain !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
       }
     }
     @media (max-width: 480px) {
-      .accreditation-header-wrapper {
+      header.accreditation-header-wrapper {
+        height: auto !important;
+        max-height: 52px !important;
         padding: 2px 0 !important;
+        margin: 0 !important;
+        overflow: hidden !important;
       }
-      .accreditation-header-wrapper img {
-        height: 60px !important;
+      header.accreditation-header-wrapper img {
+        height: 48px !important;
+        max-height: 48px !important;
         width: 100% !important;
         max-width: 100% !important;
         object-fit: contain !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
       }
     }
 </style>
