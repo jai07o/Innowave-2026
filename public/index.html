@@ -657,27 +657,45 @@
       letter-spacing: -0.02em;
     }
 
-    /* Brighter Vibrant INNOWAVE 2K26 Header Logo in Light Mode */
+    /* Ultra 3D Vibrant INNOWAVE 2K26 Title & Logo in Light Mode */
     [data-theme="light"] .brand-logo,
     body.light-theme .brand-logo {
       color: #0f172a !important;
       font-weight: 900 !important;
-      text-shadow: 0 2px 10px rgba(15, 23, 42, 0.1);
+      letter-spacing: -0.02em;
     }
 
     [data-theme="light"] .brand-logo .accent-text,
     body.light-theme .brand-logo .accent-text {
-      background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      background: linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #d946ef 100%) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
       font-weight: 900 !important;
-      filter: drop-shadow(0 2px 4px rgba(2, 132, 199, 0.25));
+      filter: drop-shadow(0 2px 8px rgba(2, 132, 199, 0.35)) !important;
     }
 
     [data-theme="light"] .brand-logo .dot,
     body.light-theme .brand-logo .dot {
       background: #0284c7 !important;
       box-shadow: 0 0 10px #0284c7 !important;
+    }
+
+    [data-theme="light"] .hero-title,
+    body.light-theme .hero-title {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0369a1 100%) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      font-weight: 900 !important;
+      filter: drop-shadow(0 4px 15px rgba(15, 23, 42, 0.12)) !important;
+    }
+
+    [data-theme="light"] .hero-title span,
+    body.light-theme .hero-title span {
+      background: linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #d946ef 100%) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      font-weight: 900 !important;
+      filter: drop-shadow(0 4px 16px rgba(2, 132, 199, 0.4)) !important;
     }
 
     /* Hero Badge & Subtitle */
