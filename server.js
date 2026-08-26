@@ -372,8 +372,8 @@ app.post('/api/register', async (req, res) => {
     const cleanEmail = (v.leader_email || '').trim().toLowerCase();
     const cleanIeee = (v.ieee_id || '').trim();
 
-    const existingId = b.existing_id ? parseInt(b.existing_id, 10) : null;
-    const allRows = db.prepare(`SELECT id, team_id, leader_phone, leader_name, leader_email, ieee_id FROM registrations`).all()
+    const cleanRollNo = (v.roll_no || '').trim().toUpperCase();
+    const allRows = db.prepare(`SELECT id, team_id, leader_phone, leader_name, leader_email, ieee_id, roll_no FROM registrations`).all()
       .filter(r => !existingId || r.id !== existingId);
 
     // Check Email Address Duplicate (case-insensitive - NO CLONING ALLOWED)
@@ -381,6 +381,14 @@ app.post('/api/register', async (req, res) => {
       const existingEmail = allRows.find(r => (r.leader_email || '').trim().toLowerCase() === cleanEmail);
       if (existingEmail) {
         errors.push(`🚫 DUPLICATE REGISTRATION BLOCKED: Email '${v.leader_email}' is already registered under Registration ID '${existingEmail.team_id}' (${existingEmail.leader_name}). Duplicate email addresses are not allowed.`);
+      }
+    }
+
+    // Check Admission / Roll Number Duplicate (case-insensitive - NO CLONING ALLOWED)
+    if (cleanRollNo.length >= 3) {
+      const existingRoll = allRows.find(r => (r.roll_no || '').trim().toUpperCase() === cleanRollNo);
+      if (existingRoll) {
+        errors.push(`🚫 DUPLICATE REGISTRATION BLOCKED: Admission / Roll Number '${v.roll_no}' is already registered under Registration ID '${existingRoll.team_id}' (${existingRoll.leader_name}). Duplicate admission numbers are not allowed.`);
       }
     }
 
