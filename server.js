@@ -332,11 +332,16 @@ function nextSeq() {
   return (row.m || 0) + 1;
 }
 
+function pad(n) {
+  return String(n).padStart(4, '0');
+}
+
 // ---------- Step 1: create registration (Pending) + return UPI payment info ----------
 app.post('/api/register', async (req, res) => {
   try {
     const b = req.body || {};
     const errors = [];
+    const existingId = b.existing_id ? parseInt(b.existing_id, 10) : null;
     
     // Parse selected events
     let eventsSelected = b.events_selected || [];
