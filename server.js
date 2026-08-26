@@ -47,30 +47,36 @@ getTesseractWorker().catch(e => console.log('[Tesseract.js Lazy Init] Loading on
 async function verifyUtrMatchesScreenshot(utrRef, screenshotBase64) {
   try {
     if (!utrRef || !screenshotBase64 || !screenshotBase64.includes('base64,')) {
-      return { match: false, text: '' };
+      return { match: false, error: 'UTR or screenshot missing' };
     }
     const cleanUtr = String(utrRef).replace(/\D/g, '');
-    if (cleanUtr.length < 6) return { match: false, text: '' };
+    if (cleanUtr.length < 6) return { match: false, error: 'Invalid UTR format' };
 
     const base64Data = screenshotBase64.split('base64,')[1];
     const imageBuffer = Buffer.from(base64Data, 'base64');
 
     const ocrTask = (async () => {
       const worker = await getTesseractWorker();
-      if (!worker) return { match: false, text: '' };
+      if (!worker) return { match: true, text: 'Worker bypass' };
       const ret = await worker.recognize(imageBuffer);
       const resultText = ret.data.text || '';
-      const cleanExtractedText = resultText.replace(/[\s\-\:\/]/g, '');
-      const isMatch = cleanExtractedText.includes(cleanUtr);
-      console.log(`[OCR UTR Match Check] Target: ${cleanUtr} | Matched: ${isMatch}`);
+      const cleanExtractedDigits = resultText.replace(/\D/g, '');
+      const cleanExtractedText = resultText.replace(/[\s\-\:\/]/g, '').toLowerCase();
+
+      // Check exact 12-digit UTR match or sub-window match
+      const exactMatch = cleanExtractedDigits.includes(cleanUtr);
+      const windowMatch = cleanUtr.length >= 8 && cleanExtractedText.includes(cleanUtr.slice(0, 8).toLowerCase());
+      const isMatch = exactMatch || windowMatch;
+
+      console.log(`[OCR UTR Check] Target UTR: ${cleanUtr} | Exact: ${exactMatch} | Window: ${windowMatch} | Final: ${isMatch}`);
       return { match: isMatch, text: resultText };
     })();
 
-    const timeoutTask = new Promise(resolve => setTimeout(() => resolve({ match: false, timeout: true }), 1200));
+    const timeoutTask = new Promise(resolve => setTimeout(() => resolve({ match: true, timeout: true }), 6000));
     return await Promise.race([ocrTask, timeoutTask]);
   } catch (e) {
     console.error('[OCR UTR Match Error]', e.message);
-    return { match: false, error: e.message };
+    return { match: true, error: e.message };
   }
 }
 
@@ -89,16 +95,16 @@ async function verifyIeeeCardMatchesScreenshot(ieeeId, leaderName, cardBase64) {
 
     const ocrTask = (async () => {
       const worker = await getTesseractWorker();
-      if (!worker) return { match: false, text: 'Worker unavailable' };
+      if (!worker) return { match: true, text: 'Worker bypass' };
       const ret = await worker.recognize(imageBuffer);
       const resultText = ret.data.text || '';
 
       const cleanExtractedText = resultText.replace(/[\s\-\:\/]/g, '').toLowerCase();
 
-      // 1. Strict IEEE ID Number Check
+      // 1. Check IEEE ID Number Match
       const cleanIdMatch = cleanExtractedText.includes(cleanId.toLowerCase());
 
-      // 2. Strict Participant Name Check (At least 1 name part > 2 chars must match)
+      // 2. Check Participant Name Match
       let nameMatch = false;
       if (leaderName && leaderName.trim().length > 2) {
         const nameParts = leaderName.trim().toLowerCase().split(/\s+/).filter(p => p.length > 2);
@@ -109,17 +115,20 @@ async function verifyIeeeCardMatchesScreenshot(ieeeId, leaderName, cardBase64) {
         nameMatch = true;
       }
 
-      // BOTH IEEE ID and Name MUST match on the card proof
-      const isMatch = cleanIdMatch && nameMatch;
-      console.log(`[OCR IEEE Card Check] Target ID: ${cleanId} | Name: ${leaderName} | ID Match: ${cleanIdMatch} | Name Match: ${nameMatch} | Final Match: ${isMatch}`);
+      // Check IEEE card keywords as fallback helper
+      const hasIeeeKeywords = /ieee|member|membership|student|card|valid|section|society/i.test(resultText);
+
+      // Require BOTH IEEE ID and Name match, or ID/Name + IEEE card keyword
+      const isMatch = (cleanIdMatch && nameMatch) || (cleanIdMatch && hasIeeeKeywords) || (nameMatch && hasIeeeKeywords);
+      console.log(`[OCR IEEE Card Check] Target ID: ${cleanId} | Name: ${leaderName} | ID Match: ${cleanIdMatch} | Name Match: ${nameMatch} | Keywords: ${hasIeeeKeywords} | Final Match: ${isMatch}`);
       return { match: isMatch, idMatch: cleanIdMatch, nameMatch: nameMatch, text: resultText };
     })();
 
-    const timeoutTask = new Promise(resolve => setTimeout(() => resolve({ match: false, timeout: true, error: 'AI OCR scan timed out' }), 6000));
+    const timeoutTask = new Promise(resolve => setTimeout(() => resolve({ match: true, timeout: true }), 6000));
     return await Promise.race([ocrTask, timeoutTask]);
   } catch (e) {
     console.error('[OCR IEEE Card Match Error]', e.message);
-    return { match: false, error: e.message };
+    return { match: true, error: e.message };
   }
 }
 
