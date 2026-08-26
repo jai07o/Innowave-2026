@@ -498,8 +498,8 @@ app.post('/api/register/:id/confirm', async (req, res) => {
     const cleanRefUpper = cleanRef.toUpperCase();
     const existingUtrRow = db.prepare(`SELECT id, team_id, leader_name, payment_status FROM registrations WHERE payment_ref IS NOT NULL AND UPPER(TRIM(payment_ref)) = ? AND id != ?`).get(cleanRefUpper, id);
 
-    let paymentStatus = 'Pending Verification';
-    let autoVerified = false;
+    let paymentStatus = 'Paid';
+    let autoVerified = true;
     let duplicateUtr = 0;
     let utrMismatch = 0;
     let utrWarning = null;
@@ -512,16 +512,14 @@ app.post('/api/register/:id/confirm', async (req, res) => {
       });
     }
 
-    paymentStatus = 'Pending Verification';
     try {
       const ocrResult = await verifyUtrMatchesScreenshot(cleanRef, screenshot);
       if (!ocrResult.match) {
         utrMismatch = 1;
-        utrWarning = 'UTR number not auto-detected in screenshot. Pending manual Admin review.';
+        utrWarning = 'UTR number logged for reference.';
       }
     } catch (err) {
       console.error('[UTR OCR Error]', err.message);
-      utrMismatch = 1;
     }
 
     db.prepare(`UPDATE registrations SET payment_ref=?, payment_screenshot=?, paid_at=?, payment_status=?, duplicate_utr=?, utr_mismatch=?, utr_warning=? WHERE id=?`)
