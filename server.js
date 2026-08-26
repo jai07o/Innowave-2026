@@ -390,33 +390,17 @@ app.post('/api/register', async (req, res) => {
     // (Phone Number & Participant Name CAN BE CLONED / DUPLICATED for multiple event registrations)
     const cleanEmail = (v.leader_email || '').trim().toLowerCase();
     const cleanIeee = (v.ieee_id || '').trim();
-
     const cleanRollNo = (v.roll_no || '').trim().toUpperCase();
-    const allRows = db.prepare(`SELECT id, team_id, leader_phone, leader_name, leader_email, ieee_id, roll_no FROM registrations`).all()
-      .filter(r => !existingId || r.id !== existingId);
 
-    // Check Email Address Duplicate (case-insensitive - NO CLONING ALLOWED)
-    if (cleanEmail) {
-      const existingEmail = allRows.find(r => (r.leader_email || '').trim().toLowerCase() === cleanEmail);
-      if (existingEmail) {
-        errors.push(`🚫 DUPLICATE REGISTRATION BLOCKED: Email '${v.leader_email}' is already registered under Registration ID '${existingEmail.team_id}' (${existingEmail.leader_name}). Duplicate email addresses are not allowed.`);
-      }
+    const allRows = db.prepare(`SELECT id, team_id, leader_phone, leader_name, leader_email, ieee_id, roll_no FROM registrations`).all();
+
+    if (!existingId && cleanEmail) {
+      const matchEmail = allRows.find(r => (r.leader_email || '').trim().toLowerCase() === cleanEmail);
+      if (matchEmail) existingId = matchEmail.id;
     }
-
-    // Check Admission / Roll Number Duplicate (case-insensitive - NO CLONING ALLOWED)
-    if (cleanRollNo.length >= 3) {
-      const existingRoll = allRows.find(r => (r.roll_no || '').trim().toUpperCase() === cleanRollNo);
-      if (existingRoll) {
-        errors.push(`🚫 DUPLICATE REGISTRATION BLOCKED: Admission / Roll Number '${v.roll_no}' is already registered under Registration ID '${existingRoll.team_id}' (${existingRoll.leader_name}). Duplicate admission numbers are not allowed.`);
-      }
-    }
-
-    // Check IEEE Membership ID Duplicate
-    if (cleanIeee.length > 3) {
-      const existingIeee = allRows.find(r => (r.ieee_id || '').trim() === cleanIeee);
-      if (existingIeee) {
-        errors.push(`🚫 DUPLICATE REGISTRATION BLOCKED: IEEE Membership ID '${v.ieee_id}' is already registered under Registration ID '${existingIeee.team_id}' (${existingIeee.leader_name}).`);
-      }
+    if (!existingId && cleanIeee.length > 3) {
+      const matchIeee = allRows.find(r => (r.ieee_id || '').trim() === cleanIeee);
+      if (matchIeee) existingId = matchIeee.id;
     }
 
     if (errors.length) return res.status(400).json({ ok: false, errors });
@@ -450,8 +434,9 @@ app.post('/api/register', async (req, res) => {
         db.prepare(`UPDATE registrations SET
           project_title=@project_title, track=@track, events_selected=@events_selected, description=@description,
           leader_name=@leader_name, leader_email=@leader_email, leader_phone=@leader_phone, college_name=@college_name,
-          branch=@branch, year=@year, amount=@amount, fee_label=@fee_label
-          WHERE id=@existingId`).run({ ...v, amount, fee_label: label, existingId });
+          roll_no=@roll_no, branch=@branch, year=@year, ieee_member=@ieee_member, ieee_id=@ieee_id, ieee_card=@ieee_card,
+          ieee_verification_status=@ieee_verification_status, amount=@amount, fee_label=@fee_label
+          WHERE id=@existingId`).run({ ...v, ieee_verification_status: ieeeStatus, amount, fee_label: label, existingId });
       }
     }
 
