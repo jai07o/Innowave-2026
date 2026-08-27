@@ -1529,21 +1529,6 @@
         </div>
       </div>
 
-      <!-- 📜 My Registration History Box (Persisted Down Below Form Details) -->
-      <div id="myHistoryBox" class="reg-card" style="margin-top:28px; padding:24px; display:none;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1.5px solid var(--border); padding-bottom:12px;">
-          <h3 style="font-family:'Space Grotesk',sans-serif; color:var(--accent); font-size:18px; font-weight:800; display:flex; align-items:center; gap:8px;">
-            📜 MY SUBMITTED REGISTRATION HISTORY
-          </h3>
-          <button type="button" onclick="clearMyHistory()" style="background:transparent; border:none; color:var(--text-muted); font-size:12px; font-weight:700; cursor:pointer;">
-            🗑️ Clear History
-          </button>
-        </div>
-        <div id="historyItemsList" style="display:flex; flex-direction:column; gap:12px;">
-          <!-- Dynamically populated history items -->
-        </div>
-      </div>
-
       <!-- Registration & Payment Status Lookup Box -->
       <div id="nonIeeeStatusBox"
         style="margin-top:36px; background:var(--bg-panel); border:1px solid var(--border); border-radius:12px; padding:28px; text-align:center;">
@@ -1871,14 +1856,6 @@
           return;
         }
         pendingRegId = data.id;
-        saveToMyHistory({
-          id: data.id,
-          team_id: data.team_id,
-          leader_name: leaderName,
-          college_name: collegeName,
-          amount: data.amount,
-          payment_status: 'Pending Payment Confirmation'
-        });
         resetPaymentScreenshotModal();
         if (document.getElementById('payAmountDisplay')) document.getElementById('payAmountDisplay').textContent = `₹${data.amount}`;
         if (data.upi) {
@@ -2074,7 +2051,6 @@
         }
 
         pendingRegId = data.id;
-        saveToMyHistory(data);
         document.getElementById('statusResultWrap').style.display = 'block';
         document.getElementById('resTeamId').textContent = `${data.team_id} (ID: ${data.id})`;
         document.getElementById('resDetailsText').innerHTML = `
@@ -2327,73 +2303,6 @@
       const modal = document.getElementById('validationErrorModal');
       if (modal) modal.style.display = 'none';
     }
-
-    // 📜 My Submitted Registration History Persistence Engine
-    function saveToMyHistory(record) {
-      if (!record || !record.team_id) return;
-      try {
-        let history = JSON.parse(localStorage.getItem('innowave_my_history') || '[]');
-        history = history.filter(item => item.team_id !== record.team_id);
-        history.unshift({
-          id: record.id,
-          team_id: record.team_id,
-          leader_name: record.leader_name,
-          college_name: record.college_name,
-          amount: record.amount,
-          payment_status: record.payment_status || 'Pending Payment Confirmation',
-          created_at: record.created_at || new Date().toLocaleDateString()
-        });
-        localStorage.setItem('innowave_my_history', JSON.stringify(history.slice(0, 15)));
-        renderMyHistory();
-      } catch(e) { console.error(e); }
-    }
-
-    function renderMyHistory() {
-      const box = document.getElementById('myHistoryBox');
-      const list = document.getElementById('historyItemsList');
-      if (!box || !list) return;
-      try {
-        const history = JSON.parse(localStorage.getItem('innowave_my_history') || '[]');
-        if (history.length === 0) {
-          box.style.display = 'none';
-          return;
-        }
-        box.style.display = 'block';
-        list.innerHTML = history.map(item => `
-          <div style="background:var(--bg-primary); border:1.5px solid var(--border); border-radius:14px; padding:14px 18px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-            <div>
-              <div style="font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:800; color:var(--accent);">${item.team_id}</div>
-              <div style="font-size:13.5px; font-weight:700; color:var(--text-primary); margin-top:2px;">${item.leader_name} <span style="color:var(--text-muted); font-weight:500;">(${item.college_name || 'PSCMR'})</span></div>
-              <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Date: ${item.created_at || 'Recently'} · Amount: ₹${item.amount || 100}</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span style="font-size:11.5px; font-weight:800; padding:4px 10px; border-radius:12px; background:${item.payment_status === 'Paid' ? 'rgba(0, 230, 118, 0.15)' : 'rgba(2, 132, 199, 0.15)'}; color:${item.payment_status === 'Paid' ? '#00e676' : '#0284c7'}; border:1px solid ${item.payment_status === 'Paid' ? '#00e676' : '#0284c7'};">
-                ${item.payment_status === 'Paid' ? '🟢 PAID' : '🟡 PENDING PAYMENT'}
-              </span>
-              <button type="button" class="btn-primary-lg" style="padding:8px 14px; font-size:12.5px; font-weight:800; border-radius:8px;" onclick="lookupFromHistory('${item.team_id}')">
-                📲 OPEN →
-              </button>
-            </div>
-          </div>
-        `).join('');
-      } catch(e) { console.error(e); }
-    }
-
-    function lookupFromHistory(teamId) {
-      if (document.getElementById('statusQueryInput')) {
-        document.getElementById('statusQueryInput').value = teamId;
-        performStatusCheck();
-        const box = document.getElementById('nonIeeeStatusBox');
-        if (box) box.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-
-    function clearMyHistory() {
-      localStorage.removeItem('innowave_my_history');
-      renderMyHistory();
-    }
-
-    document.addEventListener('DOMContentLoaded', renderMyHistory);
   </script>
 
   <!-- Custom Center-Screen Validation & Mismatch Error Modal -->
