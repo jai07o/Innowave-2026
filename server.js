@@ -95,7 +95,10 @@ async function verifyIeeeCardMatchesScreenshot(ieeeId, leaderName, cardBase64) {
 
     const ocrTask = (async () => {
       const worker = await getTesseractWorker();
-      if (!worker) return { match: true, text: 'Worker bypass' };
+      if (!worker) {
+        console.warn('[OCR Warning] Tesseract worker unavailable. Bypassing OCR check.');
+        return { match: true, text: 'Worker bypass' };
+      }
       const ret = await worker.recognize(imageBuffer);
       const resultText = ret.data.text || '';
 
@@ -115,20 +118,22 @@ async function verifyIeeeCardMatchesScreenshot(ieeeId, leaderName, cardBase64) {
         nameMatch = true;
       }
 
-      // Check IEEE card keywords as fallback helper
+      // Check IEEE card keywords as supplementary helper
       const hasIeeeKeywords = /ieee|member|membership|student|card|valid|section|society/i.test(resultText);
 
-      // Require BOTH IEEE ID and Name match, or ID/Name + IEEE card keyword
-      const isMatch = (cleanIdMatch && nameMatch) || (cleanIdMatch && hasIeeeKeywords) || (nameMatch && hasIeeeKeywords);
-      console.log(`[OCR IEEE Card Check] Target ID: ${cleanId} | Name: ${leaderName} | ID Match: ${cleanIdMatch} | Name Match: ${nameMatch} | Keywords: ${hasIeeeKeywords} | Final Match: ${isMatch}`);
-      return { match: isMatch, idMatch: cleanIdMatch, nameMatch: nameMatch, text: resultText };
+      // AI Match Rule: IEEE ID must match AND (Name must match OR IEEE Card keywords must be present)
+      const isMatch = (cleanIdMatch && nameMatch) || (cleanIdMatch && hasIeeeKeywords);
+
+      console.log(`[AI IEEE Card OCR Check] ID: ${cleanId} | Name: ${leaderName} | ID Match: ${cleanIdMatch} | Name Match: ${nameMatch} | Keywords: ${hasIeeeKeywords} | Final Result: ${isMatch}`);
+
+      return { match: isMatch, idMatch: cleanIdMatch, nameMatch: nameMatch, hasKeywords: hasIeeeKeywords, text: resultText };
     })();
 
-    const timeoutTask = new Promise(resolve => setTimeout(() => resolve({ match: true, timeout: true }), 6000));
+    const timeoutTask = new Promise(resolve => setTimeout(() => resolve({ match: true, timeout: true }), 8000));
     return await Promise.race([ocrTask, timeoutTask]);
   } catch (e) {
-    console.error('[OCR IEEE Card Match Error]', e.message);
-    return { match: true, error: e.message };
+    console.error('[OCR IEEE Card Match Exception]', e.message);
+    return { match: false, error: e.message };
   }
 }
 
@@ -433,10 +438,20 @@ app.post('/api/register', async (req, res) => {
       try {
         const ocrRes = await verifyIeeeCardMatchesScreenshot(v.ieee_id, v.leader_name, v.ieee_card);
         if (!ocrRes.match) {
+          let mismatchDetails = [];
+          if (ocrRes.idMatch === false) {
+            mismatchDetails.push(`• Entered 9-digit IEEE ID '${v.ieee_id}' was NOT found inside your uploaded card proof image.`);
+          }
+          if (ocrRes.nameMatch === false) {
+            mismatchDetails.push(`• Participant Name '${v.leader_name}' was NOT detected inside your uploaded card proof image.`);
+          }
+          if (mismatchDetails.length === 0) {
+            mismatchDetails.push(`• Uploaded image is blurry or not a recognized IEEE Membership Card screenshot.`);
+          }
           return res.status(400).json({
             ok: false,
             errors: [
-              `⚠️ IEEE CARD AI VERIFICATION FAILED:\n\nThe uploaded IEEE Membership Card proof does not match your entered IEEE ID (${v.ieee_id}) or Participant Name (${v.leader_name}).\n\nPlease ensure you upload a clear screenshot of your official IEEE Membership Card showing both your IEEE ID and Name.`
+              `🚫 IEEE CARD AI VERIFICATION FAILED:\n\n${mismatchDetails.join('\n')}\n\nPlease re-upload a clear, legible screenshot of your official IEEE Membership Card showing your IEEE ID & Name.`
             ]
           });
         }
