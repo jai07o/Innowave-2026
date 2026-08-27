@@ -623,6 +623,8 @@ app.get('/api/check-ieee-status', async (req, res) => {
       const phoneDigits = (r.leader_phone || '').replace(/\D/g, '');
       const emailClean = (r.leader_email || '').toLowerCase().trim();
       const ieeeIdDigits = (r.ieee_id || '').replace(/\D/g, '');
+      const nameClean = (r.leader_name || '').toLowerCase().replace(/\s+/g, '');
+      const nameParts = (r.leader_name || '').toLowerCase().split(/\s+/).filter(Boolean);
 
       const refClean = (r.payment_ref || '').toLowerCase().replace(/\s+/g, '');
       const refDigits = (r.payment_ref || '').replace(/\D/g, '');
@@ -634,6 +636,7 @@ app.get('/api/check-ieee-status', async (req, res) => {
         (phoneDigits.length >= 7 && (phoneDigits === qDigits || phoneDigits.endsWith(qDigits) || qDigits.endsWith(phoneDigits))) ||
         (emailClean && emailClean === q.toLowerCase().trim()) ||
         (ieeeIdDigits && qDigits && ieeeIdDigits === qDigits) ||
+        (nameClean && qClean.length >= 2 && (nameClean.includes(qClean) || nameParts.some(p => p === qClean || qClean.includes(p)))) ||
         (refClean && refClean === qClean) ||
         (refDigits && qDigits.length >= 6 && (refDigits === qDigits || refDigits.endsWith(qDigits)))
       );

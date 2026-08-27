@@ -2120,15 +2120,17 @@
             </a>
           `;
         } else {
-          badge.textContent = '🟢 PAYMENT UNLOCKED';
-          badge.style.color = '#00e676';
+          badge.textContent = '🟡 PAYMENT PENDING';
+          badge.style.color = '#f59e0b';
           actWrap.innerHTML = `
-            <div style="font-size:13.5px; color:#00e676; font-weight:700; margin-bottom:8px;">
-              ✓ IEEE Registration verified! Scan QR code below to complete payment (₹${data.amount}) and submit UTR reference:
+            <div style="background:rgba(245, 158, 11, 0.12); border:1.5px solid #f59e0b; border-radius:14px; padding:16px; color:#fef3c7; font-size:13.5px; font-weight:700; line-height:1.55; text-align:center;">
+              ⚠️ Registration record found for <b>${data.leader_name}</b> (${data.team_id})!<br>
+              Payment details are currently <b>PENDING</b>.<br>
+              <div style="font-size:12.5px; color:#fde68a; font-weight:600; margin:8px 0;">Scan QR code below to complete payment (₹${data.amount}) and submit your 12-digit UTR transaction ID:</div>
+              <button type="button" class="btn-primary-lg" style="margin-top:6px; width:100%; padding:14px; font-size:15px; font-weight:800;" onclick="openPaymentModalWithData()">
+                📲 OPEN PAYMENT QR CODE & SUBMIT UTR →
+              </button>
             </div>
-            <button type="button" class="btn-primary-lg" style="margin-top:8px; width:100%;" onclick="openPaymentModalWithData()">
-              📲 OPEN PAYMENT QR CODE & SUBMIT UTR →
-            </button>
           `;
         }
       } catch (err) {
