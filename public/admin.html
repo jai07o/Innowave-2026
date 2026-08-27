@@ -8,24 +8,30 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   @media print {
+    @page {
+      size: A4 portrait;
+      margin: 0 !important;
+    }
     html, body {
       background: #ffffff !important;
       color: #000000 !important;
       margin: 0 !important;
       padding: 0 !important;
-      height: 100% !important;
-      overflow: visible !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      overflow: hidden !important;
     }
     body > *:not(#directPrintArea) {
       display: none !important;
     }
     #directPrintArea {
-      display: block !important;
+      display: flex !important;
       visibility: visible !important;
       position: absolute !important;
+      top: 50% !important;
       left: 50% !important;
-      top: 20px !important;
-      transform: translateX(-50%) !important;
+      transform: translate(-50%, -50%) scale(0.85) !important;
+      transform-origin: center center !important;
       width: 440px !important;
       max-width: 440px !important;
       margin: 0 auto !important;
@@ -35,6 +41,10 @@
       background: transparent !important;
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+      page-break-before: avoid !important;
+      page-break-after: avoid !important;
     }
     #directPrintArea * {
       visibility: visible !important;
@@ -826,130 +836,130 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
       if (data.ok && data.participant) {
         const p = data.participant;
         const cardHtml = `
-          <div class="delegate-pass-card" style="max-width:440px; margin:0 auto; background:#031527; border:2.5px solid #00d4ff; border-radius:24px; color:#fff; text-align:center; overflow:hidden; font-family:'Inter', sans-serif; box-shadow:0 20px 50px rgba(0,0,0,0.6);">
+          <div class="delegate-pass-card" style="max-width:440px; margin:0 auto; background:#031527; border:2.5px solid #00d4ff; border-radius:24px; color:#fff; text-align:center; overflow:hidden; font-family:'Inter', sans-serif; box-shadow:0 20px 50px rgba(0,0,0,0.6); page-break-inside:avoid; break-inside:avoid;">
             <!-- TOP NAVY HEADER -->
-            <div style="background:#03182e; padding:22px 16px 16px; position:relative; border-bottom:3px solid #f59e0b; text-align:center;">
-              <div style="display:inline-block; background:#0a2540; border:1.5px solid #f59e0b; color:#fbbf24; padding:5px 18px; border-radius:20px; font-size:11px; font-weight:800; letter-spacing:1.5px; margin-bottom:8px;">
+            <div style="background:#03182e; padding:16px 14px 12px; position:relative; border-bottom:3px solid #f59e0b; text-align:center;">
+              <div style="display:inline-block; background:#0a2540; border:1.5px solid #f59e0b; color:#fbbf24; padding:4px 16px; border-radius:20px; font-size:10.5px; font-weight:800; letter-spacing:1.5px; margin-bottom:6px;">
                 👑 OFFICIAL DELEGATE PASS
               </div>
-              <div style="color:#ffffff; text-shadow:0 0 12px rgba(0,212,255,0.8), 0 2px 4px rgba(0,0,0,0.9); font-family:'Space Grotesk',sans-serif; font-size:28px; font-weight:900; letter-spacing:1.5px; line-height:1.1; margin:6px 0;">
+              <div style="color:#ffffff; text-shadow:0 0 12px rgba(0,212,255,0.8), 0 2px 4px rgba(0,0,0,0.9); font-family:'Space Grotesk',sans-serif; font-size:25px; font-weight:900; letter-spacing:1.5px; line-height:1.1; margin:4px 0;">
                 INNOWAVE-2K26
               </div>
-              <div style="color:#f59e0b; font-weight:800; font-size:12px; letter-spacing:1.5px; margin-top:4px;">
+              <div style="color:#f59e0b; font-weight:800; font-size:11.5px; letter-spacing:1.5px; margin-top:2px;">
                 ENGINEER'S DAY CELEBRATION
               </div>
-              <div style="color:#cbd5e1; font-size:10px; font-weight:700; letter-spacing:2px; margin-top:2px;">
+              <div style="color:#cbd5e1; font-size:9.5px; font-weight:700; letter-spacing:2px; margin-top:2px;">
                 NATIONAL LEVEL FEST
               </div>
-              <div style="display:inline-block; background:#082a4a; border:1.5px solid #00d4ff; color:#00d4ff; padding:6px 22px; border-radius:20px; font-size:13px; font-weight:900; letter-spacing:1.5px; margin-top:10px;">
+              <div style="display:inline-block; background:#082a4a; border:1.5px solid #00d4ff; color:#00d4ff; padding:5px 20px; border-radius:20px; font-size:12.5px; font-weight:900; letter-spacing:1.5px; margin-top:8px;">
                 🆔 PARTICIPANT ID: ${esc(p.team_id)}
               </div>
             </div>
 
             <!-- MIDDLE LIGHT BODY -->
-            <div style="background:#ffffff; color:#0f172a; padding:18px; text-align:left;">
+            <div style="background:#ffffff; color:#0f172a; padding:14px 14px; text-align:left;">
               <!-- Participant Name Box -->
-              <div style="background:#fefce8; border:1.5px solid #fef08a; border-radius:12px; padding:10px 14px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+              <div style="background:#fefce8; border:1.5px solid #fef08a; border-radius:12px; padding:8px 12px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
                 <div>
-                  <div style="font-size:10px; font-weight:800; color:#854d0e; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">
+                  <div style="font-size:9.5px; font-weight:800; color:#854d0e; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">
                     👤 REGISTERED PARTICIPANT NAME
                   </div>
-                  <div style="font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:800; color:#1e1b4b; line-height:1.2;">
+                  <div style="font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:800; color:#1e1b4b; line-height:1.2;">
                     ${esc(p.leader_name)}
                   </div>
                 </div>
-                <div style="background:#03182e; border:1.5px solid #00d4ff; color:#00d4ff; font-weight:900; font-size:12px; padding:4px 12px; border-radius:8px;">
+                <div style="background:#03182e; border:1.5px solid #00d4ff; color:#00d4ff; font-weight:900; font-size:11.5px; padding:3px 10px; border-radius:8px;">
                   ID: ${esc(p.team_id)}
                 </div>
               </div>
 
               <!-- College Name Box -->
-              <div style="background:#ffffff; border:1.5px solid #e2e8f0; border-left:4px solid #0284c7; border-radius:10px; padding:10px 14px; margin-bottom:10px;">
-                <div style="font-size:10px; font-weight:800; color:#0369a1; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">
+              <div style="background:#ffffff; border:1.5px solid #e2e8f0; border-left:4px solid #0284c7; border-radius:10px; padding:8px 12px; margin-bottom:8px;">
+                <div style="font-size:9.5px; font-weight:800; color:#0369a1; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">
                   🏫 COLLEGE / INSTITUTION NAME
                 </div>
-                <div style="font-size:14px; font-weight:700; color:#0f172a; line-height:1.3;">
+                <div style="font-size:13.5px; font-weight:700; color:#0f172a; line-height:1.25;">
                   ${esc(p.college_name)}
                 </div>
               </div>
 
               <!-- Branch & Year Row -->
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
-                <div style="background:#ffffff; border:1.5px solid #e2e8f0; border-left:4px solid #0284c7; border-radius:10px; padding:8px 12px;">
-                  <div style="font-size:9.5px; font-weight:800; color:#0369a1; text-transform:uppercase;">🎓 BRANCH</div>
-                  <div style="font-size:14px; font-weight:800; color:#0f172a; margin-top:2px;">${esc(p.branch)}</div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+                <div style="background:#ffffff; border:1.5px solid #e2e8f0; border-left:4px solid #0284c7; border-radius:10px; padding:6px 10px;">
+                  <div style="font-size:9px; font-weight:800; color:#0369a1; text-transform:uppercase;">🎓 BRANCH</div>
+                  <div style="font-size:13px; font-weight:800; color:#0f172a; margin-top:1px;">${esc(p.branch)}</div>
                 </div>
-                <div style="background:#ffffff; border:1.5px solid #e2e8f0; border-left:4px solid #0284c7; border-radius:10px; padding:8px 12px;">
-                  <div style="font-size:9.5px; font-weight:800; color:#0369a1; text-transform:uppercase;">📅 YEAR OF STUDY</div>
-                  <div style="font-size:14px; font-weight:800; color:#0f172a; margin-top:2px;">${esc(p.year)}</div>
+                <div style="background:#ffffff; border:1.5px solid #e2e8f0; border-left:4px solid #0284c7; border-radius:10px; padding:6px 10px;">
+                  <div style="font-size:9px; font-weight:800; color:#0369a1; text-transform:uppercase;">📅 YEAR OF STUDY</div>
+                  <div style="font-size:13px; font-weight:800; color:#0f172a; margin-top:1px;">${esc(p.year)}</div>
                 </div>
               </div>
 
               <!-- EVENTS EVALUATION CHECKLIST TABLE -->
-              <div style="border:1.5px solid #cbd5e1; border-radius:10px; overflow:hidden; margin-bottom:4px;">
-                <div style="background:#03182e; color:#ffffff; padding:8px 12px; font-size:11px; font-weight:800; display:flex; justify-content:space-between; align-items:center;">
+              <div style="border:1.5px solid #cbd5e1; border-radius:10px; overflow:hidden; margin-bottom:2px;">
+                <div style="background:#03182e; color:#ffffff; padding:6px 10px; font-size:10.5px; font-weight:800; display:flex; justify-content:space-between; align-items:center;">
                   <span>📋 EVENTS EVALUATION CHECKLIST</span>
-                  <span style="color:#00d4ff; font-size:10px;">INNOWAVE-2K26</span>
+                  <span style="color:#00d4ff; font-size:9.5px;">INNOWAVE-2K26</span>
                 </div>
 
-                <div style="background:#f8fafc; border-bottom:1.5px solid #cbd5e1; padding:6px 10px; font-size:9.5px; font-weight:800; color:#475569; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; text-align:left;">
+                <div style="background:#f8fafc; border-bottom:1.5px solid #cbd5e1; padding:4.5px 10px; font-size:9px; font-weight:800; color:#475569; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; text-align:left;">
                   <div>BROCHURE EVENT NAME</div>
                   <div style="text-align:center;">MARK [✓]</div>
                   <div style="text-align:right;">EVENT HEAD SIGN</div>
                 </div>
 
-                <div style="font-size:11px; color:#0f172a; font-weight:700;">
-                  <div style="border-bottom:1px solid #f1f5f9; padding:7px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
+                <div style="font-size:10.5px; color:#0f172a; font-weight:700;">
+                  <div style="border-bottom:1px solid #f1f5f9; padding:5px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
                     <div>🧠 Technical Quiz</div>
-                    <div style="text-align:center;"><span style="display:inline-block; width:16px; height:16px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
-                    <div style="text-align:right; color:#cbd5e1; font-size:10px;">__________________</div>
+                    <div style="text-align:center;"><span style="display:inline-block; width:14px; height:14px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
+                    <div style="text-align:right; color:#cbd5e1; font-size:9.5px;">__________________</div>
                   </div>
-                  <div style="border-bottom:1px solid #f1f5f9; padding:7px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
+                  <div style="border-bottom:1px solid #f1f5f9; padding:5px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
                     <div>💻 Coding Challenge</div>
-                    <div style="text-align:center;"><span style="display:inline-block; width:16px; height:16px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
-                    <div style="text-align:right; color:#cbd5e1; font-size:10px;">__________________</div>
+                    <div style="text-align:center;"><span style="display:inline-block; width:14px; height:14px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
+                    <div style="text-align:right; color:#cbd5e1; font-size:9.5px;">__________________</div>
                   </div>
-                  <div style="border-bottom:1px solid #f1f5f9; padding:7px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
+                  <div style="border-bottom:1px solid #f1f5f9; padding:5px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
                     <div>🗺️ Tech Treasure Hunt</div>
-                    <div style="text-align:center;"><span style="display:inline-block; width:16px; height:16px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
-                    <div style="text-align:right; color:#cbd5e1; font-size:10px;">__________________</div>
+                    <div style="text-align:center;"><span style="display:inline-block; width:14px; height:14px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
+                    <div style="text-align:right; color:#cbd5e1; font-size:9.5px;">__________________</div>
                   </div>
-                  <div style="border-bottom:1px solid #f1f5f9; padding:7px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
+                  <div style="border-bottom:1px solid #f1f5f9; padding:5px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
                     <div>🚀 Project Expo</div>
-                    <div style="text-align:center;"><span style="display:inline-block; width:16px; height:16px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
-                    <div style="text-align:right; color:#cbd5e1; font-size:10px;">__________________</div>
+                    <div style="text-align:center;"><span style="display:inline-block; width:14px; height:14px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
+                    <div style="text-align:right; color:#cbd5e1; font-size:9.5px;">__________________</div>
                   </div>
-                  <div style="border-bottom:1px solid #f1f5f9; padding:7px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
+                  <div style="border-bottom:1px solid #f1f5f9; padding:5px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
                     <div>🤖 Prompt Engineering</div>
-                    <div style="text-align:center;"><span style="display:inline-block; width:16px; height:16px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
-                    <div style="text-align:right; color:#cbd5e1; font-size:10px;">__________________</div>
+                    <div style="text-align:center;"><span style="display:inline-block; width:14px; height:14px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
+                    <div style="text-align:right; color:#cbd5e1; font-size:9.5px;">__________________</div>
                   </div>
-                  <div style="padding:7px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
+                  <div style="padding:5px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
                     <div>🎬 Reels (1 Min)</div>
-                    <div style="text-align:center;"><span style="display:inline-block; width:16px; height:16px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
-                    <div style="text-align:right; color:#cbd5e1; font-size:10px;">__________________</div>
+                    <div style="text-align:center;"><span style="display:inline-block; width:14px; height:14px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
+                    <div style="text-align:right; color:#cbd5e1; font-size:9.5px;">__________________</div>
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- BOTTOM NAVY FOOTER WITH QR & SIGNATURE -->
-            <div style="background:#021224; padding:14px 18px; color:#ffffff; border-top:2px solid #00d4ff; display:flex; align-items:center; justify-content:space-between;">
+            <div style="background:#021224; padding:10px 14px; color:#ffffff; border-top:2px solid #00d4ff; display:flex; align-items:center; justify-content:space-between;">
               <!-- Left QR Container -->
-              <div style="display:flex; align-items:center; gap:10px;">
-                <div style="background:#ffffff; padding:4px; border-radius:10px; border:2px solid #00d4ff; display:inline-block;">
-                  <img src="${p.qr_code}" style="width:68px; height:68px; display:block;" alt="Scan QR Code">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div style="background:#ffffff; padding:3px; border-radius:8px; border:1.5px solid #00d4ff; display:inline-block;">
+                  <img src="${p.qr_code}" style="width:56px; height:56px; display:block;" alt="Scan QR Code">
                 </div>
                 <div style="text-align:left;">
-                  <div style="font-size:11px; font-weight:900; color:#00d4ff; letter-spacing:0.5px;">SCAN TO VERIFY</div>
-                  <div style="font-size:9.5px; color:#94a3b8; margin-top:2px; line-height:1.2;">Official Pass<br>InnoWave-2k26</div>
+                  <div style="font-size:10.5px; font-weight:900; color:#00d4ff; letter-spacing:0.5px;">SCAN TO VERIFY</div>
+                  <div style="font-size:9px; color:#94a3b8; margin-top:1px; line-height:1.2;">Official Pass<br>InnoWave-2k26</div>
                 </div>
               </div>
 
               <!-- Right Signature Area -->
               <div style="text-align:right;">
-                <div style="color:#64748b; font-size:11px; margin-bottom:4px;">______________________</div>
-                <div style="font-size:10px; font-weight:800; color:#f59e0b; letter-spacing:0.5px;">REGISTRATION SIGNATURE</div>
+                <div style="color:#64748b; font-size:10px; margin-bottom:2px;">______________________</div>
+                <div style="font-size:9.5px; font-weight:800; color:#f59e0b; letter-spacing:0.5px;">REGISTRATION SIGNATURE</div>
               </div>
             </div>
           </div>
