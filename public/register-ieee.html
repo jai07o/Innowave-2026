@@ -2106,21 +2106,11 @@
           badge.textContent = '🔴 IEEE CARD REJECTED';
           badge.style.color = '#ff8f8f';
           actWrap.innerHTML = `<div style="font-size:13.5px; color:#ff8f8f; font-weight:700;">❌ Your IEEE Card proof was marked invalid by Admin. Please contact organizers.</div>`;
-        } else if (data.ieee_verification_status !== 'Card Approved' && data.payment_status !== 'Paid') {
-          badge.textContent = '🟡 IEEE CARD VERIFICATION UNDER PENDING';
-          badge.style.color = '#f59e0b';
+        } else if (data.payment_status === 'Paid') {
+          badge.textContent = '🟢 PAID & CONFIRMED';
+          badge.style.color = '#00e676';
           actWrap.innerHTML = `
-            <div style="background:rgba(245, 158, 11, 0.12); border:1.5px solid #f59e0b; border-radius:14px; padding:16px; color:#fef3c7; font-size:13.5px; font-weight:700; line-height:1.55; text-align:center;">
-              ⏳ Your IEEE Membership Card is under review by Admin.<br>
-              Payment access is locked until Admin verifies your IEEE Card proof.<br>
-              <span style="font-size:12px; color:#fde68a; font-weight:600; display:block; margin-top:6px;">Check back here using your Registration ID or Mobile Number after Admin approval to complete your payment!</span>
-            </div>
-          `;
-        } else if (data.payment_status === 'Paid' || data.payment_status === 'Verification Submitted' || data.payment_status === 'Pending Payment Confirmation') {
-          badge.textContent = data.payment_status === 'Paid' ? '🟢 PAID & CONFIRMED' : '🟡 PAYMENT VERIFICATION SUBMITTED';
-          badge.style.color = data.payment_status === 'Paid' ? '#00e676' : '#00d4ff';
-          actWrap.innerHTML = `
-            <div style="font-size:14px; color:#00e676; font-weight:700; margin-bottom:10px;">✓ Registration & Payment Submitted!</div>
+            <div style="font-size:14px; color:#00e676; font-weight:700; margin-bottom:10px;">✓ Registration & Payment Confirmed!</div>
             <button type="button" class="btn-primary-lg" style="width:100%; background:linear-gradient(135deg, #00e676 0%, #00b0ff 100%); color:#041220; font-weight:800; border:none; padding:12px; margin-bottom:10px;" onclick="openReceiptFromStatus()">
               🧾 VIEW & DOWNLOAD OFFICIAL RECEIPT SLIP →
             </button>
@@ -2130,21 +2120,16 @@
             </a>
           `;
         } else {
-          badge.textContent = '🟡 IEEE CARD SUBMITTED — PAYMENT UNLOCKED';
-          badge.style.color = '#00d4ff';
-
-          if (data.upi) {
-            actWrap.innerHTML = `
-          <div style="font-size:13px; color:var(--text-muted); margin-bottom:8px;">
-            Your IEEE card has been approved by Admin! Scan QR code below to complete payment (₹100) and submit your 12-digit UTR transaction ID:
-          </div>
-          <button type="button" class="btn-primary-lg" style="margin-top:4px; width:100%;" onclick="openPaymentModalWithData()">
-            📲 OPEN PAYMENT QR CODE & SUBMIT UTR →
-          </button>
-        `;
-          } else {
-            actWrap.innerHTML = `<div style="font-size:13px; color:var(--accent); font-weight:700;">⚠️ Registration Status: ${data.payment_status} (Receipt Locked)</div>`;
-          }
+          badge.textContent = '🟢 PAYMENT UNLOCKED';
+          badge.style.color = '#00e676';
+          actWrap.innerHTML = `
+            <div style="font-size:13.5px; color:#00e676; font-weight:700; margin-bottom:8px;">
+              ✓ IEEE Registration verified! Scan QR code below to complete payment (₹${data.amount}) and submit UTR reference:
+            </div>
+            <button type="button" class="btn-primary-lg" style="margin-top:8px; width:100%;" onclick="openPaymentModalWithData()">
+              📲 OPEN PAYMENT QR CODE & SUBMIT UTR →
+            </button>
+          `;
         }
       } catch (err) {
         console.error(err);
