@@ -363,7 +363,7 @@ app.post('/api/register', async (req, res) => {
   try {
     const b = req.body || {};
     const errors = [];
-    const existingId = b.existing_id ? parseInt(b.existing_id, 10) : null;
+    let existingId = b.existing_id ? parseInt(b.existing_id, 10) : null;
     
     // Parse selected events
     let eventsSelected = b.events_selected || [];
@@ -513,8 +513,19 @@ app.post('/api/register', async (req, res) => {
       upi: { vpa: UPI_VPA, name: UPI_PAYEE_NAME, note, upiUri, qr }
     });
   } catch (e) {
-    console.error(e);
-    return res.status(500).json({ ok: false, errors: ['Server error. Please try again.'] });
+    console.error('[Registration Endpoint Error]', e);
+    let errMsg = 'Registration error. Please check your form details and try again.';
+    if (e && e.message) {
+      if (e.message.includes('UNIQUE constraint failed')) {
+        if (e.message.includes('leader_email')) errMsg = '🚫 Email address is already registered.';
+        else if (e.message.includes('ieee_id')) errMsg = '🚫 IEEE Membership ID is already registered.';
+        else if (e.message.includes('roll_no')) errMsg = '🚫 College Admission / Roll Number is already registered.';
+        else errMsg = '🚫 A registration record with matching details already exists.';
+      } else {
+        errMsg = `⚠️ ${e.message}`;
+      }
+    }
+    return res.status(400).json({ ok: false, errors: [errMsg] });
   }
 });
 
