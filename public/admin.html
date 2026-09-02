@@ -625,10 +625,10 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
     const err = document.getElementById('loginErr');
     err.textContent='';
     try{
-      const r = await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})});
+      const r = await fetch('api/admin.php?action=login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pw }) });
       const j = await r.json();
       if(j.ok){ 
-        TOKEN=j.token; 
+        TOKEN = pw; 
         localStorage.setItem('iw_token', TOKEN); 
         sessionStorage.setItem('iw_token', TOKEN); 
         showDash(); 
@@ -658,20 +658,17 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
   }
   async function loadData(){
     try{
-      const r = await fetch('/api/admin/registrations',{headers:{'Authorization':'Bearer '+TOKEN}});
+      const r = await fetch('api/admin.php?action=list&password=' + encodeURIComponent(TOKEN));
       if(r.status===401){ logout(); return; }
       const j = await r.json();
-      DATA = j.rows||[];
-      document.getElementById('stTeams').textContent = j.totalTeams||0;
-      document.getElementById('stPeople').textContent = j.totalParticipants||0;
-      document.getElementById('stIeeeCount').textContent = j.ieeeParticipants||0;
-      document.getElementById('stIeeeMoney').textContent = '₹' + (j.ieeeMoney||0).toLocaleString('en-IN');
-      document.getElementById('stNonIeeeCount').textContent = j.nonIeeeParticipants||0;
-      document.getElementById('stNonIeeeMoney').textContent = '₹' + (j.nonIeeeMoney||0).toLocaleString('en-IN');
-      document.getElementById('stExpected').textContent = '₹' + (j.totalExpectedAmount||0).toLocaleString('en-IN');
-      document.getElementById('stCollected').textContent = '₹' + (j.amountCollected||0).toLocaleString('en-IN');
-      document.getElementById('stGap').textContent = '₹' + (j.collectionGap||0).toLocaleString('en-IN');
-      document.getElementById('stPending').textContent = j.pendingVerification||0;
+      DATA = j.data || [];
+      const s = j.stats || {};
+      if (document.getElementById('stTeams')) document.getElementById('stTeams').textContent = s.total || DATA.length || 0;
+      if (document.getElementById('stPeople')) document.getElementById('stPeople').textContent = s.total || DATA.length || 0;
+      if (document.getElementById('stIeeeCount')) document.getElementById('stIeeeCount').textContent = s.ieee || 0;
+      if (document.getElementById('stNonIeeeCount')) document.getElementById('stNonIeeeCount').textContent = s.non_ieee || 0;
+      if (document.getElementById('stCollected')) document.getElementById('stCollected').textContent = '₹' + (s.amount || 0).toLocaleString('en-IN');
+      if (document.getElementById('stPending')) document.getElementById('stPending').textContent = s.pending_ieee || 0;
       renderRows();
     }catch(e){ console.error(e); }
   }
@@ -830,11 +827,8 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
     document.getElementById('adminIdModal').style.display = 'none';
 
     currentParticipantTeamId = row.team_id || row.id;
-    try {
-      const res = await fetch(`/api/id-card-data/${encodeURIComponent(row.team_id || row.id)}`);
-      const data = await res.json();
-      if (data.ok && data.participant) {
-        const p = data.participant;
+      const p = row;
+      p.qr_code = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(window.location.origin + '/verify-id.html?id=' + (p.team_id || p.id))}`;
         const cardHtml = `
           <div class="delegate-pass-card" style="max-width:440px; margin:0 auto; background:#031527; border:2.5px solid #00d4ff; border-radius:24px; color:#fff; text-align:center; overflow:hidden; font-family:'Inter', sans-serif; box-shadow:0 20px 50px rgba(0,0,0,0.6); page-break-inside:avoid; break-inside:avoid;">
             <!-- TOP NAVY HEADER -->
@@ -977,13 +971,6 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
         setTimeout(() => {
           window.print();
         }, 150);
-      } else {
-        alert('Failed to generate ID Card data.');
-      }
-    } catch(e) {
-      console.error(e);
-      alert('Error generating ID card.');
-    }
   }
 
   function closeAdminIdModal() {
@@ -1017,43 +1004,41 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
   }
 
   async function verifyIeeeCard(id, action) {
-    const res = await fetch('/api/admin/registrations/' + id + '/verify-ieee-card', {
+    const res = await fetch('api/admin.php?action=approve-ieee&password=' + encodeURIComponent(TOKEN), {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
-      body: JSON.stringify({ action })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, status: action === 'approve' ? 'Card Approved' : 'Card Rejected' })
     });
     const data = await res.json();
     if (data.ok) {
-      if (action === 'approve') {
-        alert('✅ IEEE CARD APPROVED!\n\nPayment Link Email sent to participant:\n' + data.payment_url);
-      } else {
-        alert('❌ IEEE Card Rejected.');
-      }
+      alert(action === 'approve' ? '✅ IEEE CARD APPROVED!' : '❌ IEEE Card Rejected.');
     } else {
       alert(data.error || 'Failed to update IEEE card verification status.');
     }
     loadData();
   }
 
-  async function setStatus(id,status){
-    await fetch('/api/admin/registrations/'+id+'/status',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},body:JSON.stringify({status})});
+  async function setStatus(id, status) {
+    await fetch('api/admin.php?action=confirm-payment&password=' + encodeURIComponent(TOKEN), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, status })
+    });
     loadData();
   }
 
-  async function delRow(id){
-    if(!confirm('Delete this registration? This cannot be undone.')) return;
-    await fetch('/api/admin/registrations/'+id,{method:'DELETE',headers:{'Authorization':'Bearer '+TOKEN}});
+  async function delRow(id) {
+    if (!confirm('Delete this registration? This cannot be undone.')) return;
+    await fetch('api/admin.php?action=confirm-payment&password=' + encodeURIComponent(TOKEN), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, status: 'Deleted' })
+    });
     loadData();
   }
 
-  async function downloadExcel(){
-    const r = await fetch('/api/admin/export.xlsx',{headers:{'Authorization':'Bearer '+TOKEN}});
-    if(r.status===401){ logout(); return; }
-    const blob = await r.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href=url; a.download='InnoWave-2k26_Registrations.xlsx'; a.click();
-    URL.revokeObjectURL(url);
+  function downloadExcel() {
+    window.location.href = 'api/admin.php?action=export&password=' + encodeURIComponent(TOKEN);
   }
   async function deleteAllRegistrations() {
     const confirmText = prompt("⚠️ CRITICAL WARNING: You are about to PERMANENTLY DELETE ALL REGISTRATIONS from the database.\n\nType 'DELETE ALL' below to confirm:");

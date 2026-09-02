@@ -1866,7 +1866,7 @@
       }
 
       try {
-        const res = await fetch('/api/register', {
+        const res = await fetch('api/register.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -1952,10 +1952,10 @@
         verifyBtn.innerHTML = '⏳ VERIFYING PAYMENT... PLEASE WAIT';
       }
       try {
-        const res = await fetch(`/api/register/${pendingRegId}/confirm`, {
+        const res = await fetch('api/submit-utr.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ payment_ref: ref, payment_screenshot: uploadedScreenshotBase64 })
+          body: JSON.stringify({ regId: pendingRegId, utrRef: ref, screenshotBase64: uploadedScreenshotBase64 })
         });
         const data = await res.json();
         if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.innerHTML = origText; }
@@ -2073,7 +2073,7 @@
         return;
       }
       try {
-        const res = await fetch(`/api/check-ieee-status?q=${encodeURIComponent(query)}`);
+        const res = await fetch(`api/check-status.php?q=${encodeURIComponent(query)}`);
         const data = await res.json();
         if (!data.ok) {
           alert(data.error || 'Registration record not found.');

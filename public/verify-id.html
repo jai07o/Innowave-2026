@@ -620,11 +620,11 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
       }
 
       try {
-        const res = await fetch(`/api/id-card-data/${encodeURIComponent(participantId)}`);
+        const res = await fetch(`api/check-status.php?q=${encodeURIComponent(participantId)}`);
         const data = await res.json();
 
-        if (data.ok && data.participant) {
-          const p = data.participant;
+        if (data.ok && data.data) {
+          const p = data.data;
           document.getElementById('valTeamId').textContent = p.team_id || p.id;
           document.getElementById('valStatus').textContent = p.payment_status || 'Verified';
           document.getElementById('valName').textContent = p.leader_name || '—';
