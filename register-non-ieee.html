@@ -13,6 +13,7 @@
     rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
 
   <style>
     :root {
@@ -1939,6 +1940,36 @@
       }
     }
 
+    async function performUtrOcrVerification(utrRef, screenshotBase64) {
+      const cleanUtr = String(utrRef || '').replace(/\D/g, '');
+      if (cleanUtr.length < 6) return { ok: true };
+
+      try {
+        if (window.Tesseract && screenshotBase64) {
+          const res = await Tesseract.recognize(screenshotBase64, 'eng', { logger: () => {} });
+          const text = (res && res.data && res.data.text) ? res.data.text : '';
+          const textDigits = text.replace(/\D/g, '');
+
+          const isMatch = text.includes(cleanUtr) || textDigits.includes(cleanUtr);
+          if (!isMatch) {
+            const sub1 = cleanUtr.slice(0, 8);
+            const sub2 = cleanUtr.slice(-8);
+            const isPartial = textDigits.includes(sub1) || textDigits.includes(sub2);
+            
+            if (!isPartial && textDigits.length > 5) {
+              return {
+                ok: false,
+                error: `🚫 UTR & PAYMENT SCREENSHOT MISMATCH:\n\nThe 12-digit UTR transaction ID you entered (${utrRef}) was NOT found inside your uploaded payment screenshot image.\n\nPlease check your transaction receipt image and enter the exact matching 12-digit UTR / reference number shown on your payment receipt screenshot.`
+              };
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('[UTR OCR Check Warning]', err);
+      }
+      return { ok: true };
+    }
+
     async function confirmUtr() {
       const ref = document.getElementById('utrRef').value.trim();
       if (!ref || ref.length < 6 || !uploadedScreenshotBase64) {
@@ -1949,8 +1980,21 @@
       const origText = verifyBtn ? verifyBtn.innerHTML : '';
       if (verifyBtn) {
         verifyBtn.disabled = true;
-        verifyBtn.innerHTML = '⏳ VERIFYING PAYMENT... PLEASE WAIT';
+        verifyBtn.innerHTML = '🔍 RUNNING INSTANT AI OCR SCREENSHOT CHECK...';
       }
+
+      // 1. RUN AI OCR SCREENSHOT UTR CHECK
+      const ocrCheck = await performUtrOcrVerification(ref, uploadedScreenshotBase64);
+      if (!ocrCheck.ok) {
+        if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.innerHTML = origText; }
+        showValidationErrorModal('🚫 PAYMENT SCREENSHOT MISMATCH', ocrCheck.error);
+        return;
+      }
+
+      if (verifyBtn) {
+        verifyBtn.innerHTML = '⏳ VERIFYING PAYMENT & SAVING...';
+      }
+
       try {
         const res = await fetch('api/submit-utr.php', {
           method: 'POST',
@@ -1977,7 +2021,11 @@
       document.getElementById('paymentModal').style.display = 'none';
 
       if (document.getElementById('popRef')) document.getElementById('popRef').textContent = ref;
-      if (document.getElementById('popStatus')) document.getElementById('popStatus').textContent = '⏳ Pending Admin Verification';
+      if (document.getElementById('popStatus')) {
+        document.getElementById('popStatus').textContent = '🟢 PAID & CONFIRMED';
+        document.getElementById('popStatus').style.background = 'rgba(0,230,118,0.15)';
+        document.getElementById('popStatus').style.color = '#00e676';
+      }
 
       const congModal = document.getElementById('congratulationsModal');
       if (congModal) congModal.style.display = 'flex';

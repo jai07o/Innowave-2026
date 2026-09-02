@@ -14,6 +14,7 @@
     rel="stylesheet">
   <!-- Three.js for 3D Background Scene -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
 
   <style>
     :root {
@@ -4831,16 +4832,59 @@
       }
     }
 
+    async function performUtrOcrVerification(utrRef, screenshotBase64) {
+      const cleanUtr = String(utrRef || '').replace(/\D/g, '');
+      if (cleanUtr.length < 6) return { ok: true };
+
+      try {
+        if (window.Tesseract && screenshotBase64) {
+          const res = await Tesseract.recognize(screenshotBase64, 'eng', { logger: () => {} });
+          const text = (res && res.data && res.data.text) ? res.data.text : '';
+          const textDigits = text.replace(/\D/g, '');
+
+          const isMatch = text.includes(cleanUtr) || textDigits.includes(cleanUtr);
+          if (!isMatch) {
+            const sub1 = cleanUtr.slice(0, 8);
+            const sub2 = cleanUtr.slice(-8);
+            const isPartial = textDigits.includes(sub1) || textDigits.includes(sub2);
+            
+            if (!isPartial && textDigits.length > 5) {
+              return {
+                ok: false,
+                error: `🚫 UTR & PAYMENT SCREENSHOT MISMATCH:\n\nThe 12-digit UTR transaction ID you entered (${utrRef}) was NOT found inside your uploaded payment screenshot image.\n\nPlease check your transaction receipt image and enter the exact matching 12-digit UTR / reference number shown on your payment receipt screenshot.`
+              };
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('[UTR OCR Check Warning]', err);
+      }
+      return { ok: true };
+    }
+
     async function confirmUtr() {
       const utrEl = document.getElementById('utrRef');
       if (!utrEl) return;
       const utr = utrEl.value.trim();
-      if (!utr || utr.length < 6) { alert('Please enter a valid 12-digit UTR / UPI Reference ID.'); return; }
+      const imgBase64 = (typeof uploadedScreenshotBase64 !== 'undefined' ? uploadedScreenshotBase64 : '');
+
+      if (!utr || utr.length < 6 || !imgBase64) {
+        alert('⚠️ PAYMENT PROOF REQUIRED: Please enter a valid 12-digit UTR / Reference ID and upload your payment screenshot image.');
+        return;
+      }
+
+      // 1. RUN AI OCR SCREENSHOT UTR CHECK
+      const ocrCheck = await performUtrOcrVerification(utr, imgBase64);
+      if (!ocrCheck.ok) {
+        alert(ocrCheck.error);
+        return;
+      }
+
       try {
         const res = await fetch('api/submit-utr.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ regId: (currentRegistration ? currentRegistration.id : 0), utrRef: utr, payment_ref: utr, screenshotBase64: (typeof uploadedScreenshotBase64 !== 'undefined' ? uploadedScreenshotBase64 : '') })
+          body: JSON.stringify({ regId: (currentRegistration ? currentRegistration.id : 0), utrRef: utr, payment_ref: utr, screenshotBase64: imgBase64 })
         });
         const data = await res.json();
         if (data.ok) {
