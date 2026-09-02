@@ -87,7 +87,7 @@ function esc($s) {
     min-height: 100vh;
     padding: 24px 16px;
   }
-  .wrap { max-width: 1280px; margin: 0 auto; }
+  .wrap { max-width: 1320px; margin: 0 auto; }
   .header {
     display: flex;
     justify-content: space-between;
@@ -125,12 +125,19 @@ function esc($s) {
   .badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
   .badge-paid { background: rgba(0, 230, 118, 0.2); color: #00e676; border: 1px solid #00e676; }
   .badge-pending { background: rgba(251, 191, 36, 0.2); color: #fbbf24; border: 1px solid #fbbf24; }
-  .btn { padding: 6px 12px; border-radius: 6px; border: none; font-size: 11.5px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; margin-right: 4px; }
+  .btn { padding: 6px 12px; border-radius: 6px; border: none; font-size: 11.5px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; margin-right: 4px; margin-bottom: 4px; }
   .btn-approve { background: #00e676; color: #030712; }
   .btn-view { background: rgba(0, 242, 254, 0.2); color: #00f2fe; border: 1px solid #00f2fe; }
+  .btn-card { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #030712; font-weight: 800; }
   .btn-delete { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; }
   .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 9999; align-items: center; justify-content: center; padding: 20px; }
   .modal-content { background: var(--bg-primary); border: 2px solid var(--accent); border-radius: 20px; padding: 24px; max-width: 540px; width: 100%; text-align: center; max-height: 90vh; overflow-y: auto; }
+  
+  @media print {
+    body * { visibility: hidden; }
+    #printableIdCard, #printableIdCard * { visibility: visible; }
+    #printableIdCard { position: absolute; left: 0; top: 0; width: 100%; }
+  }
 </style>
 </head>
 <body>
@@ -140,7 +147,7 @@ function esc($s) {
   <div style="max-width:400px; margin:80px auto; background:var(--bg-panel); border:1.5px solid var(--border); border-radius:24px; padding:32px 24px; text-align:center; box-shadow:0 15px 40px rgba(0,0,0,0.6);">
     <div style="font-size:42px; margin-bottom:12px;">🛡️</div>
     <h2 style="font-family:'Space Grotesk',sans-serif; color:var(--accent); font-size:22px; font-weight:800; margin-bottom:6px;">ORGANIZER LOGIN</h2>
-    <p style="color:var(--text-muted); font-size:13px; margin-bottom:20px;">Enter your admin passcode to access InnoWave-2k26 live registrations.</p>
+    <p style="color:var(--text-muted); font-size:13px; margin-bottom:20px;">Enter your admin passcode to access InnoWave-2k26 live registrations & print official delegate cards.</p>
     
     <?php if ($authError): ?>
       <div style="background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#ef4444; padding:10px; border-radius:8px; font-size:12.5px; margin-bottom:16px; font-weight:700;">
@@ -160,8 +167,8 @@ function esc($s) {
 
   <div class="header">
     <div>
-      <div class="title">⚡ INNOWAVE-2K26 ORGANIZER ADMIN</div>
-      <div style="color:var(--text-muted); font-size:13px; margin-top:2px;">Live MySQL Registration & Payment Audit Control</div>
+      <div class="title">⚡ INNOWAVE-2K26 ORGANIZER ADMIN & ID CARD PRINTER</div>
+      <div style="color:var(--text-muted); font-size:13px; margin-top:2px;">Live MySQL Registration Control & Official Delegate ID Card Printing Portal</div>
     </div>
     <div>
       <a href="admin.php?action=logout" class="btn btn-delete" style="text-decoration:none; padding:8px 16px;">🔒 Logout</a>
@@ -215,7 +222,7 @@ function esc($s) {
           <th>College & Branch</th>
           <th>IEEE Info</th>
           <th>Submitted UTR / Proofs</th>
-          <th>Actions</th>
+          <th>Organizer Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -234,9 +241,16 @@ function esc($s) {
               $hasIeeeCard = !empty($r['ieee_card']);
               $hasProof = !empty($r['payment_screenshot']) || !empty($r['payment_proof']);
               $proofImg = !empty($r['payment_screenshot']) ? $r['payment_screenshot'] : ($r['payment_proof'] ?? '');
+              $teamIdEsc = esc($r['team_id'] ?? ('IW26-' . $r['id']));
+              $nameEsc = esc($r['leader_name'] ?? 'Participant');
+              $collegeEsc = esc($r['college_name'] ?? 'PSCMR CET');
+              $branchEsc = esc($r['branch'] ?? '');
+              $yearEsc = esc($r['year'] ?? '');
+              $rollEsc = esc($r['roll_no'] ?? 'N/A');
+              $ieeeEsc = ($r['ieee_member'] === 'Yes') ? 'IEEE Member' : 'Non-IEEE';
             ?>
             <tr id="row-<?= $r['id'] ?>">
-              <td><strong style="color:#00f2fe"><?= esc($r['team_id'] ?? ('IW26-' . $r['id'])) ?></strong></td>
+              <td><strong style="color:#00f2fe"><?= $teamIdEsc ?></strong></td>
               <td>
                 <?php if ($isPaid): ?>
                   <span class="badge badge-paid">🟢 PAID & VERIFIED</span>
@@ -246,13 +260,13 @@ function esc($s) {
                 <div style="font-weight:900; font-size:13px; margin-top:4px; color:#00e676;">₹<?= esc($r['amount'] ?? 100) ?></div>
               </td>
               <td>
-                <strong><?= esc($r['leader_name'] ?? 'Participant') ?></strong><br>
+                <strong><?= $nameEsc ?></strong><br>
                 <a href="mailto:<?= esc($r['leader_email']) ?>" style="color:#00f2fe; text-decoration:none; font-size:12px;"><?= esc($r['leader_email']) ?></a><br>
                 <span style="color:#94a3b8; font-size:12px;">📱 <?= esc($r['leader_phone']) ?></span>
               </td>
               <td>
-                <strong><?= esc($r['college_name'] ?? 'PSCMR CET') ?></strong><br>
-                <span style="color:#94a3b8; font-size:12px;"><?= esc($r['branch'] ?? '') ?> (<?= esc($r['year'] ?? '') ?>)</span>
+                <strong><?= $collegeEsc ?></strong><br>
+                <span style="color:#94a3b8; font-size:12px;"><?= $branchEsc ?> (<?= $yearEsc ?>)</span>
               </td>
               <td>
                 <?= ($r['ieee_member'] === 'Yes') ? '<span style="color:#00f2fe; font-weight:800;">✓ IEEE Member</span>' : '<span style="color:#94a3b8;">Non-IEEE</span>' ?>
@@ -274,6 +288,7 @@ function esc($s) {
                 <?php endif; ?>
               </td>
               <td>
+                <button class="btn btn-card" onclick="openOfficialIdCardModal('<?= $teamIdEsc ?>', '<?= $nameEsc ?>', '<?= $collegeEsc ?>', '<?= $branchEsc ?>', '<?= $yearEsc ?>', '<?= $rollEsc ?>', '<?= $ieeeEsc ?>')">🪪 PRINT ID CARD</button><br>
                 <?php if (!$isPaid): ?>
                   <button class="btn btn-approve" onclick="updateStatus(<?= $r['id'] ?>, 'approve_paid')">✓ Approve</button>
                 <?php else: ?>
@@ -297,6 +312,62 @@ function esc($s) {
     </div>
   </div>
 
+  <!-- Admin Official ID Card Printer Modal -->
+  <div class="modal-overlay" id="idCardModal" onclick="closeIdCardModal()">
+    <div class="modal-content" onclick="event.stopPropagation()" style="max-width:460px; background:#040914; border:2px solid var(--accent); border-radius:24px; padding:24px; text-align:center;">
+      <h3 style="color:var(--gold); font-size:18px; margin-bottom:14px; font-family:'Space Grotesk',sans-serif;">🪪 OFFICIAL PARTICIPANT ID CARD PRINTER</h3>
+      
+      <!-- Printable Card Container -->
+      <div id="printableIdCard" style="background:linear-gradient(135deg, #09152e 0%, #030814 100%); border:2px solid #00f2fe; border-radius:20px; padding:24px 18px; color:#ffffff; text-align:center; position:relative; box-shadow:0 0 30px rgba(0,242,254,0.25); margin-bottom:16px;">
+        <div style="font-size:10px; font-weight:800; color:#fbbf24; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:4px;">
+          POTTI SRIRAMULU CHALAVADI MALLIKARJUNA RAO COLLEGE OF ENGG & TECH
+        </div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:900; color:#00f2fe; margin-bottom:12px;">
+          INNOWAVE-2K26 DELEGATE PASS
+        </div>
+
+        <div style="width:70px; height:70px; margin:0 auto 12px; background:linear-gradient(135deg, #00f2fe, #0066ff); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:32px; box-shadow:0 0 15px rgba(0,242,254,0.4);">
+          🎓
+        </div>
+
+        <div id="cardName" style="font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:900; color:#ffffff; margin-bottom:4px;">
+          Participant Name
+        </div>
+        <div id="cardCollege" style="font-size:12.5px; color:#94a3b8; font-weight:600; margin-bottom:10px;">
+          PSCMR CET · CSE (III Year)
+        </div>
+
+        <div style="background:rgba(0, 230, 118, 0.15); border:1px solid #00e676; border-radius:10px; padding:6px 12px; display:inline-block; font-size:11px; font-weight:900; color:#00e676; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:14px;">
+          🟢 OFFICIAL VERIFIED PARTICIPANT
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; background:rgba(255,255,255,0.04); padding:12px; border-radius:12px; font-size:12px; text-align:left; border:1px solid rgba(255,255,255,0.1);">
+          <div>
+            <span style="color:#94a3b8; font-size:10px; display:block; font-weight:700;">TEAM REG ID</span>
+            <strong id="cardTeamId" style="color:#00f2fe; font-size:15px; font-family:monospace;">IW26-1001</strong>
+          </div>
+          <div>
+            <span style="color:#94a3b8; font-size:10px; display:block; font-weight:700;">MEMBERSHIP</span>
+            <strong id="cardIeee" style="color:#fbbf24; font-size:12px;">IEEE Member</strong>
+          </div>
+          <div style="grid-column: span 2;">
+            <span style="color:#94a3b8; font-size:10px; display:block; font-weight:700;">ROLL NUMBER</span>
+            <strong id="cardRollNo" style="color:#ffffff; font-size:12px;">22KT1A0501</strong>
+          </div>
+        </div>
+
+        <div style="font-size:10px; color:#64748b; margin-top:12px; font-weight:700;">
+          STB18301 · IEEE Student Branch · Organizers Entry Pass
+        </div>
+      </div>
+
+      <div style="display:flex; gap:10px;">
+        <button class="btn btn-approve" style="flex:1; padding:12px; font-size:14px;" onclick="printIdCard()">🖨️ PRINT THIS ID CARD</button>
+        <button class="btn btn-view" style="padding:12px;" onclick="closeIdCardModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     function viewImage(title, src) {
       document.getElementById('imgModalTitle').textContent = title;
@@ -306,6 +377,24 @@ function esc($s) {
     function closeImgModal() {
       document.getElementById('imgModal').style.display = 'none';
     }
+
+    function openOfficialIdCardModal(teamId, name, college, branch, year, roll, ieee) {
+      document.getElementById('cardTeamId').textContent = teamId;
+      document.getElementById('cardName').textContent = name;
+      document.getElementById('cardCollege').textContent = college + (branch ? ' · ' + branch : '') + (year ? ' (' + year + ')' : '');
+      document.getElementById('cardRollNo').textContent = roll || 'N/A';
+      document.getElementById('cardIeee').textContent = ieee;
+      document.getElementById('idCardModal').style.display = 'flex';
+    }
+
+    function closeIdCardModal() {
+      document.getElementById('idCardModal').style.display = 'none';
+    }
+
+    function printIdCard() {
+      window.print();
+    }
+
     async function updateStatus(id, action) {
       if (action === 'delete' && !confirm('Are you sure you want to delete this registration record?')) return;
       const formData = new FormData();
