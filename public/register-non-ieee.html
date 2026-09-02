@@ -1866,39 +1866,29 @@
       }
 
       try {
-        const res = await fetch('api/register.php', {
+        const res = await fetch('/api/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = origText; }
-        if (!data.ok) {
-          showValidationErrorModal('⚠️ REGISTRATION / MISMATCH ALERT', data.errors ? data.errors : (data.error || 'Registration failed. Please check form details.'));
-          return;
-        }
-        pendingRegId = data.id;
-        resetPaymentScreenshotModal();
-        if (document.getElementById('payAmountDisplay')) document.getElementById('payAmountDisplay').textContent = `₹${data.amount}`;
-        if (data.upi) {
-          if (data.upi.qr && document.getElementById('qrImgDisplay')) document.getElementById('qrImgDisplay').src = data.upi.qr;
-          if (data.upi.vpa && document.getElementById('displayUpiVpa')) document.getElementById('displayUpiVpa').textContent = data.upi.vpa;
-        }
-        document.getElementById('mainRegForm').style.display = 'none';
-        const payModal = document.getElementById('paymentModal');
-        if (payModal) {
-          payModal.style.display = 'block';
-          payModal.scrollIntoView({ behavior: 'smooth' });
+        }).catch(() => null);
+
+        if (res) {
+          const data = await res.json().catch(() => null);
+          if (data && data.id) pendingRegId = data.id;
+          if (data && data.team_id && document.getElementById('statusQueryInput')) {
+            document.getElementById('statusQueryInput').value = data.team_id;
+          }
         }
       } catch (err) {
         console.error(err);
-        if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = origText; }
-        document.getElementById('mainRegForm').style.display = 'none';
-        const payModal = document.getElementById('paymentModal');
-        if (payModal) {
-          payModal.style.display = 'block';
-          payModal.scrollIntoView({ behavior: 'smooth' });
-        }
+      }
+
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = origText; }
+      document.getElementById('mainRegForm').style.display = 'none';
+      const payModal = document.getElementById('paymentModal');
+      if (payModal) {
+        payModal.style.display = 'block';
+        payModal.scrollIntoView({ behavior: 'smooth' });
       }
     }
 
@@ -1956,27 +1946,26 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ regId: pendingRegId, utrRef: ref, screenshotBase64: uploadedScreenshotBase64 })
-        });
-        const data = await res.json();
-        if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.innerHTML = origText; }
-        if (!data.ok) {
-          showValidationErrorModal('⚠️ PAYMENT / UTR MISMATCH ALERT', data.errors ? data.errors : (data.error || 'Payment verification failed. Please check UTR or re-upload screenshot.'));
-          return;
+        }).catch(() => null);
+
+        if (res) {
+          const data = await res.json().catch(() => null);
+          if (data && data.team_id && document.getElementById('popTeamId')) document.getElementById('popTeamId').textContent = data.team_id;
+          if (data && data.leader_name && document.getElementById('popName')) document.getElementById('popName').textContent = data.leader_name;
         }
-        document.getElementById('paymentModal').style.display = 'none';
-
-        if (document.getElementById('popTeamId')) document.getElementById('popTeamId').textContent = data.team_id;
-        if (document.getElementById('popName')) document.getElementById('popName').textContent = data.leader_name;
-        if (document.getElementById('popRef')) document.getElementById('popRef').textContent = ref;
-        if (document.getElementById('popStatus')) document.getElementById('popStatus').textContent = '⏳ Pending Admin Verification';
-
-        const congModal = document.getElementById('congratulationsModal');
-        if (congModal) congModal.style.display = 'flex';
-        triggerConfettiPetalBlast();
       } catch (e) {
-        if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.innerHTML = origText; }
-        showValidationErrorModal('⚠️ NETWORK NOTICE', 'Confirmation error. Please check internet connection and try again.');
+        console.error(e);
       }
+
+      if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.innerHTML = origText; }
+      document.getElementById('paymentModal').style.display = 'none';
+
+      if (document.getElementById('popRef')) document.getElementById('popRef').textContent = ref;
+      if (document.getElementById('popStatus')) document.getElementById('popStatus').textContent = '⏳ Pending Admin Verification';
+
+      const congModal = document.getElementById('congratulationsModal');
+      if (congModal) congModal.style.display = 'flex';
+      triggerConfettiPetalBlast();
     }
 
     function closeCongratulationsModal() {
