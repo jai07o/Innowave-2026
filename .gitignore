@@ -4,10 +4,8 @@ yarn-debug.log*
 yarn-error.log*
 .env
 .env.local
-*.db
-*.db-journal
-*.db-wal
-*.db-shm
+# *.db
+!data/innowave.db
 *.log
 log.txt
 .DS_Store
