@@ -58,10 +58,11 @@ $isIeee = ($row['ieee_member'] === 'Yes');
 $ieeeStatus = $row['ieee_verification_status'] ?: ($isIeee ? 'Card Approved' : 'N/A');
 $paymentStatus = $row['payment_status'] ?: 'Pending Payment Confirmation';
 
-$vpa = '6309419599@axl';
-$payeeName = 'PSCMR IEEE Student Branch';
+$vpa = '1414155000131347@kvbl0001414.ifsc';
+$payeeName = 'POTTI SRIRAMULU CHALAVADI MALLIKARJUNA RAO COLLEGE';
 $note = "InnoWave-2k26 {$row['team_id']}";
 $upiUri = "upi://pay?pa=" . urlencode($vpa) . "&pn=" . urlencode($payeeName) . "&am={$row['amount']}&cu=INR&tn=" . urlencode($note);
+$qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=" . urlencode($upiUri);
 
 $responseData = [
     'id' => intval($row['id']),
@@ -84,7 +85,11 @@ $responseData = [
         'vpa' => $vpa,
         'name' => $payeeName,
         'note' => $note,
-        'upiUri' => $upiUri
+        'upiUri' => $upiUri,
+        'qr' => $qrUrl,
+        'acc_no' => '1414155000131347',
+        'ifsc' => 'KVBL0001414',
+        'bank' => 'Karur Vysya Bank (KVB)'
     ]
 ];
 
