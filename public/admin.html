@@ -548,6 +548,32 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
   </header>
 
   <div class="container">
+    <!-- Official College Bank Account Details Summary Card for Organizers -->
+    <div style="background:linear-gradient(135deg, rgba(3,24,46,0.95) 0%, rgba(10,37,64,0.95) 100%); border:2px solid var(--accent); border-radius:18px; padding:18px 24px; margin-bottom:24px; box-shadow:0 12px 30px rgba(0,212,255,0.15); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <div style="background:rgba(0,212,255,0.15); border:1.5px solid var(--accent); width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:24px;">
+          🏦
+        </div>
+        <div>
+          <div style="color:var(--accent); font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase;">OFFICIAL COLLEGE BANK ACCOUNT DETAILS</div>
+          <div style="color:#ffffff; font-size:16px; font-weight:900; margin-top:2px;">POTTI SRIRAMULU CHALAVADI MALLIKARJUNA RAO COLLEGE</div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+        <div style="background:rgba(255,255,255,0.06); padding:8px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.15);">
+          <div style="color:#94a3b8; font-size:10px; font-weight:700;">ACCOUNT NUMBER</div>
+          <div style="color:#00e676; font-size:15px; font-weight:900; font-family:monospace; letter-spacing:1px;">1414155000131347</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.06); padding:8px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.15);">
+          <div style="color:#94a3b8; font-size:10px; font-weight:700;">IFSC CODE</div>
+          <div style="color:#00d4ff; font-size:15px; font-weight:900; font-family:monospace; letter-spacing:1px;">KVBL0001414</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.06); padding:8px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.15);">
+          <div style="color:#94a3b8; font-size:10px; font-weight:700;">BANK NAME</div>
+          <div style="color:#fbbf24; font-size:14px; font-weight:900;">Karur Vysya Bank (KVB)</div>
+        </div>
+      </div>
+    </div>
     <div class="stats" style="grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));">
       <div class="stat"><div class="k">Total Participants</div><div class="v" id="stPeople">0</div><div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Across <span id="stTeams">0</span> Registrations</div></div>
       <div class="stat"><div class="k">IEEE Members</div><div class="v" id="stIeeeCount" style="color:var(--accent);">0</div><div style="font-size:12px; font-weight:700; color:var(--accent); margin-top:4px;">Expected: <span id="stIeeeMoney">₹0</span></div></div>
@@ -756,9 +782,10 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
 
   function viewPaymentProofModal(teamId, id) {
     const row = DATA.find(r => r.id === id);
-    if (!row || !row.payment_screenshot) { alert('No payment screenshot proof uploaded for this participant.'); return; }
+    const proofSrc = row ? (row.payment_screenshot || row.payment_proof) : null;
+    if (!row || !proofSrc) { alert('No payment screenshot proof uploaded for this participant.'); return; }
     document.getElementById('proofTitle').textContent = `Payment Proof Screenshot — ${teamId} (${row.leader_name})`;
-    document.getElementById('proofImg').src = row.payment_screenshot;
+    document.getElementById('proofImg').src = proofSrc;
 
     const infoBox = document.getElementById('proofHeaderInfo');
     if (infoBox) {
