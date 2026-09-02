@@ -1,0 +1,30 @@
+# INNOWAVE-2K26 — cPanel Apache Rewrite Rules
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Enable CORS headers for API requests
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS, DELETE"
+    Header set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, X-Admin-Password"
+
+    # API Routing
+    RewriteRule ^api/register$ api/register.php [L,QSA]
+    RewriteRule ^api/register/([0-9]+)/confirm$ api/submit-utr.php?id=$1 [L,QSA]
+    RewriteRule ^api/submit-utr$ api/submit-utr.php [L,QSA]
+    RewriteRule ^api/check-status$ api/check-status.php [L,QSA]
+    RewriteRule ^api/check-ieee-status$ api/check-status.php [L,QSA]
+    RewriteRule ^api/admin$ api/admin.php [L,QSA]
+    RewriteRule ^api/admin/registrations/all$ api/admin.php?action=delete-all [L,QSA]
+    RewriteRule ^api/admin/export.xlsx$ api/admin.php?action=export [L,QSA]
+    RewriteRule ^api/id-card-data/(.+)$ api/id-card-data.php?id=$1 [L,QSA]
+
+    # Page Routing
+    RewriteRule ^register-ieee$ register-ieee.html [L,QSA]
+    RewriteRule ^register-non-ieee$ register-non-ieee.html [L,QSA]
+    RewriteRule ^register$ register-non-ieee.html [L,QSA]
+    RewriteRule ^admin$ admin.php [L,QSA]
+    RewriteRule ^verify-id$ verify-id.html [L,QSA]
+    RewriteRule ^id-card$ id-card.html [L,QSA]
+    RewriteRule ^verify$ verify-id.html [L,QSA]
+</IfModule>

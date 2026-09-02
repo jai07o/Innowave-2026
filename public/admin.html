@@ -1056,10 +1056,8 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
 
   async function delRow(id) {
     if (!confirm('Delete this registration? This cannot be undone.')) return;
-    await fetch('api/admin.php?action=confirm-payment&password=' + encodeURIComponent(TOKEN), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, status: 'Deleted' })
+    await fetch('api/admin.php?action=delete&id=' + id + '&password=' + encodeURIComponent(TOKEN), {
+      method: 'POST'
     });
     loadData();
   }
@@ -1067,6 +1065,7 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
   function downloadExcel() {
     window.location.href = 'api/admin.php?action=export&password=' + encodeURIComponent(TOKEN);
   }
+
   async function deleteAllRegistrations() {
     const confirmText = prompt("⚠️ CRITICAL WARNING: You are about to PERMANENTLY DELETE ALL REGISTRATIONS from the database.\n\nType 'DELETE ALL' below to confirm:");
     if (confirmText !== 'DELETE ALL') {
@@ -1075,13 +1074,12 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
     }
 
     try {
-      const res = await fetch('/api/admin/registrations/all', {
-        method: 'DELETE',
-        headers: { 'Authorization': 'Bearer ' + TOKEN }
+      const res = await fetch('api/admin.php?action=delete-all&password=' + encodeURIComponent(TOKEN), {
+        method: 'POST'
       });
       const data = await res.json();
       if (data.ok) {
-        alert(`✅ Success: All ${data.deleted || 0} registration records have been deleted.`);
+        alert('✅ Success: All registration records have been deleted.');
         loadData();
       } else {
         alert('Failed to delete registrations: ' + (data.error || 'Unknown error'));
@@ -1098,7 +1096,7 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
       alert('Admin session expired. Please log in again.');
       return;
     }
-    window.location.href = `/api/admin/export.xlsx?token=${encodeURIComponent(token)}`;
+    window.location.href = `api/admin.php?action=export&password=${encodeURIComponent(token)}`;
   }
 
   // auto-login if token present

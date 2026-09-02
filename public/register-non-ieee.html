@@ -740,6 +740,10 @@
         object-fit: contain !important;
       }
 
+      input, select, textarea {
+        font-size: 16px !important;
+      }
+
       nav .nav-in {
         padding: 7px 12px !important;
         height: auto !important;
@@ -1866,7 +1870,7 @@
       }
 
       try {
-        const res = await fetch('/api/register', {
+        const res = await fetch('api/register.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -1874,6 +1878,12 @@
 
         if (res) {
           const data = await res.json().catch(() => null);
+          if (data && !data.ok) {
+            if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = origText; }
+            const errMsg = (data.errors && data.errors.length) ? data.errors.join('\n\n') : (data.error || 'Registration failed.');
+            showValidationErrorModal('🚫 REGISTRATION ERROR', errMsg);
+            return;
+          }
           if (data && data.id) pendingRegId = data.id;
           if (data && data.team_id && document.getElementById('statusQueryInput')) {
             document.getElementById('statusQueryInput').value = data.team_id;
@@ -1950,6 +1960,12 @@
 
         if (res) {
           const data = await res.json().catch(() => null);
+          if (data && !data.ok) {
+            if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.innerHTML = origText; }
+            const errMsg = (data.errors && data.errors.length) ? data.errors.join('\n\n') : (data.error || 'Payment verification failed.');
+            showValidationErrorModal('🚫 SUBMISSION ERROR', errMsg);
+            return;
+          }
           if (data && data.team_id && document.getElementById('popTeamId')) document.getElementById('popTeamId').textContent = data.team_id;
           if (data && data.leader_name && document.getElementById('popName')) document.getElementById('popName').textContent = data.leader_name;
         }

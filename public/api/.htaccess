@@ -1,0 +1,19 @@
+# INNOWAVE-2K26 — API Directory Apache Rules
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /api/
+
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS, DELETE"
+    Header set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, X-Admin-Password"
+
+    RewriteRule ^register$ register.php [L,QSA]
+    RewriteRule ^register/([0-9]+)/confirm$ submit-utr.php?id=$1 [L,QSA]
+    RewriteRule ^submit-utr$ submit-utr.php [L,QSA]
+    RewriteRule ^check-status$ check-status.php [L,QSA]
+    RewriteRule ^check-ieee-status$ check-status.php [L,QSA]
+    RewriteRule ^admin$ admin.php [L,QSA]
+    RewriteRule ^admin/registrations/all$ admin.php?action=delete-all [L,QSA]
+    RewriteRule ^admin/export.xlsx$ admin.php?action=export [L,QSA]
+    RewriteRule ^id-card-data/(.+)$ id-card-data.php?id=$1 [L,QSA]
+</IfModule>
