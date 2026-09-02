@@ -1889,6 +1889,12 @@
           if (data && data.team_id && document.getElementById('statusQueryInput')) {
             document.getElementById('statusQueryInput').value = data.team_id;
           }
+          if (data && data.amount && document.getElementById('payAmountDisplay')) {
+            document.getElementById('payAmountDisplay').textContent = `₹${data.amount}`;
+          }
+          if (data && data.upi && data.upi.qr && document.getElementById('qrImgDisplay')) {
+            document.getElementById('qrImgDisplay').src = data.upi.qr;
+          }
         }
       } catch (err) {
         console.error(err);
