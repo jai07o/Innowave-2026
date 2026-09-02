@@ -355,9 +355,24 @@ function computeBrochureFee(ieee_count, non_ieee_count, college_name = '') {
   return { amount, label, ieee, nonIeee, totalSize: ieee + nonIeee, isPscmr };
 }
 
+async function safeQuery(sql, params = []) {
+  if (mysqlConnected && pool) {
+    try {
+      return await pool.query(sql, params);
+    } catch(e) {
+      console.error('[MySQL Query Warning]', e.message);
+    }
+  }
+  return [[], null];
+}
+
 async function nextSeq() {
-  const [rows] = await pool.query('SELECT COALESCE(MAX(reg_seq),0) AS m FROM registrations');
-  return ((rows && rows[0] && rows[0].m) || 0) + 1;
+  try {
+    const [rows] = await safeQuery('SELECT COALESCE(MAX(reg_seq),0) AS m FROM registrations');
+    return ((rows && rows[0] && rows[0].m) || memoryRegistrations.length) + 1;
+  } catch(e) {
+    return memoryRegistrations.length + 1;
+  }
 }
 
 function pad(n) { return String(n).padStart(4, '0'); }
@@ -411,7 +426,14 @@ app.post(['/api/register', '/api/register.php'], async (req, res) => {
     const cleanEmail = v.leader_email.toLowerCase();
     const cleanIeee = v.ieee_id;
 
-    const [allRows] = await pool.query('SELECT id, team_id, leader_email, ieee_id FROM registrations');
+    let allRows = [];
+    if (mysqlConnected) {
+      const [r] = await safeQuery('SELECT id, team_id, leader_email, ieee_id FROM registrations');
+      allRows = r || [];
+    } else {
+      allRows = memoryRegistrations;
+    }
+
     if (!existingId && cleanEmail) {
       const matchEmail = allRows.find(r => (r.leader_email || '').toLowerCase() === cleanEmail);
       if (matchEmail) existingId = matchEmail.id;
@@ -437,12 +459,20 @@ app.post(['/api/register', '/api/register.php'], async (req, res) => {
     let team_id = '';
 
     if (existingId) {
-      const [exRows] = await pool.query('SELECT team_id FROM registrations WHERE id = ?', [existingId]);
-      if (exRows && exRows.length) {
-        team_id = exRows[0].team_id;
-        await pool.query(`UPDATE registrations SET
-          project_title=?, track=?, events_selected=?, description=?, leader_name=?, leader_email=?, leader_phone=?, college_name=?, roll_no=?, branch=?, year=?, ieee_member=?, ieee_id=?, ieee_card=?, ieee_verification_status=?, amount=?, fee_label=? WHERE id=?`,
-          [v.project_title, v.track, v.events_selected, v.description, v.leader_name, v.leader_email, v.leader_phone, v.college_name, v.roll_no, v.branch, v.year, v.ieee_member, v.ieee_id, v.ieee_card, ieeeStatus, amount, label, existingId]);
+      if (mysqlConnected) {
+        const [exRows] = await safeQuery('SELECT team_id FROM registrations WHERE id = ?', [existingId]);
+        if (exRows && exRows.length) {
+          team_id = exRows[0].team_id;
+          await safeQuery(`UPDATE registrations SET
+            project_title=?, track=?, events_selected=?, description=?, leader_name=?, leader_email=?, leader_phone=?, college_name=?, roll_no=?, branch=?, year=?, ieee_member=?, ieee_id=?, ieee_card=?, ieee_verification_status=?, amount=?, fee_label=? WHERE id=?`,
+            [v.project_title, v.track, v.events_selected, v.description, v.leader_name, v.leader_email, v.leader_phone, v.college_name, v.roll_no, v.branch, v.year, v.ieee_member, v.ieee_id, v.ieee_card, ieeeStatus, amount, label, existingId]);
+        }
+      } else {
+        const mRow = memoryRegistrations.find(r => r.id === existingId);
+        if (mRow) {
+          team_id = mRow.team_id;
+          Object.assign(mRow, v, { amount, fee_label: label, ieee_verification_status: ieeeStatus });
+        }
       }
     }
 
@@ -450,11 +480,18 @@ app.post(['/api/register', '/api/register.php'], async (req, res) => {
       const seq = await nextSeq();
       team_id = `IW26-${pad(seq)}`;
       const created_at = new Date().toISOString();
-      const [result] = await pool.query(`INSERT INTO registrations
-        (team_id, reg_seq, project_title, track, events_selected, description, leader_name, leader_email, leader_phone, college_name, roll_no, branch, year, ieee_member, ieee_id, ieee_card, ieee_verification_status, ieee_email, ieee_grade, ieee_count, non_ieee_count, team_size, member2, member3, member4, amount, fee_label, payment_mode, payment_status, created_at)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'UPI',?,?)`,
-        [team_id, seq, v.project_title, v.track, v.events_selected, v.description, v.leader_name, v.leader_email, v.leader_phone, v.college_name, v.roll_no, v.branch, v.year, v.ieee_member, v.ieee_id, v.ieee_card, ieeeStatus, v.ieee_email, v.ieee_grade, v.ieee_count, v.non_ieee_count, v.team_size, v.member2, v.member3, v.member4, amount, label, initialPaymentStatus, created_at]);
-      regId = result.insertId;
+
+      if (mysqlConnected) {
+        const [result] = await safeQuery(`INSERT INTO registrations
+          (team_id, reg_seq, project_title, track, events_selected, description, leader_name, leader_email, leader_phone, college_name, roll_no, branch, year, ieee_member, ieee_id, ieee_card, ieee_verification_status, ieee_email, ieee_grade, ieee_count, non_ieee_count, team_size, member2, member3, member4, amount, fee_label, payment_mode, payment_status, created_at)
+          VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'UPI',?,?)`,
+          [team_id, seq, v.project_title, v.track, v.events_selected, v.description, v.leader_name, v.leader_email, v.leader_phone, v.college_name, v.roll_no, v.branch, v.year, v.ieee_member, v.ieee_id, v.ieee_card, ieeeStatus, v.ieee_email, v.ieee_grade, v.ieee_count, v.non_ieee_count, v.team_size, v.member2, v.member3, v.member4, amount, label, initialPaymentStatus, created_at]);
+        regId = result ? result.insertId : seq;
+      } else {
+        regId = nextMemoryId++;
+        const record = Object.assign({ id: regId, team_id, reg_seq: seq, amount, fee_label: label, payment_status: initialPaymentStatus, ieee_verification_status: ieeeStatus, created_at }, v);
+        memoryRegistrations.unshift(record);
+      }
     }
 
     const note = `InnoWave-2k26 ${team_id}`;
@@ -484,15 +521,27 @@ app.post(['/api/register/:id/confirm', '/api/submit-utr.php'], async (req, res) 
     const ref = (req.body && (req.body.payment_ref || req.body.utrRef || req.body.utr) || '').trim();
     const screenshot = (req.body && (req.body.payment_screenshot || req.body.screenshotBase64 || req.body.screenshot) || '').trim();
 
-    const [rows] = await pool.query('SELECT * FROM registrations WHERE id = ?', [id]);
-    const row = rows[0];
+    let row = null;
+    if (mysqlConnected) {
+      const [rows] = await safeQuery('SELECT * FROM registrations WHERE id = ?', [id]);
+      row = rows ? rows[0] : null;
+    } else {
+      row = memoryRegistrations.find(r => r.id === id || r.team_id === String(id)) || memoryRegistrations[0];
+    }
+
     if (!row) return res.status(404).json({ ok: false, errors: ['Registration not found. Please start again.'] });
     if (!ref || ref.length < 6) return res.status(400).json({ ok: false, errors: ['Please enter a valid 12-digit UPI transaction / reference ID (UTR).'] });
     if (!screenshot) return res.status(400).json({ ok: false, errors: ['Please upload your payment screenshot.'] });
     if (row.payment_status === 'Paid') return res.status(400).json({ ok: false, errors: ['This registration is already verified & confirmed.'] });
 
     const cleanRef = ref.replace(/\s+/g, '');
-    const [existingUtrRows] = await pool.query(`SELECT id, team_id, leader_name FROM registrations WHERE payment_ref IS NOT NULL AND UPPER(TRIM(payment_ref)) = ? AND id != ?`, [cleanRef.toUpperCase(), id]);
+    let existingUtrRows = [];
+    if (mysqlConnected) {
+      const [r] = await safeQuery(`SELECT id, team_id, leader_name FROM registrations WHERE payment_ref IS NOT NULL AND UPPER(TRIM(payment_ref)) = ? AND id != ?`, [cleanRef.toUpperCase(), id]);
+      existingUtrRows = r || [];
+    } else {
+      existingUtrRows = memoryRegistrations.filter(r => r.payment_ref && r.payment_ref.toUpperCase() === cleanRef.toUpperCase() && r.id !== id);
+    }
 
     if (existingUtrRows && existingUtrRows.length) {
       return res.status(400).json({
@@ -501,7 +550,15 @@ app.post(['/api/register/:id/confirm', '/api/submit-utr.php'], async (req, res) 
       });
     }
 
-    await pool.query(`UPDATE registrations SET payment_ref=?, payment_screenshot=?, payment_proof=?, paid_at=?, payment_status='Paid', duplicate_utr=0 WHERE id=?`, [cleanRef, screenshot, screenshot, new Date().toISOString(), id]);
+    if (mysqlConnected) {
+      await safeQuery(`UPDATE registrations SET payment_ref=?, payment_screenshot=?, payment_proof=?, paid_at=?, payment_status='Paid', duplicate_utr=0 WHERE id=?`, [cleanRef, screenshot, screenshot, new Date().toISOString(), id]);
+    } else {
+      row.payment_ref = cleanRef;
+      row.payment_screenshot = screenshot;
+      row.payment_proof = screenshot;
+      row.paid_at = new Date().toISOString();
+      row.payment_status = 'Paid';
+    }
 
     return res.json({
       ok: true,
@@ -534,7 +591,14 @@ app.get(['/api/check-ieee-status', '/api/check-status.php'], async (req, res) =>
     if (!q) return res.status(400).json({ ok: false, error: 'Please enter your Registration ID, Mobile, or Email.' });
 
     const qClean = q.toLowerCase();
-    const [rows] = await pool.query('SELECT * FROM registrations ORDER BY id DESC');
+    let rows = [];
+    if (mysqlConnected) {
+      const [r] = await safeQuery('SELECT * FROM registrations ORDER BY id DESC');
+      rows = r || [];
+    } else {
+      rows = memoryRegistrations;
+    }
+
     const row = rows.find(r => 
       String(r.id) === q ||
       (r.team_id || '').toLowerCase() === qClean ||
