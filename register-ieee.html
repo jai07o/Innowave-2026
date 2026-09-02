@@ -2051,7 +2051,19 @@
       const origText = submitBtn ? submitBtn.innerHTML : '';
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '⚡ RUNNING INSTANT AI ANALYSIS & SUBMITTING...';
+        submitBtn.innerHTML = '🔍 RUNNING INSTANT AI OCR CARD CHECK...';
+      }
+
+      // 1. RUN INSTANT AI OCR IEEE CARD VERIFICATION
+      const ieeeCardCheck = await performIeeeCardOcrVerification(ieeeId, leaderName, uploadedIeeeCardBase64);
+      if (!ieeeCardCheck.ok) {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = origText; }
+        showValidationErrorModal('🚫 IEEE CARD VERIFICATION FAILED', ieeeCardCheck.error);
+        return;
+      }
+
+      if (submitBtn) {
+        submitBtn.innerHTML = '⚡ SAVING REGISTRATION & GENERATING PAYMENT QR...';
       }
 
       try {
@@ -2248,6 +2260,57 @@
         };
         reader.readAsDataURL(input.files[0]);
       }
+    }
+
+    async function performIeeeCardOcrVerification(ieeeId, leaderName, cardImageBase64) {
+      const cleanIeeeId = String(ieeeId || '').replace(/\D/g, '');
+      if (!cleanIeeeId || cleanIeeeId.length < 5) {
+        return { ok: false, error: '⚠️ Please enter a valid 9-digit IEEE Membership ID.' };
+      }
+      if (!cardImageBase64) {
+        return { ok: false, error: '⚠️ Please upload a screenshot proof of your official IEEE Membership Card.' };
+      }
+
+      try {
+        if (window.Tesseract) {
+          const res = await Tesseract.recognize(cardImageBase64, 'eng', { logger: () => {} });
+          const ocrText = (res && res.data && res.data.text) ? res.data.text : '';
+          const ocrUpper = ocrText.toUpperCase();
+          const ocrDigits = ocrText.replace(/\D/g, '');
+
+          // Check 9-digit IEEE ID
+          const hasIdMatch = ocrText.includes(cleanIeeeId) || ocrDigits.includes(cleanIeeeId);
+
+          // Check Leader Name parts
+          const nameParts = leaderName.trim().toUpperCase().split(/\s+/).filter(p => p.length > 2);
+          let hasNameMatch = (nameParts.length === 0);
+          for (const part of nameParts) {
+            if (ocrUpper.includes(part)) {
+              hasNameMatch = true;
+              break;
+            }
+          }
+
+          if (!hasIdMatch || !hasNameMatch) {
+            let reason = '';
+            if (!hasIdMatch && !hasNameMatch) {
+              reason = `Entered IEEE ID (${ieeeId}) and Participant Name (${leaderName}) were NOT found inside your uploaded card proof image.`;
+            } else if (!hasIdMatch) {
+              reason = `Entered 9-digit IEEE ID (${ieeeId}) was NOT found inside your uploaded card proof image.`;
+            } else {
+              reason = `Participant Name (${leaderName}) was NOT found inside your uploaded card proof image.`;
+            }
+
+            return {
+              ok: false,
+              error: `🚫 IEEE CARD AI VERIFICATION FAILED:\n\n${reason}\n\nPlease re-upload a clear, legible screenshot of your official IEEE Membership Card showing your IEEE ID & Name.`
+            };
+          }
+        }
+      } catch (err) {
+        console.warn('[IEEE Card OCR Warning]', err);
+      }
+      return { ok: true };
     }
 
     async function performUtrOcrVerification(utrRef, screenshotBase64) {
