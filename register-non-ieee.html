@@ -1941,27 +1941,43 @@
     }
 
     async function performUtrOcrVerification(utrRef, screenshotBase64) {
-      const cleanUtr = String(utrRef || '').replace(/\D/g, '');
-      if (cleanUtr.length < 6) return { ok: true };
+      const rawInput = String(utrRef || '').trim();
+      const cleanUtr = rawInput.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+      const digitsOnly = rawInput.replace(/\D/g, '');
+
+      if (cleanUtr.length < 5) return { ok: true };
+      if (!screenshotBase64) {
+        return { ok: false, error: '⚠️ Please upload your payment receipt screenshot image.' };
+      }
 
       try {
-        if (window.Tesseract && screenshotBase64) {
+        if (window.Tesseract) {
           const res = await Tesseract.recognize(screenshotBase64, 'eng', { logger: () => {} });
-          const text = (res && res.data && res.data.text) ? res.data.text : '';
-          const textDigits = text.replace(/\D/g, '');
+          const ocrRawText = (res && res.data && res.data.text) ? res.data.text : '';
+          const ocrUpper = ocrRawText.toUpperCase();
+          const ocrClean = ocrUpper.replace(/[^A-Za-z0-9]/g, '');
+          const ocrDigits = ocrUpper.replace(/\D/g, '');
 
-          const isMatch = text.includes(cleanUtr) || textDigits.includes(cleanUtr);
-          if (!isMatch) {
-            const sub1 = cleanUtr.slice(0, 8);
-            const sub2 = cleanUtr.slice(-8);
-            const isPartial = textDigits.includes(sub1) || textDigits.includes(sub2);
-            
-            if (!isPartial && textDigits.length > 5) {
-              return {
-                ok: false,
-                error: `🚫 UTR & PAYMENT SCREENSHOT MISMATCH:\n\nThe 12-digit UTR transaction ID you entered (${utrRef}) was NOT found inside your uploaded payment screenshot image.\n\nPlease check your transaction receipt image and enter the exact matching 12-digit UTR / reference number shown on your payment receipt screenshot.`
-              };
-            }
+          let isMatch = ocrRawText.includes(rawInput) ||
+                        ocrUpper.includes(cleanUtr) ||
+                        ocrClean.includes(cleanUtr);
+
+          if (!isMatch && digitsOnly.length >= 6) {
+            isMatch = ocrDigits.includes(digitsOnly);
+          }
+
+          if (!isMatch && digitsOnly.length >= 8) {
+            const sub1 = digitsOnly.slice(0, 8);
+            const sub2 = digitsOnly.slice(-8);
+            const sub3 = digitsOnly.slice(2, 10);
+            isMatch = ocrDigits.includes(sub1) || ocrDigits.includes(sub2) || ocrDigits.includes(sub3);
+          }
+
+          if (!isMatch && (ocrClean.length > 5 || ocrDigits.length > 5)) {
+            return {
+              ok: false,
+              error: `🚫 UTR & PAYMENT SCREENSHOT MISMATCH:\n\nThe transaction reference / UTR number you entered (${rawInput}) was NOT found inside your uploaded payment screenshot image.\n\nPlease check your transaction receipt image and enter the exact matching UTR / reference number shown on your payment receipt screenshot!`
+            };
           }
         }
       } catch (err) {
