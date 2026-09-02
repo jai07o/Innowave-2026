@@ -3490,11 +3490,48 @@
   <header class="hero-unified-section" style="padding:50px 0 35px; position:relative; z-index:2;">
     <div class="wrap" style="max-width:1280px; margin:0 auto; padding:0 20px;">
 
-      <!-- Side-by-Side Grid Container -->
-      <div class="hero-tribute-grid" style="display:grid; grid-template-columns:1.15fr 0.85fr; gap:32px; align-items:center;">
+      <!-- Side-by-Side Grid Container (Visvesvaraya Card on Left, Fest Details on Right) -->
+      <div class="hero-tribute-grid" style="display:grid; grid-template-columns:0.85fr 1.15fr; gap:32px; align-items:center;">
 
-        <!-- Left Column: Hero Fest Title & Registration Details -->
-        <div class="hero-left-col" style="text-align:left; display:flex; flex-direction:column; align-items:flex-start;">
+        <!-- Left Column: Saluting Bharat Ratna Sri Mokshagundam Visvesvaraya Tribute Card -->
+        <div id="about" class="hero-left-col-tribute"
+          style="background:var(--bg-panel); border:1.5px solid var(--border); border-radius:24px; padding:28px 24px; box-shadow:0 20px 50px rgba(0, 0, 0, 0.2); backdrop-filter:blur(16px); position:relative; overflow:hidden; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+
+          <div class="sec-tag"
+            style="display:inline-block; background:rgba(0, 212, 255, 0.12); border:1px solid var(--accent); padding:4px 16px; border-radius:20px; font-size:11px; letter-spacing:0.2em; font-weight:700; color:var(--accent); margin-bottom:12px;">
+            ENGINEERS' DAY TRIBUTE
+          </div>
+
+          <h2 class="sec-title" style="font-size:1.35rem; font-weight:800; margin-bottom:18px; color:var(--text-primary); line-height:1.3; text-align:center;">
+            Saluting Bharat Ratna Sri Mokshagundam Visvesvaraya
+          </h2>
+
+          <!-- Portrait Box -->
+          <div style="text-align:center; display:flex; flex-direction:column; align-items:center;">
+            <div class="portrait-frame-wrapper" style="transform:scale(1.05); transform-origin:center center; margin-bottom:12px;">
+              <div class="portrait-frame-ring"></div>
+              <div class="portrait-frame-container">
+                <div class="tech-corner top-left"></div>
+                <div class="tech-corner top-right"></div>
+                <div class="tech-corner bottom-left"></div>
+                <div class="tech-corner bottom-right"></div>
+                <div class="laser-scan-line"></div>
+                <div class="portrait-img-box">
+                  <img src="assets/visvesvaraya.png" alt="Bharat Ratna Sri Mokshagundam Visvesvaraya Classic Photograph">
+                </div>
+              </div>
+            </div>
+            <div
+              style="margin-top:8px; font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:13.5px; color:var(--text-primary); letter-spacing:0.04em; text-transform:uppercase;">
+              Sri Mokshagundam Visvesvaraya
+            </div>
+            <div style="font-size:11.5px; color:var(--gold); font-weight:700; margin-top:2px;">(1861 – 1962) · Bharat Ratna</div>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Hero Fest Title & Registration Details -->
+        <div class="hero-right-col-fest" style="text-align:left; display:flex; flex-direction:column; align-items:flex-start;">
 
           <div class="hero-badge"
             style="display:inline-flex; align-items:center; gap:6px; background:var(--accent-dim); border:1.5px solid var(--border); color:var(--accent); padding:6px 18px; border-radius:20px; font-weight:800; font-size:11.5px; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:14px;">
@@ -3546,43 +3583,6 @@
               style="background:var(--card-bg); border:1.5px solid var(--border); color:var(--text-primary); font-weight:700; padding:14px 24px; border-radius:28px; text-decoration:none; display:inline-block;">EXPLORE
               EVENTS</a>
           </div>
-        </div>
-
-        <!-- Right Column: Saluting Bharat Ratna Sri Mokshagundam Visvesvaraya Tribute Card -->
-        <div id="about" class="hero-right-col"
-          style="background:var(--bg-panel); border:1.5px solid var(--border); border-radius:24px; padding:28px 24px; box-shadow:0 20px 50px rgba(0, 0, 0, 0.2); backdrop-filter:blur(16px); position:relative; overflow:hidden; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-
-          <div class="sec-tag"
-            style="display:inline-block; background:rgba(0, 212, 255, 0.12); border:1px solid var(--accent); padding:4px 16px; border-radius:20px; font-size:11px; letter-spacing:0.2em; font-weight:700; color:var(--accent); margin-bottom:12px;">
-            ENGINEERS' DAY TRIBUTE
-          </div>
-
-          <h2 class="sec-title" style="font-size:1.35rem; font-weight:800; margin-bottom:18px; color:var(--text-primary); line-height:1.3; text-align:center;">
-            Saluting Bharat Ratna Sri Mokshagundam Visvesvaraya
-          </h2>
-
-          <!-- Portrait Box -->
-          <div style="text-align:center; display:flex; flex-direction:column; align-items:center;">
-            <div class="portrait-frame-wrapper" style="transform:scale(1.05); transform-origin:center center; margin-bottom:12px;">
-              <div class="portrait-frame-ring"></div>
-              <div class="portrait-frame-container">
-                <div class="tech-corner top-left"></div>
-                <div class="tech-corner top-right"></div>
-                <div class="tech-corner bottom-left"></div>
-                <div class="tech-corner bottom-right"></div>
-                <div class="laser-scan-line"></div>
-                <div class="portrait-img-box">
-                  <img src="assets/visvesvaraya.png" alt="Bharat Ratna Sri Mokshagundam Visvesvaraya Classic Photograph">
-                </div>
-              </div>
-            </div>
-            <div
-              style="margin-top:8px; font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:13.5px; color:var(--text-primary); letter-spacing:0.04em; text-transform:uppercase;">
-              Sri Mokshagundam Visvesvaraya
-            </div>
-            <div style="font-size:11.5px; color:var(--gold); font-weight:700; margin-top:2px;">(1861 – 1962) · Bharat Ratna</div>
-          </div>
-
         </div>
 
       </div>
