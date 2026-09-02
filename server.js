@@ -725,15 +725,7 @@ app.post('/api/admin/login', (req, res) => {
 });
 
 app.get('/api/admin/registrations', requireAdmin, (req, res) => {
-  const allRows = db.prepare(`SELECT * FROM registrations ORDER BY id DESC`).all();
-  // Filter ONLY registrations after completion of details AND payment submission
-  const rows = allRows.filter(r => 
-    r.payment_status === 'Paid' ||
-    r.payment_status === 'Pending Verification' ||
-    r.payment_status === 'Verification Submitted' ||
-    (r.payment_ref && String(r.payment_ref).trim().length >= 4) ||
-    (r.payment_screenshot && String(r.payment_screenshot).length > 20)
-  );
+  const rows = db.prepare(`SELECT * FROM registrations ORDER BY id DESC`).all();
   const totalTeams = rows.length;
 
   let ieeeParticipants = 0;
