@@ -43,6 +43,14 @@ $nonIeeeCount = 0;
 $totalAmountCollected = 0;
 $pendingCount = 0;
 
+$utrCounts = [];
+foreach ($rows as $r) {
+    $ref = strtoupper(trim($r['payment_ref'] ?? ''));
+    if (!empty($ref)) {
+        $utrCounts[$ref] = ($utrCounts[$ref] ?? 0) + 1;
+    }
+}
+
 foreach ($rows as $r) {
     if (($r['ieee_member'] ?? '') === 'Yes') {
         $ieeeCount++;
@@ -278,8 +286,17 @@ function esc($s) {
                 <?php endif; ?>
               </td>
               <td>
+                <?php
+                  $cleanRefUpper = strtoupper(trim($utr));
+                  $isClonedUtr = (!empty($cleanRefUpper) && isset($utrCounts[$cleanRefUpper]) && $utrCounts[$cleanRefUpper] > 1);
+                ?>
                 <?php if (!empty($utr)): ?>
                   <div style="font-family:monospace; color:#00e676; font-weight:800; font-size:13px;">UTR: <?= esc($utr) ?></div>
+                  <?php if ($isClonedUtr): ?>
+                    <div style="color:#ef4444; font-weight:900; font-size:11px; margin-top:2px; background:rgba(239,68,68,0.15); border:1px solid #ef4444; padding:2px 6px; border-radius:4px; display:inline-block;">
+                      🚨 CLONED UTR (<?= $utrCounts[$cleanRefUpper] ?> Duplicate Submissions)
+                    </div>
+                  <?php endif; ?>
                 <?php else: ?>
                   <span style="color:#94a3b8; font-size:12px;">No UTR submitted</span>
                 <?php endif; ?>
