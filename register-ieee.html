@@ -2268,6 +2268,18 @@
       }
     }
 
+    async function recognizeWithTimeout(imageBase64, timeoutMs = 4000) {
+      if (!window.Tesseract || !imageBase64) return null;
+      try {
+        return await Promise.race([
+          Tesseract.recognize(imageBase64, 'eng', { logger: () => {} }),
+          new Promise((resolve) => setTimeout(() => resolve(null), timeoutMs))
+        ]);
+      } catch (err) {
+        return null;
+      }
+    }
+
     async function performIeeeCardOcrVerification(ieeeId, leaderName, cardImageBase64) {
       const cleanIeeeId = String(ieeeId || '').replace(/\D/g, '');
       if (!cleanIeeeId || cleanIeeeId.length < 5) {
@@ -2278,9 +2290,9 @@
       }
 
       try {
-        if (window.Tesseract) {
-          const res = await Tesseract.recognize(cardImageBase64, 'eng', { logger: () => {} });
-          const ocrText = (res && res.data && res.data.text) ? res.data.text : '';
+        const res = await recognizeWithTimeout(cardImageBase64, 4000);
+        if (res && res.data && res.data.text) {
+          const ocrText = res.data.text;
           const ocrUpper = ocrText.toUpperCase();
           const ocrDigits = ocrText.replace(/\D/g, '');
 
@@ -2330,9 +2342,9 @@
       }
 
       try {
-        if (window.Tesseract) {
-          const res = await Tesseract.recognize(screenshotBase64, 'eng', { logger: () => {} });
-          const ocrRawText = (res && res.data && res.data.text) ? res.data.text : '';
+        const res = await recognizeWithTimeout(screenshotBase64, 4000);
+        if (res && res.data && res.data.text) {
+          const ocrRawText = res.data.text;
           const ocrUpper = ocrRawText.toUpperCase();
           const ocrClean = ocrUpper.replace(/[^A-Za-z0-9]/g, '');
           const ocrDigits = ocrUpper.replace(/\D/g, '');

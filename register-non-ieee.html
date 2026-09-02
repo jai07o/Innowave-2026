@@ -1946,6 +1946,18 @@
       }
     }
 
+    async function recognizeWithTimeout(imageBase64, timeoutMs = 4000) {
+      if (!window.Tesseract || !imageBase64) return null;
+      try {
+        return await Promise.race([
+          Tesseract.recognize(imageBase64, 'eng', { logger: () => {} }),
+          new Promise((resolve) => setTimeout(() => resolve(null), timeoutMs))
+        ]);
+      } catch (err) {
+        return null;
+      }
+    }
+
     async function performUtrOcrVerification(utrRef, screenshotBase64) {
       const rawInput = String(utrRef || '').trim();
       const cleanUtr = rawInput.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
@@ -1957,9 +1969,9 @@
       }
 
       try {
-        if (window.Tesseract) {
-          const res = await Tesseract.recognize(screenshotBase64, 'eng', { logger: () => {} });
-          const ocrRawText = (res && res.data && res.data.text) ? res.data.text : '';
+        const res = await recognizeWithTimeout(screenshotBase64, 4000);
+        if (res && res.data && res.data.text) {
+          const ocrRawText = res.data.text;
           const ocrUpper = ocrRawText.toUpperCase();
           const ocrClean = ocrUpper.replace(/[^A-Za-z0-9]/g, '');
           const ocrDigits = ocrUpper.replace(/\D/g, '');
