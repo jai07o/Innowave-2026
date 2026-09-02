@@ -25,6 +25,6 @@
     RewriteRule ^register$ register-non-ieee.html [L,QSA]
     RewriteRule ^admin$ admin.php [L,QSA]
     RewriteRule ^verify-id$ verify-id.html [L,QSA]
-    RewriteRule ^id-card$ id-card.html [L,QSA]
+    RewriteRule ^id-card$ verify-id.html [L,QSA]
     RewriteRule ^verify$ verify-id.html [L,QSA]
 </IfModule>

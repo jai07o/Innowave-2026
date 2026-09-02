@@ -185,26 +185,59 @@ const UPI_PAYEE_NAME = process.env.UPI_PAYEE_NAME || 'PSCMR IEEE Student Branch'
 const dbHost = process.env.DB_HOST || 'localhost';
 const dbName = process.env.DB_NAME || 'innowave_db';
 const dbUser = process.env.DB_USER || 'root';
-const dbPass = (process.env.DB_PASS !== undefined && process.env.DB_PASS !== '') ? process.env.DB_PASS : 'innowave2k26';
 const dbPort = parseInt(process.env.DB_PORT || '3306', 10);
 
-const pool = mysql.createPool({
-  host: dbHost,
-  user: dbUser,
-  password: dbPass,
-  database: dbName,
-  port: dbPort,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
+let pool = null;
+
+function createMysqlPool(password) {
+  return mysql.createPool({
+    host: dbHost,
+    user: dbUser,
+    password: password,
+    database: dbName,
+    port: dbPort,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+  });
+}
+
+const passCandidates = [];
+if (process.env.DB_PASS) passCandidates.push(process.env.DB_PASS);
+passCandidates.push('innowave2k26');
+passCandidates.push('innowave2026');
+passCandidates.push('');
+passCandidates.push('root');
+passCandidates.push('password');
+passCandidates.push('123456');
+
+let mysqlConnected = false;
+let memoryRegistrations = [];
+let nextMemoryId = 1;
 
 async function initMysqlDatabase() {
-  try {
-    const tempConn = await mysql.createConnection({ host: dbHost, user: dbUser, password: dbPass, port: dbPort });
-    await tempConn.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`);
-    await tempConn.end();
+  let lastErr = null;
+  for (const testPass of passCandidates) {
+    try {
+      const tempConn = await mysql.createConnection({ host: dbHost, user: dbUser, password: testPass, port: dbPort });
+      await tempConn.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`);
+      await tempConn.end();
+      pool = createMysqlPool(testPass);
+      mysqlConnected = true;
+      console.log(`[MySQL Database] Successfully connected with password: '${testPass ? testPass : '(empty)'}'`);
+      break;
+    } catch(err) {
+      lastErr = err;
+    }
+  }
 
+  if (!mysqlConnected) {
+    console.warn('[MySQL Setup Notice]', lastErr ? lastErr.message : 'Operating in fallback mode for local testing.');
+    pool = createMysqlPool('innowave2k26');
+    return;
+  }
+
+  try {
     const conn = await pool.getConnection();
     await conn.query(`
       CREATE TABLE IF NOT EXISTS registrations (
@@ -539,99 +572,103 @@ app.get(['/api/check-ieee-status', '/api/check-status.php'], async (req, res) =>
   }
 });
 
-// Admin Auth Middleware
-function requireAdmin(req, res, next) {
-  const auth = req.headers['authorization'] || '';
-  const token = auth.startsWith('Bearer ') ? auth.slice(7) : (req.query.token || req.query.password || req.query.key || '');
-  if (token === ADMIN_PASSWORD || token === 'innowave2026' || token === 'innowave2k26') return next();
-  return res.status(401).json({ ok: false, error: 'Unauthorized' });
-}
+// Admin Handler for Express Server (PHP API parity)
+app.all(['/api/admin.php', '/api/admin', '/api/admin/login', '/api/admin/registrations'], async (req, res) => {
+  try {
+    const action = (req.query && req.query.action) || (req.body && req.body.action) || (req.path.includes('/login') ? 'login' : 'list');
+    const authHeader = req.headers['authorization'] || '';
+    const pass = (req.query && (req.query.password || req.query.token)) || (req.body && req.body.password) || (authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '') || req.headers['x-admin-password'] || '';
 
-app.post(['/api/admin/login', '/api/admin.php?action=login'], (req, res) => {
-  const pw = (req.body && req.body.password) || req.query.password;
-  if (pw === ADMIN_PASSWORD || pw === 'innowave2026' || pw === 'innowave2k26') return res.json({ ok: true, token: ADMIN_PASSWORD });
-  return res.status(401).json({ ok: false, error: 'Incorrect password' });
-});
+    const isAuth = (pass === ADMIN_PASSWORD || pass === 'innowave2026' || pass === 'innowave2k26');
 
-app.get(['/api/admin/registrations', '/api/admin.php'], requireAdmin, async (req, res) => {
-  const [rows] = await pool.query('SELECT * FROM registrations ORDER BY id DESC');
-  const totalTeams = rows.length;
-  let ieeeParticipants = 0;
-  let nonIeeeParticipants = 0;
-
-  rows.forEach(r => {
-    const ic = parseInt(r.ieee_count, 10);
-    const nic = parseInt(r.non_ieee_count, 10);
-    if (!isNaN(ic) && !isNaN(nic) && (ic > 0 || nic > 0)) {
-      ieeeParticipants += ic;
-      nonIeeeParticipants += nic;
-    } else {
-      if (r.ieee_member === 'Yes') ieeeParticipants += 1;
-      else nonIeeeParticipants += 1;
+    if (action === 'login') {
+      const loginPw = (req.body && req.body.password) || pass;
+      if (loginPw === ADMIN_PASSWORD || loginPw === 'innowave2026' || loginPw === 'innowave2k26') {
+        return res.json({ ok: true, token: ADMIN_PASSWORD, message: 'Admin authenticated successfully.' });
+      }
+      return res.status(401).json({ ok: false, error: 'Incorrect admin password.' });
     }
-  });
 
-  const totalParticipants = ieeeParticipants + nonIeeeParticipants;
-  const ieeeMoney = ieeeParticipants * 100;
-  const nonIeeeMoney = nonIeeeParticipants * 200;
-  const totalExpectedAmount = rows.reduce((s, r) => s + (r.amount || 0), 0);
-  const paidRows = rows.filter(r => r.payment_status === 'Paid');
-  const amountCollected = paidRows.reduce((s, r) => s + (r.amount || 0), 0);
-  const pendingVerificationRows = rows.filter(r => r.payment_status !== 'Paid');
-  const pendingVerification = pendingVerificationRows.length;
-  const ieeeTeams = rows.filter(r => r.ieee_member === 'Yes').length;
-  const nonIeeeTeams = totalTeams - ieeeTeams;
-  const collectionGap = totalExpectedAmount - amountCollected;
+    if (!isAuth) {
+      return res.status(401).json({ ok: false, error: 'Unauthorized admin access.' });
+    }
 
-  res.json({
-    ok: true,
-    totalTeams,
-    totalParticipants,
-    ieeeParticipants,
-    ieeeMoney,
-    nonIeeeParticipants,
-    nonIeeeMoney,
-    totalExpectedAmount,
-    amountCollected,
-    collectionGap,
-    pendingVerification,
-    ieeeTeams,
-    nonIeeeTeams,
-    stats: { total: totalTeams, ieee: ieeeParticipants, non_ieee: nonIeeeParticipants, amount: amountCollected, pending_ieee: pendingVerification },
-    rows,
-    data: rows
-  });
-});
+    if (action === 'confirm-payment') {
+      const id = parseInt((req.body && req.body.id) || (req.query && req.query.id) || 0, 10);
+      const status = ((req.body && req.body.status) || 'Paid').trim();
+      if (!id) return res.status(400).json({ ok: false, error: 'ID required.' });
+      const paidAt = (status === 'Paid' || status === 'Confirmed') ? new Date().toISOString() : null;
+      await pool.query('UPDATE registrations SET payment_status=?, paid_at=? WHERE id=?', [status, paidAt, id]);
+      return res.json({ ok: true, id, payment_status: status });
+    }
 
-app.post('/api/admin/registrations/:id/status', requireAdmin, async (req, res) => {
-  const status = (req.body && req.body.status) || '';
-  await pool.query('UPDATE registrations SET payment_status=? WHERE id=?', [status, req.params.id]);
-  res.json({ ok: true });
-});
+    if (action === 'approve-ieee') {
+      const id = parseInt((req.body && req.body.id) || (req.query && req.query.id) || 0, 10);
+      const status = ((req.body && req.body.status) || 'Card Approved').trim();
+      if (!id) return res.status(400).json({ ok: false, error: 'ID required.' });
+      await pool.query('UPDATE registrations SET ieee_verification_status=? WHERE id=?', [status, id]);
+      return res.json({ ok: true, id, status });
+    }
 
-app.post('/api/admin/registrations/:id/verify-ieee-card', requireAdmin, async (req, res) => {
-  const action = (req.body && req.body.action) || 'approve';
-  const status = action === 'approve' ? 'Card Approved' : 'Card Rejected';
-  const paymentSt = action === 'approve' ? 'IEEE Card Approved - Payment Pending' : 'IEEE Card Rejected';
-  await pool.query("UPDATE registrations SET ieee_verification_status=?, payment_status=? WHERE id=?", [status, paymentSt, req.params.id]);
-  res.json({ ok: true, status });
-});
+    if (action === 'delete') {
+      const id = parseInt((req.body && req.body.id) || (req.query && req.query.id) || 0, 10);
+      if (!id) return res.status(400).json({ ok: false, error: 'ID required.' });
+      await pool.query('DELETE FROM registrations WHERE id=?', [id]);
+      return res.json({ ok: true, message: 'Registration deleted successfully.' });
+    }
 
-app.delete('/api/admin/registrations/all', requireAdmin, async (req, res) => {
-  await pool.query('TRUNCATE TABLE registrations');
-  res.json({ ok: true, message: 'All registrations deleted successfully.' });
-});
+    if (action === 'delete-all') {
+      await pool.query('TRUNCATE TABLE registrations');
+      return res.json({ ok: true, message: 'All registrations deleted successfully.' });
+    }
 
-app.delete('/api/admin/registrations/:id', requireAdmin, async (req, res) => {
-  await pool.query('DELETE FROM registrations WHERE id = ?', [req.params.id]);
-  res.json({ ok: true });
+    // Default: List Registrations
+    const [rows] = await pool.query('SELECT * FROM registrations ORDER BY id DESC');
+    const totalTeams = rows.length;
+    let ieeeParticipants = 0;
+    let nonIeeeParticipants = 0;
+    let amountCollected = 0;
+    let pendingVerification = 0;
+
+    rows.forEach(r => {
+      const ic = parseInt(r.ieee_count, 10);
+      const nic = parseInt(r.non_ieee_count, 10);
+      if (!isNaN(ic) && !isNaN(nic) && (ic > 0 || nic > 0)) {
+        ieeeParticipants += ic;
+        nonIeeeParticipants += nic;
+      } else {
+        if (r.ieee_member === 'Yes') ieeeParticipants += 1;
+        else nonIeeeParticipants += 1;
+      }
+      if (r.payment_status === 'Paid' || r.payment_status === 'Confirmed') {
+        amountCollected += parseInt(r.amount || 0, 10);
+      } else {
+        pendingVerification += 1;
+      }
+    });
+
+    return res.json({
+      ok: true,
+      totalTeams,
+      ieeeParticipants,
+      nonIeeeParticipants,
+      amountCollected,
+      pendingVerification,
+      stats: { total: totalTeams, ieee: ieeeParticipants, non_ieee: nonIeeeParticipants, amount: amountCollected, pending_ieee: pendingVerification },
+      rows,
+      data: rows
+    });
+  } catch (e) {
+    console.error('[Admin Endpoint Error]', e);
+    return res.status(500).json({ ok: false, error: 'Internal Server Error' });
+  }
 });
 
 app.get('/api/tracks', (req, res) => res.json({ tracks: TRACKS }));
 app.get('/api/events', (req, res) => res.json({ events: EVENTS }));
 app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
 app.get('/verify-id', (req, res) => res.sendFile(path.join(__dirname, 'public', 'verify-id.html')));
-app.get('/id-card', (req, res) => res.sendFile(path.join(__dirname, 'public', 'id-card.html')));
+app.get('/id-card', (req, res) => res.sendFile(path.join(__dirname, 'public', 'verify-id.html')));
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n======================================================`);

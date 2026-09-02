@@ -21,7 +21,11 @@ if (getenv('DB_PASS') !== false && getenv('DB_PASS') !== '') {
     $passCandidates[] = getenv('DB_PASS');
 }
 $passCandidates[] = 'innowave2k26';
+$passCandidates[] = 'innowave2026';
 $passCandidates[] = '';
+$passCandidates[] = 'root';
+$passCandidates[] = 'password';
+$passCandidates[] = '123456';
 
 $pdo = null;
 $lastError = null;

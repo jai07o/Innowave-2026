@@ -9,8 +9,8 @@ header('Content-Type: application/json');
 $rawInput = file_get_contents('php://input');
 $jsonBody = json_decode($rawInput, true) ?: [];
 
-$action = $_GET['action'] ?? $_POST['action'] ?? $jsonBody['action'] ?? '';
-$pass   = $_GET['password'] ?? $_POST['password'] ?? $jsonBody['password'] ?? $_SERVER['HTTP_X_ADMIN_PASSWORD'] ?? '';
+$action = $_REQUEST['action'] ?? $jsonBody['action'] ?? '';
+$pass   = $_REQUEST['password'] ?? $jsonBody['password'] ?? $_SERVER['HTTP_X_ADMIN_PASSWORD'] ?? '';
 
 if (empty($pass) && isset($_SERVER['HTTP_AUTHORIZATION'])) {
     $auth = $_SERVER['HTTP_AUTHORIZATION'];
@@ -23,7 +23,9 @@ $ADMIN_PASSWORD = 'innowave2k26';
 
 function isAuthorizedPassword($p) {
     global $ADMIN_PASSWORD;
-    return ($p === $ADMIN_PASSWORD || $p === 'innowave2026' || $p === 'innowave2k26');
+    if (empty($p)) return false;
+    $pClean = trim($p);
+    return ($pClean === $ADMIN_PASSWORD || $pClean === 'innowave2026' || $pClean === 'innowave2k26');
 }
 
 if ($action === 'login') {
@@ -31,12 +33,14 @@ if ($action === 'login') {
     if (isAuthorizedPassword($loginPw)) {
         echo json_encode(['ok' => true, 'token' => $ADMIN_PASSWORD, 'message' => 'Admin authenticated successfully.']);
     } else {
+        http_response_code(401);
         echo json_encode(['ok' => false, 'error' => 'Incorrect admin password.']);
     }
     exit;
 }
 
 if (!isAuthorizedPassword($pass)) {
+    http_response_code(401);
     echo json_encode(['ok' => false, 'error' => 'Unauthorized admin access.']);
     exit;
 }

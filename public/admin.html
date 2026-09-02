@@ -647,20 +647,28 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
   let DATA = [];
 
   async function doLogin(){
-    const pw = document.getElementById('pw').value;
+    const pw = (document.getElementById('pw').value || '').trim();
     const err = document.getElementById('loginErr');
     err.textContent='';
+    if(!pw){ err.textContent = 'Please enter password.'; return; }
     try{
-      const r = await fetch('api/admin.php?action=login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pw }) });
+      const r = await fetch('api/admin.php?action=login&password=' + encodeURIComponent(pw), { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify({ password: pw, action: 'login' }) 
+      });
       const j = await r.json();
-      if(j.ok){ 
-        TOKEN = pw; 
+      if(j && j.ok){ 
+        TOKEN = j.token || pw; 
         localStorage.setItem('iw_token', TOKEN); 
         sessionStorage.setItem('iw_token', TOKEN); 
         showDash(); 
       }
-      else err.textContent = j.error||'Incorrect password';
-    }catch(e){ err.textContent='Network error'; }
+      else err.textContent = (j && j.error) ? j.error : 'Incorrect password';
+    }catch(e){ 
+      console.error(e);
+      err.textContent='Connection error. Please try again.'; 
+    }
   }
   let autoRefreshInterval = null;
   function logout(){ 
@@ -668,7 +676,10 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
     localStorage.removeItem('iw_token'); 
     sessionStorage.removeItem('iw_token'); 
     TOKEN=''; 
-    location.reload(); 
+    document.getElementById('loginWrap').style.display='flex';
+    document.getElementById('dash').style.display='none';
+    const err = document.getElementById('loginErr');
+    if(err) err.textContent = 'Session expired. Please log in.';
   }
   function showDash(){
     document.getElementById('loginWrap').style.display='none';
@@ -683,11 +694,13 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
     }
   }
   async function loadData(){
+    if(!TOKEN) return;
     try{
       const r = await fetch('api/admin.php?action=list&password=' + encodeURIComponent(TOKEN));
-      if(r.status===401){ logout(); return; }
+      if(r.status === 401){ logout(); return; }
       const j = await r.json();
-      DATA = j.data || [];
+      if(!j || !j.ok){ logout(); return; }
+      DATA = j.data || j.rows || [];
       const s = j.stats || {};
       if (document.getElementById('stTeams')) document.getElementById('stTeams').textContent = s.total || DATA.length || 0;
       if (document.getElementById('stPeople')) document.getElementById('stPeople').textContent = s.total || DATA.length || 0;
