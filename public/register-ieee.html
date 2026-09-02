@@ -1594,27 +1594,49 @@
         </div>
       </div>
 
-      <!-- Payment Modal -->
+      <!-- Payment Modal / Official Bank Account Details Box -->
       <div id="paymentModal"
-        style="display:none; margin-top:24px; background:var(--bg-primary); border:1px solid var(--accent); padding:28px; border-radius:12px; text-align:center;">
-        <h3 class="font-space" style="color:var(--accent); font-size:20px; font-weight:700;">SCAN TO PAY VIA PhonePe /
-          UPI</h3>
-        <p style="color:var(--text-muted); font-size:13.5px; margin:6px 0 16px;">Complete payment by scanning the
-          official QR Code below:</p>
+        style="display:none; margin-top:24px; background:var(--bg-primary); border:1.5px solid var(--accent); padding:28px 20px; border-radius:16px; text-align:center;">
+        <h3 class="font-space" style="color:var(--accent); font-size:20px; font-weight:800; margin-bottom:6px;">
+          🏦 OFFICIAL BANK ACCOUNT DETAILS FOR PAYMENT</h3>
+        <p style="color:var(--text-muted); font-size:13.5px; margin-bottom:20px;">
+          Transfer the registration fee via <strong>NEFT / IMPS / NetBanking / Mobile Banking / UPI</strong> to the official college account below:</p>
 
+        <!-- Official Bank Account Details Card -->
         <div
-          style="background:#ffffff; display:inline-block; padding:16px; border-radius:16px; border:2px solid var(--accent); margin-bottom:16px; box-shadow: 0 0 24px rgba(0, 212, 255, 0.3);">
-          <img id="qrImgDisplay" src="" style="width:240px; height:240px; display:block;" alt="Payment QR Code">
-          <div
-            style="font-size:11px; font-weight:800; color:#000; margin-top:6px; letter-spacing:0.05em; font-family:'Space Grotesk',sans-serif;">
-            Scan with PhonePe / GPay / Paytm</div>
-        </div>
+          style="background:linear-gradient(135deg, rgba(0, 212, 255, 0.08) 0%, rgba(0, 102, 255, 0.08) 100%); border:2px solid var(--accent); border-radius:16px; padding:22px 20px; max-width:540px; margin:0 auto 24px; text-align:left; box-shadow:0 10px 30px rgba(0, 212, 255, 0.15);">
+          
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px; border-bottom:1px dashed var(--border); padding-bottom:12px;">
+            <div style="font-size:28px;">🏫</div>
+            <div>
+              <div style="font-size:11px; font-weight:800; color:var(--accent); text-transform:uppercase; letter-spacing:0.08em;">BENEFICIARY ACCOUNT NAME</div>
+              <div style="font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:13.5px; color:var(--text-primary); line-height:1.35; margin-top:2px;">
+                POTTI SRIRAMULU CHALAVADI MALLIKARJUNA RAO COLLEGE
+              </div>
+            </div>
+          </div>
 
-        <div
-          style="background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:8px; padding:10px 16px; display:inline-flex; align-items:center; gap:10px; margin-bottom:20px;">
-          <span style="font-size:12.5px; color:var(--text-muted);">UPI ID:</span>
-          <strong style="color:var(--accent); font-family:monospace; font-size:14px;"
-            id="displayUpiVpa">6309419599@axl</strong>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div>
+              <div style="font-size:11px; font-weight:800; color:var(--gold); text-transform:uppercase; letter-spacing:0.08em;">ACCOUNT NUMBER</div>
+              <div style="font-family:'Space Grotesk',sans-serif; font-weight:900; font-size:17px; color:var(--text-primary); letter-spacing:0.05em; margin-top:2px; user-select:all;">
+                1414155000131347
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size:11px; font-weight:800; color:var(--accent); text-transform:uppercase; letter-spacing:0.08em;">IFSC CODE</div>
+              <div style="font-family:'Space Grotesk',sans-serif; font-weight:900; font-size:17px; color:var(--accent); letter-spacing:0.05em; margin-top:2px; user-select:all;">
+                KVBL0001414
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:14px; padding-top:10px; border-top:1px dashed var(--border); font-size:12px; color:var(--text-muted); display:flex; justify-content:space-between; align-items:center;">
+            <span>🏦 Bank: <strong>Karur Vysya Bank (KVB)</strong></span>
+            <span style="color:var(--gold); font-weight:700;">★ Official College Account</span>
+          </div>
+
         </div>
 
         <div
@@ -2128,7 +2150,7 @@
               Payment details are currently <b>PENDING</b>.<br>
               <div style="font-size:12.5px; color:#fde68a; font-weight:600; margin:8px 0;">Scan QR code below to complete payment (₹${data.amount}) and submit your 12-digit UTR transaction ID:</div>
               <button type="button" class="btn-primary-lg" style="margin-top:6px; width:100%; padding:14px; font-size:15px; font-weight:800;" onclick="openPaymentModalWithData()">
-                📲 OPEN PAYMENT QR CODE & SUBMIT UTR →
+                📲 OPEN PAYMENT DETAILS & BANK ACCOUNT →
               </button>
             </div>
           `;
