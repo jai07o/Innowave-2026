@@ -360,7 +360,7 @@ function pad(n) {
 }
 
 // ---------- Step 1: create registration (Pending) + return UPI payment info ----------
-app.post('/api/register', async (req, res) => {
+app.post(['/api/register', '/api/register.php'], async (req, res) => {
   try {
     const b = req.body || {};
     const errors = [];
@@ -531,11 +531,11 @@ app.post('/api/register', async (req, res) => {
 });
 
 // ---------- Step 2: confirm payment (submit UPI reference + payment screenshot) ----------
-app.post('/api/register/:id/confirm', async (req, res) => {
+app.post(['/api/register/:id/confirm', '/api/submit-utr.php'], async (req, res) => {
   try {
-    const id = parseInt(req.params.id, 10);
-    const ref = (req.body && req.body.payment_ref || '').trim();
-    const screenshot = (req.body && req.body.payment_screenshot || '').trim();
+    const id = parseInt(req.params.id || (req.body && (req.body.regId || req.body.id)), 10);
+    const ref = (req.body && (req.body.payment_ref || req.body.utrRef || req.body.utr) || '').trim();
+    const screenshot = (req.body && (req.body.payment_screenshot || req.body.screenshotBase64 || req.body.screenshot) || '').trim();
 
     const row = db.prepare('SELECT * FROM registrations WHERE id = ?').get(id);
     if (!row) return res.status(404).json({ ok: false, errors: ['Registration not found. Please start again.'] });
@@ -607,7 +607,7 @@ app.post('/api/register/:id/confirm', async (req, res) => {
 });
 
 // ---------- Check IEEE Registration Status & Retrieve Active Payment QR ----------
-app.get('/api/check-ieee-status', async (req, res) => {
+app.get(['/api/check-ieee-status', '/api/check-status.php'], async (req, res) => {
   try {
     const q = (req.query.q || req.query.id || '').trim();
     if (!q) return res.status(400).json({ ok: false, error: 'Please enter your Registration ID, Mobile, or Email.' });
@@ -684,6 +684,40 @@ function requireAdmin(req, res, next) {
   if (token === ADMIN_PASSWORD || token === 'innowave2026' || token === 'innowave2k26') return next();
   return res.status(401).json({ ok: false, error: 'Unauthorized' });
 }
+app.all('/api/admin.php', (req, res, next) => {
+  const action = req.query.action || req.body.action || '';
+  const pass = req.query.password || req.body.password || (req.body && req.body.password) || '';
+  if (action === 'login') {
+    const pw = (req.body && req.body.password) || pass;
+    if (pw === ADMIN_PASSWORD || pw === 'innowave2026' || pw === 'innowave2k26') return res.json({ ok: true, token: ADMIN_PASSWORD });
+    return res.status(401).json({ ok: false, error: 'Incorrect password' });
+  }
+  if (pass !== ADMIN_PASSWORD && pass !== 'innowave2026' && pass !== 'innowave2k26') {
+    return res.status(401).json({ ok: false, error: 'Unauthorized' });
+  }
+  if (action === 'list') {
+    req.headers['authorization'] = 'Bearer ' + pass;
+    return app._router.handle(Object.assign(req, { url: '/api/admin/registrations', method: 'GET' }), res, next);
+  }
+  if (action === 'approve-ieee') {
+    req.headers['authorization'] = 'Bearer ' + pass;
+    const id = req.body.id;
+    const status = req.body.status === 'Card Approved' ? 'approve' : 'reject';
+    return app._router.handle(Object.assign(req, { url: `/api/admin/registrations/${id}/verify-ieee-card`, method: 'POST', body: { action: status } }), res, next);
+  }
+  if (action === 'confirm-payment') {
+    req.headers['authorization'] = 'Bearer ' + pass;
+    const id = req.body.id;
+    const status = req.body.status || 'Paid';
+    return app._router.handle(Object.assign(req, { url: `/api/admin/registrations/${id}/status`, method: 'POST', body: { status } }), res, next);
+  }
+  if (action === 'export') {
+    req.headers['authorization'] = 'Bearer ' + pass;
+    return app._router.handle(Object.assign(req, { url: '/api/admin/export.xlsx', method: 'GET' }), res, next);
+  }
+  next();
+});
+
 app.post('/api/admin/login', (req, res) => {
   const { password } = req.body || {};
   if (password === ADMIN_PASSWORD || password === 'innowave2026' || password === 'innowave2k26') return res.json({ ok: true, token: ADMIN_PASSWORD });
