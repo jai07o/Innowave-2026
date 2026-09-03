@@ -2383,14 +2383,14 @@
                              ocrRawText.includes(`${amtStr}.0`);
 
             if (!isAmtMatch && (ocrClean.length > 5 || ocrDigits.length > 5)) {
-              let feeCategoryText = `₹${amtNum}`;
-              if (amtNum === 50) feeCategoryText = `PSCMR CET IEEE Member (Required Fee: EXACTLY ₹50)`;
-              if (amtNum === 100) feeCategoryText = `Other College IEEE Member / PSCMR Non-IEEE (Required Fee: EXACTLY ₹100)`;
-              if (amtNum === 200) feeCategoryText = `Other College Non-IEEE Member (Required Fee: EXACTLY ₹200)`;
+              let feeCategoryText = `Category Fee: EXACTLY ₹${amtNum}`;
+              if (amtNum === 50) feeCategoryText = `1. PSCMR CET IEEE Member ➔ REQUIRED FEE: EXACTLY ₹50`;
+              if (amtNum === 100) feeCategoryText = `2. PSCMR CET Non-IEEE / 3. Other College IEEE Member ➔ REQUIRED FEE: EXACTLY ₹100`;
+              if (amtNum === 200) feeCategoryText = `4. Other College Non-IEEE Member ➔ REQUIRED FEE: EXACTLY ₹200`;
 
               return {
                 ok: false,
-                error: `🚫 PAYMENT AMOUNT MISMATCH:\n\nYou registered under Category: ${feeCategoryText}.\n\nThe uploaded payment receipt screenshot image does NOT show the required transfer amount of EXACTLY ₹${amtNum}.\n\nPlease upload your exact payment receipt screenshot showing a completed transfer of EXACTLY ₹${amtNum}!`
+                error: `🚫 PAYMENT AMOUNT MISMATCH:\n\n${feeCategoryText}\n\nThe uploaded payment receipt screenshot image does NOT show the required transfer amount of EXACTLY ₹${amtNum}.\n\nPlease check your screenshot and upload the exact payment receipt showing a completed transfer of EXACTLY ₹${amtNum}!`
               };
             }
           }
