@@ -88,7 +88,7 @@ if ($existingUtrRow) {
 }
 
 $paidAt = date('Y-m-d H:i:s');
-$paymentStatus = 'Paid';
+$paymentStatus = 'Pending Payment Confirmation';
 
 $updateStmt = $pdo->prepare("
     UPDATE registrations SET

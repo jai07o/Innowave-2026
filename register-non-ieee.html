@@ -1958,7 +1958,7 @@
       }
     }
 
-    async function performUtrOcrVerification(utrRef, screenshotBase64) {
+    async function performUtrOcrVerification(utrRef, screenshotBase64, expectedAmount) {
       const rawInput = String(utrRef || '').trim();
       const cleanUtr = rawInput.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
       const digitsOnly = rawInput.replace(/\D/g, '');
@@ -1968,34 +1968,53 @@
         return { ok: false, error: '⚠️ Please upload your payment receipt screenshot image.' };
       }
 
+      const amtNum = parseInt(String(expectedAmount || '0').replace(/\D/g, ''), 10);
+
       try {
-        const res = await recognizeWithTimeout(screenshotBase64, 4000);
+        const res = await recognizeWithTimeout(screenshotBase64, 4500);
         if (res && res.data && res.data.text) {
           const ocrRawText = res.data.text;
           const ocrUpper = ocrRawText.toUpperCase();
           const ocrClean = ocrUpper.replace(/[^A-Za-z0-9]/g, '');
           const ocrDigits = ocrUpper.replace(/\D/g, '');
 
-          let isMatch = ocrRawText.includes(rawInput) ||
-                        ocrUpper.includes(cleanUtr) ||
-                        ocrClean.includes(cleanUtr);
+          // 1. UTR NUMBER MATCH CHECK
+          let isUtrMatch = ocrRawText.includes(rawInput) ||
+                           ocrUpper.includes(cleanUtr) ||
+                           ocrClean.includes(cleanUtr);
 
-          if (!isMatch && digitsOnly.length >= 6) {
-            isMatch = ocrDigits.includes(digitsOnly);
+          if (!isUtrMatch && digitsOnly.length >= 6) {
+            isUtrMatch = ocrDigits.includes(digitsOnly);
           }
 
-          if (!isMatch && digitsOnly.length >= 8) {
+          if (!isUtrMatch && digitsOnly.length >= 8) {
             const sub1 = digitsOnly.slice(0, 8);
             const sub2 = digitsOnly.slice(-8);
             const sub3 = digitsOnly.slice(2, 10);
-            isMatch = ocrDigits.includes(sub1) || ocrDigits.includes(sub2) || ocrDigits.includes(sub3);
+            isUtrMatch = ocrDigits.includes(sub1) || ocrDigits.includes(sub2) || ocrDigits.includes(sub3);
           }
 
-          if (!isMatch && (ocrClean.length > 5 || ocrDigits.length > 5)) {
+          if (!isUtrMatch && (ocrClean.length > 5 || ocrDigits.length > 5)) {
             return {
               ok: false,
               error: `🚫 UTR & PAYMENT SCREENSHOT MISMATCH:\n\nThe transaction reference / UTR number you entered (${rawInput}) was NOT found inside your uploaded payment screenshot image.\n\nPlease check your transaction receipt image and enter the exact matching UTR / reference number shown on your payment receipt screenshot!`
             };
+          }
+
+          // 2. PAYMENT AMOUNT MATCH CHECK
+          if (amtNum > 0) {
+            const amtStr = String(amtNum);
+            let isAmtMatch = ocrRawText.includes(amtStr) ||
+                             ocrDigits.includes(amtStr) ||
+                             ocrRawText.includes(`${amtStr}.00`) ||
+                             ocrRawText.includes(`${amtStr}.0`);
+
+            if (!isAmtMatch && (ocrClean.length > 5 || ocrDigits.length > 5)) {
+              return {
+                ok: false,
+                error: `🚫 PAYMENT AMOUNT MISMATCH:\n\nThe required registration fee amount (₹${amtNum}) was NOT detected inside your uploaded payment screenshot image.\n\nPlease upload a clear payment receipt screenshot showing the exact transfer amount of ₹${amtNum}.`
+              };
+            }
           }
         }
       } catch (err) {
@@ -2017,8 +2036,9 @@
         verifyBtn.innerHTML = '🔍 RUNNING INSTANT AI OCR SCREENSHOT CHECK...';
       }
 
-      // 1. RUN AI OCR SCREENSHOT UTR CHECK
-      const ocrCheck = await performUtrOcrVerification(ref, uploadedScreenshotBase64);
+      // 1. RUN AI OCR SCREENSHOT UTR & AMOUNT CHECK
+      const payAmtDisplay = document.getElementById('payAmountDisplay') ? document.getElementById('payAmountDisplay').textContent : '';
+      const ocrCheck = await performUtrOcrVerification(ref, uploadedScreenshotBase64, payAmtDisplay);
       if (!ocrCheck.ok) {
         if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.innerHTML = origText; }
         showValidationErrorModal('🚫 PAYMENT SCREENSHOT MISMATCH', ocrCheck.error);
