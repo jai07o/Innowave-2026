@@ -2374,7 +2374,7 @@
             };
           }
 
-          // 2. PAYMENT AMOUNT MATCH CHECK
+          // 2. EXACT PRICE MATRIX AMOUNT MATCH CHECK
           if (amtNum > 0) {
             const amtStr = String(amtNum);
             let isAmtMatch = ocrRawText.includes(amtStr) ||
@@ -2383,9 +2383,14 @@
                              ocrRawText.includes(`${amtStr}.0`);
 
             if (!isAmtMatch && (ocrClean.length > 5 || ocrDigits.length > 5)) {
+              let feeCategoryText = `₹${amtNum}`;
+              if (amtNum === 50) feeCategoryText = `₹50 (PSCMR CET IEEE Member Rate)`;
+              if (amtNum === 100) feeCategoryText = `₹100 (PSCMR Non-IEEE / Other College IEEE Rate)`;
+              if (amtNum === 200) feeCategoryText = `₹200 (Other College Non-IEEE Member Rate)`;
+
               return {
                 ok: false,
-                error: `🚫 PAYMENT AMOUNT MISMATCH:\n\nThe required registration fee amount (₹${amtNum}) was NOT detected inside your uploaded payment screenshot image.\n\nPlease upload a clear payment receipt screenshot showing the exact transfer amount of ₹${amtNum}.`
+                error: `🚫 PAYMENT AMOUNT MISMATCH:\n\nThe required registration fee amount of ${feeCategoryText} was NOT detected inside your uploaded payment receipt screenshot image.\n\nPlease check your uploaded payment screenshot image and ensure it shows an exact transfer of ${feeCategoryText}.`
               };
             }
           }
@@ -2409,9 +2414,20 @@
         verifyBtn.innerHTML = '🔍 RUNNING INSTANT AI OCR SCREENSHOT CHECK...';
       }
 
+      // Calculate expected fee amount according to pricing matrix (PSCMR IEEE ₹50 | Other IEEE ₹100)
+      let targetAmt = 100;
+      const colName = document.getElementById('collegeName') ? document.getElementById('collegeName').value.trim() : '';
+      if (typeof isPscmrCollegeName === 'function' && isPscmrCollegeName(colName)) {
+        targetAmt = 50;
+      }
+      if (document.getElementById('payAmountDisplay')) {
+        const dispTxt = document.getElementById('payAmountDisplay').textContent;
+        const parsedDisp = parseInt(dispTxt.replace(/\D/g, ''), 10);
+        if (parsedDisp > 0) targetAmt = parsedDisp;
+      }
+
       // 1. RUN AI OCR SCREENSHOT UTR & AMOUNT CHECK
-      const payAmtDisplay = document.getElementById('payAmountDisplay') ? document.getElementById('payAmountDisplay').textContent : '';
-      const ocrCheck = await performUtrOcrVerification(ref, uploadedScreenshotBase64, payAmtDisplay);
+      const ocrCheck = await performUtrOcrVerification(ref, uploadedScreenshotBase64, targetAmt);
       if (!ocrCheck.ok) {
         if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.innerHTML = origText; }
         showValidationErrorModal('🚫 PAYMENT SCREENSHOT MISMATCH', ocrCheck.error);
