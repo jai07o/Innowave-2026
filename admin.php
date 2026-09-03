@@ -496,62 +496,167 @@ function esc($s)
       <!-- Admin Official ID Card Printer Modal -->
       <div class="modal-overlay" id="idCardModal" onclick="closeIdCardModal()">
         <div class="modal-content" onclick="event.stopPropagation()"
-          style="max-width:460px; background:#040914; border:2px solid var(--accent); border-radius:24px; padding:24px; text-align:center;">
+          style="max-width:480px; background:#040914; border:2px solid var(--accent); border-radius:24px; padding:20px; text-align:center;">
           <h3 style="color:var(--gold); font-size:18px; margin-bottom:14px; font-family:'Space Grotesk',sans-serif;">🪪
             OFFICIAL PARTICIPANT ID CARD PRINTER</h3>
 
           <!-- Printable Card Container -->
-          <div id="printableIdCard"
-            style="background:linear-gradient(135deg, #09152e 0%, #030814 100%); border:2px solid #00f2fe; border-radius:20px; padding:24px 18px; color:#ffffff; text-align:center; position:relative; box-shadow:0 0 30px rgba(0,242,254,0.25); margin-bottom:16px;">
-            <div
-              style="font-size:10px; font-weight:800; color:#fbbf24; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:4px;">
-              POTTI SRIRAMULU CHALAVADI MALLIKARJUNA RAO COLLEGE OF ENGG & TECH
-            </div>
-            <div
-              style="font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:900; color:#00f2fe; margin-bottom:12px;">
-              INNOWAVE-2K26 DELEGATE PASS
-            </div>
-
-            <div
-              style="width:70px; height:70px; margin:0 auto 12px; background:linear-gradient(135deg, #00f2fe, #0066ff); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:32px; box-shadow:0 0 15px rgba(0,242,254,0.4);">
-              🎓
-            </div>
-
-            <div id="cardName"
-              style="font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:900; color:#ffffff; margin-bottom:4px;">
-              Participant Name
-            </div>
-            <div id="cardCollege" style="font-size:12.5px; color:#94a3b8; font-weight:600; margin-bottom:10px;">
-              PSCMR CET · CSE (III Year)
-            </div>
-
-            <div
-              style="background:rgba(0, 230, 118, 0.15); border:1px solid #00e676; border-radius:10px; padding:6px 12px; display:inline-block; font-size:11px; font-weight:900; color:#00e676; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:14px;">
-              🟢 OFFICIAL VERIFIED PARTICIPANT
-            </div>
-
-            <div
-              style="display:grid; grid-template-columns:1fr 1fr; gap:10px; background:rgba(255,255,255,0.04); padding:12px; border-radius:12px; font-size:12px; text-align:left; border:1px solid rgba(255,255,255,0.1);">
-              <div>
-                <span style="color:#94a3b8; font-size:10px; display:block; font-weight:700;">TEAM REG ID</span>
-                <strong id="cardTeamId" style="color:#00f2fe; font-size:15px; font-family:monospace;">IW26-1001</strong>
+          <div id="printableIdCard" style="width: 420px; margin: 0 auto; background: #ffffff; border: 2.5px solid #00c3ff; border-radius: 20px; overflow: hidden; font-family: 'Inter', sans-serif; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: left; color: #0f172a; position: relative;">
+            
+            <!-- 1. Top Dark Navy Blue Banner Header -->
+            <div style="background: #020d1a; padding: 24px 20px 20px; text-align: center; border-bottom: 3px solid #e59a18; position: relative;">
+              <!-- Gold Pill Badge -->
+              <div style="display: inline-block; border: 1.5px solid #e59a18; border-radius: 20px; padding: 4px 16px; color: #e59a18; font-weight: 800; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px;">
+                👑 OFFICIAL DELEGATE PASS
               </div>
-              <div>
-                <span style="color:#94a3b8; font-size:10px; display:block; font-weight:700;">MEMBERSHIP</span>
-                <strong id="cardIeee" style="color:#fbbf24; font-size:12px;">IEEE Member</strong>
+              
+              <!-- Main Event Title -->
+              <div style="font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 900; color: #ffffff; letter-spacing: 0.05em; line-height: 1.1; margin-bottom: 6px;">
+                INNOWAVE-2K26
               </div>
-              <div style="grid-column: span 2;">
-                <span style="color:#94a3b8; font-size:10px; display:block; font-weight:700;">ROLL NUMBER</span>
-                <strong id="cardRollNo" style="color:#ffffff; font-size:12px;">22KT1A0501</strong>
+              
+              <!-- Subtitle -->
+              <div style="color: #f59e0b; font-weight: 800; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 2px;">
+                ENGINEER'S DAY CELEBRATION
+              </div>
+              <div style="color: #ffffff; font-weight: 700; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 16px;">
+                NATIONAL LEVEL FEST
+              </div>
+
+              <!-- Cyan Participant ID Pill -->
+              <div style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1.5px solid #00f2fe; border-radius: 20px; padding: 6px 18px; background: rgba(0, 242, 254, 0.05);">
+                <span style="background: #7c4dff; color: #ffffff; font-weight: 900; font-size: 10px; padding: 2px 6px; border-radius: 4px;">ID</span>
+                <span style="color: #00f2fe; font-family: monospace; font-weight: 800; font-size: 14px; letter-spacing: 0.05em;">PARTICIPANT ID: <span id="cardHeaderTeamId">IW26-0001</span></span>
               </div>
             </div>
 
-            <div style="font-size:10px; color:#64748b; margin-top:12px; font-weight:700;">
-              STB18301 · IEEE Student Branch · Organizers Entry Pass
+            <!-- 2. Middle Body Section (White Container) -->
+            <div style="padding: 16px 18px; background: #ffffff;">
+              
+              <!-- Registered Participant Name Box (Cream Yellow with Gold Border) -->
+              <div style="background: #fffde7; border: 1.5px solid #fbc02d; border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <div style="color: #9a6700; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 4px;">
+                    <span>👤</span> REGISTERED PARTICIPANT NAME
+                  </div>
+                  <div id="cardName" style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 800; color: #0f172a; margin-top: 2px;">
+                    jai
+                  </div>
+                </div>
+                <div id="cardNameIdBadge" style="background: #004d61; color: #00f2fe; font-family: monospace; font-size: 12px; font-weight: 800; padding: 6px 12px; border-radius: 8px;">
+                  ID: IW26-0001
+                </div>
+              </div>
+
+              <!-- College / Institution Name Box -->
+              <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-left: 4px solid #0288d1; border-radius: 12px; padding: 10px 14px; margin-bottom: 12px;">
+                <div style="color: #0288d1; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 4px;">
+                  <span>🏫</span> COLLEGE / INSTITUTION NAME
+                </div>
+                <div id="cardCollege" style="font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 800; color: #0f172a; margin-top: 2px;">
+                  pscmrcet
+                </div>
+              </div>
+
+              <!-- Branch & Year 2-Column Grid -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+                <!-- Branch -->
+                <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-left: 4px solid #0288d1; border-radius: 12px; padding: 10px 12px;">
+                  <div style="color: #0288d1; font-size: 10px; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 4px;">
+                    <span>🎓</span> BRANCH
+                  </div>
+                  <div id="cardBranch" style="font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 800; color: #0f172a; margin-top: 2px;">
+                    CSO
+                  </div>
+                </div>
+                <!-- Year -->
+                <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-left: 4px solid #0288d1; border-radius: 12px; padding: 10px 12px;">
+                  <div style="color: #0288d1; font-size: 10px; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 4px;">
+                    <span>📅</span> YEAR OF STUDY
+                  </div>
+                  <div id="cardYear" style="font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 800; color: #0f172a; margin-top: 2px;">
+                    4th Year
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. Events Evaluation Checklist Table -->
+              <div style="border: 1.5px solid #cbd5e1; border-radius: 12px; overflow: hidden; margin-bottom: 14px;">
+                <div style="background: #020d1a; padding: 8px 12px; color: #ffffff; font-size: 11px; font-weight: 800; display: flex; justify-content: space-between; align-items: center;">
+                  <span>📋 EVENTS EVALUATION CHECKLIST</span>
+                  <span style="color: #00f2fe; font-size: 10px;">INNOWAVE-2K26</span>
+                </div>
+                <table style="width: 100%; border-collapse: collapse; font-size: 11px; background: #ffffff;">
+                  <thead>
+                    <tr style="background: #f8fafc; border-bottom: 1.5px solid #e2e8f0; color: #475569; font-weight: 800; text-transform: uppercase; font-size: 9.5px;">
+                      <th style="padding: 6px 10px; text-align: left;">BROCHURE EVENT NAME</th>
+                      <th style="padding: 6px 8px; text-align: center; width: 70px;">MARK [✓]</th>
+                      <th style="padding: 6px 10px; text-align: center; width: 110px;">EVENT HEAD SIGN</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                      <td style="padding: 6px 10px; font-weight: 700; color: #0f172a;">🧠 Technical Quiz</td>
+                      <td style="padding: 6px 8px; text-align: center;"><div style="width: 16px; height: 16px; border: 1.5px solid #94a3b8; border-radius: 4px; margin: 0 auto;"></div></td>
+                      <td style="padding: 6px 10px; text-align: center; color: #cbd5e1; font-weight: 300;">__________________</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                      <td style="padding: 6px 10px; font-weight: 700; color: #0f172a;">💻 Coding Challenge</td>
+                      <td style="padding: 6px 8px; text-align: center;"><div style="width: 16px; height: 16px; border: 1.5px solid #94a3b8; border-radius: 4px; margin: 0 auto;"></div></td>
+                      <td style="padding: 6px 10px; text-align: center; color: #cbd5e1; font-weight: 300;">__________________</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                      <td style="padding: 6px 10px; font-weight: 700; color: #0f172a;">🗺️ Tech Treasure Hunt</td>
+                      <td style="padding: 6px 8px; text-align: center;"><div style="width: 16px; height: 16px; border: 1.5px solid #94a3b8; border-radius: 4px; margin: 0 auto;"></div></td>
+                      <td style="padding: 6px 10px; text-align: center; color: #cbd5e1; font-weight: 300;">__________________</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                      <td style="padding: 6px 10px; font-weight: 700; color: #0f172a;">🚀 Project Expo</td>
+                      <td style="padding: 6px 8px; text-align: center;"><div style="width: 16px; height: 16px; border: 1.5px solid #94a3b8; border-radius: 4px; margin: 0 auto;"></div></td>
+                      <td style="padding: 6px 10px; text-align: center; color: #cbd5e1; font-weight: 300;">__________________</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                      <td style="padding: 6px 10px; font-weight: 700; color: #0f172a;">🤖 Prompt Engineering</td>
+                      <td style="padding: 6px 8px; text-align: center;"><div style="width: 16px; height: 16px; border: 1.5px solid #94a3b8; border-radius: 4px; margin: 0 auto;"></div></td>
+                      <td style="padding: 6px 10px; text-align: center; color: #cbd5e1; font-weight: 300;">__________________</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 6px 10px; font-weight: 700; color: #0f172a;">🎬 Reels (1 Min)</td>
+                      <td style="padding: 6px 8px; text-align: center;"><div style="width: 16px; height: 16px; border: 1.5px solid #94a3b8; border-radius: 4px; margin: 0 auto;"></div></td>
+                      <td style="padding: 6px 10px; text-align: center; color: #cbd5e1; font-weight: 300;">__________________</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
             </div>
+
+            <!-- 4. Bottom Dark Navy Blue Footer Section -->
+            <div style="background: #020d1a; padding: 14px 18px; border-top: 2px solid #00c3ff; display: flex; justify-content: space-between; align-items: center;">
+              <!-- Left: QR Code Verification Box -->
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="background: #ffffff; padding: 4px; border-radius: 10px; border: 1.5px solid #00f2fe;">
+                  <img id="cardQrImg" src="" style="width: 60px; height: 60px; display: block;">
+                </div>
+                <div>
+                  <div style="color: #00f2fe; font-size: 11px; font-weight: 900; letter-spacing: 0.05em; text-transform: uppercase;">SCAN TO VERIFY</div>
+                  <div style="color: #94a3b8; font-size: 9.5px; font-weight: 600;">Official Pass</div>
+                  <div style="color: #ffffff; font-size: 9.5px; font-weight: 700;">InnoWave-2k26</div>
+                </div>
+              </div>
+
+              <!-- Right: Registration Signature Line -->
+              <div style="text-align: right;">
+                <div style="border-bottom: 1px solid #64748b; width: 140px; margin-bottom: 4px;"></div>
+                <div style="color: #f59e0b; font-size: 10px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase;">
+                  REGISTRATION SIGNATURE
+                </div>
+              </div>
+            </div>
+
           </div>
 
-          <div style="display:flex; gap:10px;">
+          <div style="display:flex; gap:10px; margin-top:16px;">
             <button class="btn btn-approve" style="flex:1; padding:12px; font-size:14px;" onclick="printIdCard()">🖨️
               PRINT THIS ID CARD</button>
             <button class="btn btn-view" style="padding:12px;" onclick="closeIdCardModal()">Close</button>
@@ -570,11 +675,17 @@ function esc($s)
         }
 
         function openOfficialIdCardModal(teamId, name, college, branch, year, roll, ieee) {
-          document.getElementById('cardTeamId').textContent = teamId;
-          document.getElementById('cardName').textContent = name;
-          document.getElementById('cardCollege').textContent = college + (branch ? ' · ' + branch : '') + (year ? ' (' + year + ')' : '');
-          document.getElementById('cardRollNo').textContent = roll || 'N/A';
-          document.getElementById('cardIeee').textContent = ieee;
+          if (document.getElementById('cardHeaderTeamId')) document.getElementById('cardHeaderTeamId').textContent = teamId;
+          if (document.getElementById('cardNameIdBadge')) document.getElementById('cardNameIdBadge').textContent = 'ID: ' + teamId;
+          if (document.getElementById('cardName')) document.getElementById('cardName').textContent = name;
+          if (document.getElementById('cardCollege')) document.getElementById('cardCollege').textContent = college || 'PSCMR CET';
+          if (document.getElementById('cardBranch')) document.getElementById('cardBranch').textContent = branch || 'N/A';
+          if (document.getElementById('cardYear')) document.getElementById('cardYear').textContent = year ? (year.toLowerCase().includes('year') ? year : year + ' Year') : 'N/A';
+
+          const verifyUrl = window.location.origin + window.location.pathname.replace('admin.php', 'verify-id.html') + '?id=' + encodeURIComponent(teamId);
+          const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(verifyUrl);
+          if (document.getElementById('cardQrImg')) document.getElementById('cardQrImg').src = qrUrl;
+
           document.getElementById('idCardModal').style.display = 'flex';
         }
 
