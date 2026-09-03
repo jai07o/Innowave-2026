@@ -322,8 +322,11 @@ function esc($s)
           <div style="color:var(--text-muted); font-size:13px; margin-top:2px;">Live MySQL Registration Control & Official
             Delegate ID Card Printing Portal</div>
         </div>
-        <div>
-          <a href="admin.php?action=logout" class="btn btn-delete" style="text-decoration:none; padding:8px 16px;">🔒
+        <div style="display:flex; gap:10px; align-items:center;">
+          <a href="api/admin.php?action=export&password=innowave2k26" class="btn btn-approve" target="_blank" style="text-decoration:none; padding:10px 18px; font-size:13px; font-weight:800; display:inline-flex; align-items:center; gap:6px; box-shadow:0 0 15px rgba(0,230,118,0.3);">
+            📊 📥 DOWNLOAD EXCEL SHEET (.CSV)
+          </a>
+          <a href="admin.php?action=logout" class="btn btn-delete" style="text-decoration:none; padding:10px 16px;">🔒
             Logout</a>
         </div>
       </div>
