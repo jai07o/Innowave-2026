@@ -2384,13 +2384,13 @@
 
             if (!isAmtMatch && (ocrClean.length > 5 || ocrDigits.length > 5)) {
               let feeCategoryText = `₹${amtNum}`;
-              if (amtNum === 50) feeCategoryText = `₹50 (PSCMR CET IEEE Member Rate)`;
-              if (amtNum === 100) feeCategoryText = `₹100 (PSCMR Non-IEEE / Other College IEEE Rate)`;
-              if (amtNum === 200) feeCategoryText = `₹200 (Other College Non-IEEE Member Rate)`;
+              if (amtNum === 50) feeCategoryText = `PSCMR CET IEEE Member (Required Fee: EXACTLY ₹50)`;
+              if (amtNum === 100) feeCategoryText = `Other College IEEE Member / PSCMR Non-IEEE (Required Fee: EXACTLY ₹100)`;
+              if (amtNum === 200) feeCategoryText = `Other College Non-IEEE Member (Required Fee: EXACTLY ₹200)`;
 
               return {
                 ok: false,
-                error: `🚫 PAYMENT AMOUNT MISMATCH:\n\nThe required registration fee amount of ${feeCategoryText} was NOT detected inside your uploaded payment receipt screenshot image.\n\nPlease check your uploaded payment screenshot image and ensure it shows an exact transfer of ${feeCategoryText}.`
+                error: `🚫 PAYMENT AMOUNT MISMATCH:\n\nYou registered under Category: ${feeCategoryText}.\n\nThe uploaded payment receipt screenshot image does NOT show the required transfer amount of EXACTLY ₹${amtNum}.\n\nPlease upload your exact payment receipt screenshot showing a completed transfer of EXACTLY ₹${amtNum}!`
               };
             }
           }
