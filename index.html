@@ -4942,15 +4942,20 @@
       }
     }
 
-    async function performUtrOcrVerification(utrRef, screenshotBase64) {
+    async function performUtrOcrVerification(utrRef, screenshotBase64, expectedAmount) {
       const rawInput = String(utrRef || '').trim();
       const cleanUtr = rawInput.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
       const digitsOnly = rawInput.replace(/\D/g, '');
 
-      if (cleanUtr.length < 5) return { ok: true };
       if (!screenshotBase64) {
         return { ok: false, error: '⚠️ Please upload your payment receipt screenshot image.' };
       }
+
+      if (cleanUtr.length < 6) {
+        return { ok: false, error: '⚠️ Please enter a valid 12-digit UPI transaction / reference ID (UTR).' };
+      }
+
+      const amtNum = parseInt(String(expectedAmount || '0').replace(/\D/g, ''), 10);
 
       try {
         if (window.Tesseract) {
@@ -4960,6 +4965,15 @@
           const ocrClean = ocrUpper.replace(/[^A-Za-z0-9]/g, '');
           const ocrDigits = ocrUpper.replace(/\D/g, '');
 
+          // STRICT CHECK: Unreadable image
+          if (!ocrRawText || ocrRawText.trim().length === 0) {
+            return {
+              ok: false,
+              error: '🚫 UNREADABLE PAYMENT SCREENSHOT:\n\nCould not extract readable text from your uploaded payment image.\n\nPlease upload a clear, legible screenshot of your completed UPI payment receipt showing your 12-digit UTR and transfer amount.'
+            };
+          }
+
+          // RULE 1: UTR MATCH
           let isMatch = ocrRawText.includes(rawInput) ||
                         ocrUpper.includes(cleanUtr) ||
                         ocrClean.includes(cleanUtr);
@@ -4975,11 +4989,59 @@
             isMatch = ocrDigits.includes(sub1) || ocrDigits.includes(sub2) || ocrDigits.includes(sub3);
           }
 
-          if (!isMatch && (ocrClean.length > 5 || ocrDigits.length > 5)) {
+          if (!isMatch) {
             return {
               ok: false,
               error: `🚫 UTR & PAYMENT SCREENSHOT MISMATCH:\n\nThe transaction reference / UTR number you entered (${rawInput}) was NOT found inside your uploaded payment screenshot image.\n\nPlease check your transaction receipt image and enter the exact matching UTR / reference number shown on your payment receipt screenshot!`
             };
+          }
+
+          // RULE 2: EXACT AMOUNT MATCH
+          if (amtNum > 0) {
+            const amtStr = String(amtNum);
+            let isAmtMatch = false;
+
+            const amtPatterns = [
+              `₹${amtStr}`,
+              `₹ ${amtStr}`,
+              `\u20B9${amtStr}`,
+              `\u20B9 ${amtStr}`,
+              `INR ${amtStr}`,
+              `INR${amtStr}`,
+              `RS ${amtStr}`,
+              `RS. ${amtStr}`,
+              `RS.${amtStr}`,
+              `RUPEES ${amtStr}`,
+              `${amtStr}.00`,
+              `${amtStr}.0`,
+              `₹${amtStr}.00`,
+              `₹ ${amtStr}.00`,
+              `PAID ₹${amtStr}`,
+              `PAID ${amtStr}`,
+              `SUCCESS ₹${amtStr}`
+            ];
+
+            for (const p of amtPatterns) {
+              if (ocrRawText.includes(p) || ocrUpper.includes(p.toUpperCase())) {
+                isAmtMatch = true;
+                break;
+              }
+            }
+
+            if (!isAmtMatch) {
+              const amtRegex = new RegExp('(?:[₹\\u20B9]|INR|RS\\.?|Rs\\.?|RUPEES|AMT|AMOUNT|PAID|TRANSFER)?\\s*' + amtStr + '(?:\\.00|\\.0)?(?:\\b|[^0-9]|$)', 'i');
+              const broadRegex = new RegExp('(?:^|\\s|[₹\\u20B9]|INR|RS\\.?|Rs\\.?|:)' + amtStr + '(?:\\.00|\\.0)?(?:\\s|$|[^0-9])', 'i');
+              if ((amtRegex.test(ocrRawText) || amtRegex.test(ocrUpper)) && (broadRegex.test(ocrRawText) || broadRegex.test(ocrUpper))) {
+                isAmtMatch = true;
+              }
+            }
+
+            if (!isAmtMatch) {
+              return {
+                ok: false,
+                error: `🚫 PAYMENT AMOUNT MISMATCH:\n\nThe uploaded payment receipt screenshot image does NOT show the required transfer amount.\n\nPlease check your screenshot and upload the correct payment receipt showing a completed transfer!`
+              };
+            }
           }
         }
       } catch (err) {
@@ -4999,8 +5061,10 @@
         return;
       }
 
-      // 1. RUN AI OCR SCREENSHOT UTR CHECK
-      const ocrCheck = await performUtrOcrVerification(utr, imgBase64);
+      const expectedAmt = (currentRegistration && currentRegistration.amount) ? currentRegistration.amount : 0;
+
+      // 1. RUN AI OCR SCREENSHOT UTR & AMOUNT CHECK
+      const ocrCheck = await performUtrOcrVerification(utr, imgBase64, expectedAmt);
       if (!ocrCheck.ok) {
         alert(ocrCheck.error);
         return;

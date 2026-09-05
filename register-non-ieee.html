@@ -1796,7 +1796,9 @@
     // Form & Dynamic Fee
     let currentFee = 100;
     let pendingRegId = null;
+    let pendingRegAmount = 0;
     let uploadedScreenshotBase64 = '';
+    let cachedScreenshotOcr = null;
 
     function isPscmrCollegeName(cn) {
       const c = (cn || '').toLowerCase();
@@ -1941,8 +1943,11 @@
           if (data && data.team_id && document.getElementById('statusQueryInput')) {
             document.getElementById('statusQueryInput').value = data.team_id;
           }
-          if (data && data.amount && document.getElementById('payAmountDisplay')) {
-            document.getElementById('payAmountDisplay').textContent = `₹${data.amount}`;
+          if (data && data.amount) {
+            pendingRegAmount = data.amount;
+            if (document.getElementById('payAmountDisplay')) {
+              document.getElementById('payAmountDisplay').textContent = `₹${data.amount}`;
+            }
           }
           if (data && data.upi && data.upi.qr && document.getElementById('qrImgDisplay')) {
             document.getElementById('qrImgDisplay').src = data.upi.qr;
@@ -1995,10 +2000,15 @@
         uploadedScreenshotBase64 = compressed;
         document.getElementById('screenshotPreviewImg').src = compressed;
         document.getElementById('screenshotPreviewWrap').style.display = 'block';
+
+        // Pre-warm AI OCR immediately in background
+        if (uploadedScreenshotBase64 && window.Tesseract) {
+          cachedScreenshotOcr = recognizeWithTimeout(uploadedScreenshotBase64, 30000);
+        }
       }
     }
 
-    async function recognizeWithTimeout(imageBase64, timeoutMs = 12000) {
+    async function recognizeWithTimeout(imageBase64, timeoutMs = 30000) {
       if (!window.Tesseract || !imageBase64) return null;
       try {
         return await Promise.race([
@@ -2006,6 +2016,7 @@
           new Promise((resolve) => setTimeout(() => resolve(null), timeoutMs))
         ]);
       } catch (err) {
+        console.warn('OCR error:', err);
         return null;
       }
     }
@@ -2038,14 +2049,11 @@
 
       const amtNum = parseInt(String(expectedAmount || '0').replace(/\D/g, ''), 10);
 
-      // Run AI OCR on payment screenshot image
-      const res = await recognizeWithTimeout(screenshotBase64, 10000);
+      // Run AI OCR on payment screenshot image (use pre-warmed cache if available)
+      const res = cachedScreenshotOcr ? (await cachedScreenshotOcr) : (await recognizeWithTimeout(screenshotBase64, 30000));
       
-      // Handle local file testing or worker initialization issues gracefully
+      // STRICT BLOCK: If image is unreadable or empty
       if (!res || !res.data || !res.data.text || res.data.text.trim().length === 0) {
-        if (cleanDigits.length >= 10) {
-          return { ok: true, fallback: true };
-        }
         return {
           ok: false,
           error: `🚫 UNREADABLE PAYMENT SCREENSHOT:\n\nCould not extract readable text from your uploaded payment image.\n\nPlease upload a clear, legible screenshot of your completed UPI payment receipt showing your 12-digit UTR and transfer amount.`
@@ -2107,21 +2115,31 @@
       }
 
       // RULE 2: EXACT PRICING MATRIX AMOUNT MATCH CHECK
+      // Verifies that the screenshot displays the exact calculated registration fee (e.g. ₹50, ₹100, or ₹200).
       if (amtNum > 0) {
         const amtStr = String(amtNum);
         let isAmtMatch = false;
 
+        // Scans the OCR text for standard Indian payment formats:
+        // ₹100, ₹ 100, INR 100, Rs 100, 100.00, etc.
         const amtPatterns = [
-          amtStr,
           `₹${amtStr}`,
           `₹ ${amtStr}`,
+          `\u20B9${amtStr}`,
+          `\u20B9 ${amtStr}`,
           `INR ${amtStr}`,
+          `INR${amtStr}`,
           `RS ${amtStr}`,
           `RS. ${amtStr}`,
+          `RS.${amtStr}`,
+          `RUPEES ${amtStr}`,
           `${amtStr}.00`,
           `${amtStr}.0`,
           `₹${amtStr}.00`,
-          `₹ ${amtStr}.00`
+          `₹ ${amtStr}.00`,
+          `PAID ₹${amtStr}`,
+          `PAID ${amtStr}`,
+          `SUCCESS ₹${amtStr}`
         ];
 
         for (const p of amtPatterns) {
@@ -2131,17 +2149,16 @@
           }
         }
 
+        // Uses regex pattern matching to ensure the participant transferred the correct registration fee
         if (!isAmtMatch) {
-          const amtRegex = new RegExp(`(?:₹|INR|RS\\.?|Rs\\.?|AMT|AMOUNT)?\\s*${amtStr}(?:\\.00|\\.0)?(?:\\b|[^0-9]|$)`, 'i');
-          if (amtRegex.test(ocrRawText)) {
+          const amtRegex = new RegExp('(?:[₹\\u20B9]|INR|RS\\.?|Rs\\.?|RUPEES|AMT|AMOUNT|PAID|TRANSFER)?\\s*' + amtStr + '(?:\\.00|\\.0)?(?:\\b|[^0-9]|$)', 'i');
+          const broadRegex = new RegExp('(?:^|\\s|[₹\\u20B9]|INR|RS\\.?|Rs\\.?|:)' + amtStr + '(?:\\.00|\\.0)?(?:\\s|$|[^0-9])', 'i');
+          if ((amtRegex.test(ocrRawText) || amtRegex.test(ocrUpper)) && (broadRegex.test(ocrRawText) || broadRegex.test(ocrUpper))) {
             isAmtMatch = true;
           }
         }
 
-        if (!isAmtMatch && ocrNormalizedDigits.includes(amtStr)) {
-          isAmtMatch = true;
-        }
-
+        // If it fails: Submission is blocked with the required exact error message:
         if (!isAmtMatch) {
           return {
             ok: false,
@@ -2169,7 +2186,7 @@
       // Target amount: PSCMR Non-IEEE = 100, Other College Non-IEEE = 200
       const colName = document.getElementById('collegeName') ? document.getElementById('collegeName').value.trim() : '';
       const isPscmr = typeof isPscmrCollegeName === 'function' && isPscmrCollegeName(colName);
-      const targetAmt = isPscmr ? 100 : 200;
+      const targetAmt = pendingRegAmount || (isPscmr ? 100 : 200);
 
       // 1. RUN AI OCR SCREENSHOT UTR & EXACT PRICING MATRIX AMOUNT CHECK
       const ocrCheck = await performUtrOcrVerification(ref, uploadedScreenshotBase64, targetAmt);

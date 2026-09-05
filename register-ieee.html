@@ -2047,6 +2047,11 @@
           reader.readAsDataURL(file);
         }
         previewWrap.style.display = 'block';
+
+        // Pre-warm AI OCR immediately in background
+        if (uploadedIeeeCardBase64 && window.Tesseract) {
+          cachedIeeeCardOcr = recognizeWithTimeout(uploadedIeeeCardBase64, 30000);
+        }
       }
     }
 
@@ -2182,6 +2187,7 @@
             return;
           }
           if (data && data.id) pendingRegId = data.id;
+          if (data && data.amount) pendingRegAmount = data.amount;
           if (data && data.team_id && document.getElementById('statusQueryInput')) {
             document.getElementById('statusQueryInput').value = data.team_id;
           }
@@ -2377,19 +2383,30 @@
       }
     })();
 
+    let cachedIeeeCardOcr = null;
+    let cachedScreenshotOcr = null;
+    let pendingRegAmount = 0;
+
     function previewScreenshot(input) {
       if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = function (e) {
           uploadedScreenshotBase64 = e.target.result;
-          document.getElementById('screenshotPreviewImg').src = e.target.result;
-          document.getElementById('screenshotPreviewWrap').style.display = 'block';
+          const previewImg = document.getElementById('screenshotPreviewImg');
+          if (previewImg) previewImg.src = e.target.result;
+          const previewWrap = document.getElementById('screenshotPreviewWrap');
+          if (previewWrap) previewWrap.style.display = 'block';
+
+          // Pre-warm AI OCR immediately in background
+          if (uploadedScreenshotBase64 && window.Tesseract) {
+            cachedScreenshotOcr = recognizeWithTimeout(uploadedScreenshotBase64, 30000);
+          }
         };
         reader.readAsDataURL(input.files[0]);
       }
     }
 
-    async function recognizeWithTimeout(imageBase64, timeoutMs = 12000) {
+    async function recognizeWithTimeout(imageBase64, timeoutMs = 30000) {
       if (!window.Tesseract || !imageBase64) return null;
       try {
         return await Promise.race([
@@ -2397,6 +2414,7 @@
           new Promise((resolve) => setTimeout(() => resolve(null), timeoutMs))
         ]);
       } catch (err) {
+        console.warn('OCR error:', err);
         return null;
       }
     }
@@ -2432,14 +2450,11 @@
         return { ok: false, error: '⚠️ Please enter your Participant Full Name as printed on your IEEE Membership Card.' };
       }
 
-      // Run AI OCR on uploaded IEEE Card screenshot
-      const res = await recognizeWithTimeout(cardBase64, 12000);
+      // Run AI OCR on uploaded IEEE Card screenshot (use pre-warmed cache if available)
+      const res = cachedIeeeCardOcr ? (await cachedIeeeCardOcr) : (await recognizeWithTimeout(cardBase64, 30000));
 
-      // Handle unreadable image gracefully
+      // STRICT BLOCK: If image is unreadable or empty
       if (!res || !res.data || !res.data.text || res.data.text.trim().length === 0) {
-        if (cleanDigits.length >= 8) {
-          return { ok: true, fallback: true };
-        }
         return {
           ok: false,
           error: `🚫 UNREADABLE IEEE CARD IMAGE:\n\nCould not extract readable text from your uploaded IEEE Card screenshot.\n\nPlease upload a clear, legible screenshot of your official IEEE Membership Card showing your 9-digit Membership ID and Name.`
@@ -2501,18 +2516,21 @@
       }
 
       // CHECK 2: PARTICIPANT FULL NAME MATCH
+      // Compares the Participant / Leader Name entered in the form against the cardholder's name printed on the card
       let isNameMatch = false;
       const cleanInputName = rawName.toUpperCase().replace(/[^A-Z\s]/g, ' ').replace(/\s+/g, ' ').trim();
       const ocrCleanNameText = ocrUpper.replace(/[^A-Z\s]/g, ' ').replace(/\s+/g, ' ');
 
       // 1. Direct full name inclusion
-      if (ocrCleanNameText.includes(cleanInputName)) {
+      if (cleanInputName.length >= 2 && ocrCleanNameText.includes(cleanInputName)) {
         isNameMatch = true;
       }
 
-      // 2. Tokenized significant word matching
+      // 2. Tokenized significant word matching:
+      // Strips titles/honorifics (like Mr, Ms, Mrs, Dr, Sri, Kumar) and verifies the actual first name and surname tokens.
+      // At least 50% of the name parts or any major name token (>= 5 characters) must match the card text.
       if (!isNameMatch) {
-        const ignoreWords = ['MR', 'MS', 'MRS', 'DR', 'SRI', 'KUMAR', 'KUMARI', 'THE', 'AND'];
+        const ignoreWords = ['MR', 'MS', 'MRS', 'DR', 'SRI', 'KUMAR', 'KUMARI', 'THE', 'AND', 'PROF'];
         const nameTokens = cleanInputName.split(' ')
           .map(w => w.trim())
           .filter(w => w.length >= 3 && !ignoreWords.includes(w));
@@ -2522,13 +2540,15 @@
           for (const token of nameTokens) {
             if (ocrCleanNameText.includes(token)) {
               matchedTokens++;
+            } else if (token.length >= 5) {
+              // 1-character OCR tolerance for tokens with 5+ characters
+              const tokenRegex = new RegExp(token.split('').map((c, i) => token.slice(0, i) + '[A-Z]' + token.slice(i + 1)).join('|'));
+              if (tokenRegex.test(ocrCleanNameText)) {
+                matchedTokens++;
+              }
             }
           }
           if (matchedTokens >= Math.ceil(nameTokens.length / 2) || (matchedTokens >= 1 && nameTokens.some(t => t.length >= 5 && ocrCleanNameText.includes(t)))) {
-            isNameMatch = true;
-          }
-        } else {
-          if (ocrCleanNameText.includes(cleanInputName)) {
             isNameMatch = true;
           }
         }
@@ -2538,7 +2558,7 @@
       if (!isNameMatch) {
         return {
           ok: false,
-          error: `🚫 IEEE CARD HOLDER NAME MISMATCH:\n\nThe Participant Name you entered (${rawName}) was NOT found inside your uploaded IEEE Card proof image.\n\n⚠️ CRITICAL REQUIREMENT: Your entered participant full name must match the name printed on your official IEEE Membership Card!`
+          error: `🚫 IEEE CARD HOLDER NAME MISMATCH:\n\nThe Participant Name entered was NOT found on your uploaded IEEE Card proof image.`
         };
       }
 
@@ -2559,14 +2579,11 @@
 
       const amtNum = parseInt(String(expectedAmount || '0').replace(/\D/g, ''), 10);
 
-      // Run AI OCR on payment screenshot image
-      const res = await recognizeWithTimeout(screenshotBase64, 10000);
+      // Run AI OCR on payment screenshot image (use pre-warmed cache if available)
+      const res = cachedScreenshotOcr ? (await cachedScreenshotOcr) : (await recognizeWithTimeout(screenshotBase64, 30000));
       
-      // Handle local file testing or worker initialization issues gracefully
+      // STRICT BLOCK: If image is unreadable or empty
       if (!res || !res.data || !res.data.text || res.data.text.trim().length === 0) {
-        if (cleanDigits.length >= 10) {
-          return { ok: true, fallback: true };
-        }
         return {
           ok: false,
           error: `🚫 UNREADABLE PAYMENT SCREENSHOT:\n\nCould not extract readable text from your uploaded payment image.\n\nPlease upload a clear, legible screenshot of your completed UPI payment receipt showing your 12-digit UTR and transfer amount.`
@@ -2628,21 +2645,31 @@
       }
 
       // RULE 2: EXACT PRICING MATRIX AMOUNT MATCH CHECK
+      // Verifies that the screenshot displays the exact calculated registration fee (e.g. ₹50, ₹100, or ₹200).
       if (amtNum > 0) {
         const amtStr = String(amtNum);
         let isAmtMatch = false;
 
+        // Scans the OCR text for standard Indian payment formats:
+        // ₹100, ₹ 100, INR 100, Rs 100, 100.00, etc.
         const amtPatterns = [
-          amtStr,
           `₹${amtStr}`,
           `₹ ${amtStr}`,
+          `\u20B9${amtStr}`,
+          `\u20B9 ${amtStr}`,
           `INR ${amtStr}`,
+          `INR${amtStr}`,
           `RS ${amtStr}`,
           `RS. ${amtStr}`,
+          `RS.${amtStr}`,
+          `RUPEES ${amtStr}`,
           `${amtStr}.00`,
           `${amtStr}.0`,
           `₹${amtStr}.00`,
-          `₹ ${amtStr}.00`
+          `₹ ${amtStr}.00`,
+          `PAID ₹${amtStr}`,
+          `PAID ${amtStr}`,
+          `SUCCESS ₹${amtStr}`
         ];
 
         for (const p of amtPatterns) {
@@ -2652,17 +2679,16 @@
           }
         }
 
+        // Uses regex pattern matching to ensure the participant transferred the correct registration fee
         if (!isAmtMatch) {
-          const amtRegex = new RegExp(`(?:₹|INR|RS\\.?|Rs\\.?|AMT|AMOUNT)?\\s*${amtStr}(?:\\.00|\\.0)?(?:\\b|[^0-9]|$)`, 'i');
-          if (amtRegex.test(ocrRawText)) {
+          const amtRegex = new RegExp('(?:[₹\\u20B9]|INR|RS\\.?|Rs\\.?|RUPEES|AMT|AMOUNT|PAID|TRANSFER)?\\s*' + amtStr + '(?:\\.00|\\.0)?(?:\\b|[^0-9]|$)', 'i');
+          const broadRegex = new RegExp('(?:^|\\s|[₹\\u20B9]|INR|RS\\.?|Rs\\.?|:)' + amtStr + '(?:\\.00|\\.0)?(?:\\s|$|[^0-9])', 'i');
+          if ((amtRegex.test(ocrRawText) || amtRegex.test(ocrUpper)) && (broadRegex.test(ocrRawText) || broadRegex.test(ocrUpper))) {
             isAmtMatch = true;
           }
         }
 
-        if (!isAmtMatch && ocrNormalizedDigits.includes(amtStr)) {
-          isAmtMatch = true;
-        }
-
+        // If it fails: Submission is blocked with the required exact error message:
         if (!isAmtMatch) {
           return {
             ok: false,
@@ -2690,7 +2716,7 @@
       // Target amount: PSCMR IEEE = 50, Other College IEEE = 100
       const colName = document.getElementById('collegeName') ? document.getElementById('collegeName').value.trim() : '';
       const isPscmr = typeof isPscmrCollegeName === 'function' && isPscmrCollegeName(colName);
-      const targetAmt = isPscmr ? 50 : 100;
+      const targetAmt = pendingRegAmount || (isPscmr ? 50 : 100);
 
       // 1. RUN AI OCR SCREENSHOT UTR & EXACT PRICING MATRIX AMOUNT CHECK
       const ocrCheck = await performUtrOcrVerification(ref, uploadedScreenshotBase64, targetAmt);
