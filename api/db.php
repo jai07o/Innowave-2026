@@ -47,22 +47,33 @@ $pdo = null;
 $activeEngine = 'mysql';
 $lastMysqlError = '';
 
-// Build host candidates
-$hosts = [$cfg_host];
-if ($cfg_host !== '127.0.0.1' && ($cfg_host === 'localhost' || $cfg_host === '')) {
-    $hosts[] = '127.0.0.1';
-}
-$hosts = array_unique($hosts);
+// 1. Detect System / Hosting User (e.g. cPanel user prefixes like pscmr, server1, etc.)
+$sysUser = function_exists('get_current_user') ? @get_current_user() : '';
 
-// Build port candidates (tries explicit port, standard 3306, and alternate 3307)
-$ports = [];
-if (!empty($cfg_port)) {
-    $ports[] = (int)$cfg_port;
+// 2. Build Intelligent User Candidates
+$users = [];
+if (!empty($cfg_user)) $users[] = $cfg_user;
+if (!empty($sysUser) && !in_array($sysUser, $users)) {
+    $users[] = $sysUser;
 }
-if (!in_array(3306, $ports)) $ports[] = 3306;
-if (!in_array(3307, $ports)) $ports[] = 3307;
+if (!in_array('root', $users)) $users[] = 'root';
+if (!in_array('admin', $users)) $users[] = 'admin';
+$users = array_unique($users);
 
-// Build password candidates
+// 3. Build Intelligent Database Name Candidates
+$dbNames = [];
+if (!empty($cfg_name)) $dbNames[] = $cfg_name;
+if (!empty($sysUser)) {
+    $dbNames[] = $sysUser . '_' . $cfg_name;
+    $dbNames[] = $sysUser . '_innowave';
+    $dbNames[] = $sysUser . '_innowave2k26';
+}
+if (!in_array('innowave_db', $dbNames)) $dbNames[] = 'innowave_db';
+if (!in_array('innowave2k26', $dbNames)) $dbNames[] = 'innowave2k26';
+if (!in_array('innowave', $dbNames)) $dbNames[] = 'innowave';
+$dbNames = array_unique($dbNames);
+
+// 4. Build Password Candidates
 $passwords = [];
 if ($cfg_pass !== '') {
     $passwords[] = $cfg_pass;
@@ -75,44 +86,92 @@ $passwords[] = 'password';
 $passwords[] = '123456';
 $passwords = array_unique($passwords);
 
-// 2. PRIMARY & EXCLUSIVE: Connect to MySQL
+// 5. Build DSN Target List (Host/Port + Unix Domain Sockets for Linux/cPanel)
+$dsnTargets = [];
+
+// Explicit & default host candidates
+$hosts = [$cfg_host];
+if ($cfg_host !== '127.0.0.1' && ($cfg_host === 'localhost' || $cfg_host === '')) {
+    $hosts[] = '127.0.0.1';
+}
+$hosts = array_unique($hosts);
+
+// Port candidates
+$ports = [];
+if (!empty($cfg_port)) {
+    $ports[] = (int)$cfg_port;
+}
+if (!in_array(3306, $ports)) $ports[] = 3306;
+if (!in_array(3307, $ports)) $ports[] = 3307;
+
 foreach ($hosts as $h) {
     foreach ($ports as $p) {
-        foreach ($passwords as $pwd) {
-            // First attempt: Connect directly to the database
-            try {
-                $dsn = "mysql:host={$h};port={$p};dbname={$cfg_name};charset=utf8mb4";
-                $pdo = new PDO($dsn, $cfg_user, $pwd, [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                    PDO::ATTR_EMULATE_PREPARES => false,
-                    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
-                ]);
-                if ($pdo) break 3;
-            } catch (Exception $e) {
-                $lastMysqlError = $e->getMessage();
-                // If database doesn't exist yet, connect to server and create it
-                try {
-                    $dsnNoDb = "mysql:host={$h};port={$p};charset=utf8mb4";
-                    $pdoTemp = new PDO($dsnNoDb, $cfg_user, $pwd, [
-                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-                    ]);
-                    $pdoTemp->exec("CREATE DATABASE IF NOT EXISTS `{$cfg_name}` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;");
-                    
-                    $dsn = "mysql:host={$h};port={$p};dbname={$cfg_name};charset=utf8mb4";
-                    $pdo = new PDO($dsn, $cfg_user, $pwd, [
-                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                        PDO::ATTR_EMULATE_PREPARES => false,
-                        PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
-                    ]);
-                    if ($pdo) break 3;
-                } catch (Exception $ex) {
-                    $lastMysqlError = $ex->getMessage();
-                    // Try next host/port/password combination
+        $dsnTargets[] = ['type' => 'tcp', 'host' => $h, 'port' => $p];
+    }
+}
+
+// Check standard Linux/cPanel Unix sockets if running on a Linux/Unix server
+$knownSockets = [
+    '/var/run/mysqld/mysqld.sock',
+    '/tmp/mysql.sock',
+    '/var/lib/mysql/mysql.sock',
+    '/run/mysqld/mysqld.sock'
+];
+foreach ($knownSockets as $sock) {
+    if (@file_exists($sock)) {
+        $dsnTargets[] = ['type' => 'socket', 'socket' => $sock];
+    }
+}
+
+// 6. Resilient Connection Loop with Micro-Retry
+$pdoOptions = [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES => false,
+    PDO::ATTR_TIMEOUT => 4,
+    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
+];
+
+for ($attempt = 1; $attempt <= 2 && !$pdo; $attempt++) {
+    foreach ($dsnTargets as $target) {
+        foreach ($users as $u) {
+            foreach ($passwords as $pwd) {
+                foreach ($dbNames as $db) {
+                    try {
+                        if ($target['type'] === 'socket') {
+                            $dsn = "mysql:unix_socket={$target['socket']};dbname={$db};charset=utf8mb4";
+                        } else {
+                            $dsn = "mysql:host={$target['host']};port={$target['port']};dbname={$db};charset=utf8mb4";
+                        }
+                        $pdo = new PDO($dsn, $u, $pwd, $pdoOptions);
+                        if ($pdo) break 5;
+                    } catch (Exception $e) {
+                        $lastMysqlError = $e->getMessage();
+                        // If database does not exist, connect without dbname and create it
+                        try {
+                            if ($target['type'] === 'socket') {
+                                $dsnNoDb = "mysql:unix_socket={$target['socket']};charset=utf8mb4";
+                            } else {
+                                $dsnNoDb = "mysql:host={$target['host']};port={$target['port']};charset=utf8mb4";
+                            }
+                            $pdoTemp = new PDO($dsnNoDb, $u, $pwd, [
+                                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                                PDO::ATTR_TIMEOUT => 3
+                            ]);
+                            $pdoTemp->exec("CREATE DATABASE IF NOT EXISTS `{$db}` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;");
+                            
+                            $pdo = new PDO($dsn, $u, $pwd, $pdoOptions);
+                            if ($pdo) break 5;
+                        } catch (Exception $ex) {
+                            $lastMysqlError = $ex->getMessage();
+                        }
+                    }
                 }
             }
         }
+    }
+    if (!$pdo && $attempt === 1) {
+        usleep(50000); // 50ms pause before second attempt
     }
 }
 
@@ -122,7 +181,7 @@ if (!$pdo) {
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode([
         'ok' => false,
-        'error' => 'MySQL Database Connection Failed: ' . ($lastMysqlError ?: 'Could not connect to MySQL server. Please verify MySQL service is running and credentials in api/config.php are correct.')
+        'error' => 'MySQL Database Connection Failed: ' . ($lastMysqlError ?: 'Could not connect to MySQL server. Please verify MySQL service is active.')
     ]);
     exit;
 }
