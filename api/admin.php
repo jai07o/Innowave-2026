@@ -177,18 +177,40 @@ if ($action === 'delete-all') {
     exit;
 }
 
-if ($action === 'export') {
+if ($action === 'export' || $action === 'export-php') {
+    // 1. Excel Export tailored for PHP Admin (admin.php)
     header('Content-Type: text/csv; charset=utf-8');
-    header('Content-Disposition: attachment; filename=innowave_2k26_registrations_' . date('Y-m-d') . '.csv');
+    header('Content-Disposition: attachment; filename=innowave_2k26_php_admin_export_' . date('Y-m-d') . '.csv');
 
     $output = fopen('php://output', 'w');
+    // Output UTF-8 BOM for Microsoft Excel compatibility
+    fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+
     fputcsv($output, [
-        'ID', 'Team ID', 'Participant Name', 'Email', 'Phone', 'College', 'Roll No',
-        'Branch', 'Year', 'IEEE Member', 'IEEE ID', 'IEEE Verification Status',
-        'Events Selected', 'Amount (₹)', 'Fee Label', 'Payment Status', 'Payment Ref (UTR)', 'Registered At'
+        'S.No',
+        'Participant ID',
+        'Payment Status',
+        'Amount (₹)',
+        'Fee Details / Matrix Label',
+        'Participant Name',
+        'Email Address',
+        'Phone Number',
+        'College / Institution',
+        'PSCMR Admission / Roll Number',
+        'Branch / Department',
+        'Year of Study',
+        'IEEE Member (Yes/No)',
+        'IEEE Membership ID',
+        'IEEE Card Verification Status',
+        'Selected Events',
+        '12-Digit UTR / Transaction Ref',
+        'Payment Verification Flag',
+        'Payment Screenshot Uploaded',
+        'Registration Date & Time'
     ]);
 
     $stmt = $pdo->query("SELECT * FROM registrations ORDER BY id ASC");
+    $sno = 1;
     while ($r = $stmt->fetch()) {
         $eventsStr = $r['events_selected'] ?? '';
         $decoded = json_decode($eventsStr, true);
@@ -196,25 +218,109 @@ if ($action === 'export') {
             $eventsStr = implode(', ', $decoded);
         }
 
+        $flag = 'Clean';
+        if (!empty($r['duplicate_utr'])) {
+            $flag = 'Duplicate UTR (' . ($r['utr_warning'] ?: 'Reused UTR') . ')';
+        } elseif (!empty($r['utr_mismatch'])) {
+            $flag = 'UTR Mismatch (' . ($r['utr_warning'] ?: 'Not detected in screenshot') . ')';
+        }
+
         fputcsv($output, [
-            $r['id'],
-            $r['team_id'],
-            $r['leader_name'],
-            $r['leader_email'],
-            $r['leader_phone'],
-            $r['college_name'],
-            $r['roll_no'],
-            $r['branch'],
-            $r['year'],
-            $r['ieee_member'],
-            $r['ieee_id'],
-            $r['ieee_verification_status'] ?? 'N/A',
-            $eventsStr,
-            $r['amount'],
-            $r['fee_label'],
-            $r['payment_status'],
-            $r['payment_ref'],
-            $r['created_at']
+            $sno++,
+            $r['team_id'] ?: 'IW26-' . str_pad($r['id'], 4, '0', STR_PAD_LEFT),
+            $r['payment_status'] ?: 'Pending Confirmation',
+            $r['amount'] ?: '0',
+            $r['fee_label'] ?: 'N/A',
+            $r['leader_name'] ?: 'N/A',
+            $r['leader_email'] ?: 'N/A',
+            $r['leader_phone'] ?: 'N/A',
+            $r['college_name'] ?: 'N/A',
+            $r['roll_no'] ?: 'N/A',
+            $r['branch'] ?: 'N/A',
+            $r['year'] ?: 'N/A',
+            $r['ieee_member'] ?: 'No',
+            $r['ieee_id'] ?: 'N/A',
+            $r['ieee_verification_status'] ?: 'N/A',
+            $eventsStr ?: 'All 6 Brochure Events',
+            $r['payment_ref'] ?: 'N/A',
+            $flag,
+            !empty($r['payment_screenshot']) || !empty($r['payment_proof']) ? 'Yes (Uploaded)' : 'No',
+            $r['created_at'] ?: date('Y-m-d H:i:s')
+        ]);
+    }
+    fclose($output);
+    exit;
+}
+
+if ($action === 'export-html') {
+    // 2. Excel Export tailored for HTML Admin (admin.html)
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename=innowave_2k26_html_admin_export_' . date('Y-m-d') . '.csv');
+
+    $output = fopen('php://output', 'w');
+    // Output UTF-8 BOM for Microsoft Excel compatibility
+    fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+
+    fputcsv($output, [
+        'S.No',
+        'Participant ID',
+        'Payment Status',
+        'Amount (₹)',
+        '12-Digit UTR Reference',
+        'UTR Warning / Mismatch Flag',
+        'Participant Name',
+        'Email Address',
+        'Phone Number',
+        'College Name',
+        'Admission / Roll Number',
+        'Branch',
+        'Year of Study',
+        'IEEE Status',
+        'IEEE Membership ID',
+        'IEEE Card Verification Status',
+        'IEEE Card Uploaded',
+        'Payment Screenshot Uploaded',
+        'Selected Events',
+        'Registered Timestamp'
+    ]);
+
+    $stmt = $pdo->query("SELECT * FROM registrations ORDER BY id ASC");
+    $sno = 1;
+    while ($r = $stmt->fetch()) {
+        $eventsStr = $r['events_selected'] ?? '';
+        $decoded = json_decode($eventsStr, true);
+        if (is_array($decoded)) {
+            $eventsStr = implode(', ', $decoded);
+        }
+
+        $warning = $r['utr_warning'] ?: 'None';
+        if (!empty($r['duplicate_utr'])) {
+            $warning = 'DUPLICATE: ' . $warning;
+        } elseif (!empty($r['utr_mismatch'])) {
+            $warning = 'MISMATCH: ' . $warning;
+        }
+
+        fputcsv($output, [
+            $sno++,
+            $r['team_id'] ?: 'IW26-' . str_pad($r['id'], 4, '0', STR_PAD_LEFT),
+            $r['payment_status'] ?: 'Pending',
+            $r['amount'] ?: '0',
+            $r['payment_ref'] ?: 'N/A',
+            $warning,
+            $r['leader_name'] ?: 'N/A',
+            $r['leader_email'] ?: 'N/A',
+            $r['leader_phone'] ?: 'N/A',
+            $r['college_name'] ?: 'N/A',
+            $r['roll_no'] ?: 'N/A',
+            $r['branch'] ?: 'N/A',
+            $r['year'] ?: 'N/A',
+            $r['ieee_member'] === 'Yes' ? 'IEEE Member' : 'Non-IEEE',
+            $r['ieee_id'] ?: 'N/A',
+            $r['ieee_verification_status'] ?: 'N/A',
+            !empty($r['ieee_card']) ? 'Yes' : 'No',
+            !empty($r['payment_screenshot']) || !empty($r['payment_proof']) ? 'Yes' : 'No',
+            $eventsStr ?: 'All Events',
+            $r['created_at'] ?: date('Y-m-d H:i:s')
         ]);
     }
     fclose($output);

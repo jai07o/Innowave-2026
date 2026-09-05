@@ -16,33 +16,33 @@ if (empty($q)) {
 $cleanQ = strtolower($q);
 $digitsOnly = preg_replace('/\D/', '', $q);
 
-// Search by Registration ID, Team ID, Phone, Email, IEEE ID, Name, or UTR Reference
-$stmt = $pdo->prepare("
-    SELECT *
-    FROM registrations
-    WHERE CAST(id AS CHAR) = ?
-       OR LOWER(team_id) = ?
-       OR LOWER(leader_email) = ?
-       OR (LOWER(ieee_id) = ? AND ieee_id != '')
-       OR (leader_phone LIKE ? AND CHAR_LENGTH(?) >= 6)
-       OR (LOWER(leader_name) LIKE ? AND CHAR_LENGTH(?) >= 3)
-       OR (payment_ref IS NOT NULL AND LOWER(payment_ref) = ?)
-    ORDER BY id DESC LIMIT 1
-");
+$whereClauses = [
+    "CAST(id AS CHAR) = :q",
+    "LOWER(team_id) = :cleanQ",
+    "LOWER(leader_email) = :cleanQ",
+    "(LOWER(ieee_id) = :cleanQ AND ieee_id != '')",
+    "(payment_ref IS NOT NULL AND LOWER(payment_ref) = :cleanQ)",
+    "(roll_no IS NOT NULL AND LOWER(TRIM(roll_no)) = :cleanQ AND roll_no != '')"
+];
 
-$phoneSearch = '%' . $digitsOnly . '%';
-$nameSearch  = '%' . $cleanQ . '%';
+$params = [
+    'q' => $q,
+    'cleanQ' => $cleanQ
+];
 
-$stmt->execute([
-    $q,
-    $cleanQ,
-    $cleanQ,
-    $cleanQ,
-    $phoneSearch, $digitsOnly,
-    $nameSearch, $cleanQ,
-    $cleanQ
-]);
+if (!empty($digitsOnly) && strlen($digitsOnly) >= 5) {
+    $whereClauses[] = "(REPLACE(REPLACE(leader_phone, '+', ''), ' ', '') LIKE :phone)";
+    $params['phone'] = '%' . $digitsOnly . '%';
+}
 
+if (strlen($cleanQ) >= 3) {
+    $whereClauses[] = "(LOWER(leader_name) LIKE :name)";
+    $params['name'] = '%' . $cleanQ . '%';
+}
+
+$sql = "SELECT * FROM registrations WHERE " . implode(" OR ", $whereClauses) . " ORDER BY id DESC LIMIT 1";
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
 $row = $stmt->fetch();
 
 if (!$row) {
@@ -78,6 +78,8 @@ $responseData = [
     'ieee_verification_status' => $ieeeStatus,
     'payment_status' => $paymentStatus,
     'payment_ref' => $row['payment_ref'],
+    'has_payment_screenshot' => (!empty($row['payment_screenshot']) || !empty($row['payment_proof'])),
+    'has_payment_ref' => (!empty($row['payment_ref']) && trim($row['payment_ref']) !== ''),
     'amount' => intval($row['amount']),
     'fee_label' => $row['fee_label'],
     'created_at' => $row['created_at'],

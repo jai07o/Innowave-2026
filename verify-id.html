@@ -595,7 +595,7 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
       const isLight = document.body.classList.toggle('light-theme');
       document.body.setAttribute('data-theme', isLight ? 'light' : 'dark');
       const btn = document.getElementById('themeToggleBtn');
-      if (btn) btn.textContent = isLight ? '🌙 DARK MODE' : '☀️ LIGHT MODE';
+      if (btn) btn.textContent = isLight ? '☀️ LIGHT MODE' : '🌙 DARK MODE';
       localStorage.setItem('innowave_theme', isLight ? 'light' : 'dark');
     }
 
@@ -625,27 +625,49 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
 
         if (data.ok && data.data) {
           const p = data.data;
+          const isPaid = (p.payment_status === 'Paid' || p.payment_status === 'Confirmed' || p.payment_status === 'Approved');
+
           document.getElementById('valTeamId').textContent = p.team_id || p.id;
-          document.getElementById('valStatus').textContent = p.payment_status || 'Verified';
+          document.getElementById('valStatus').textContent = isPaid ? '✅ Paid & Approved' : '⏳ Pending Admin Approval';
+          document.getElementById('valStatus').className = 'detail-val ' + (isPaid ? 'success' : 'gold');
           document.getElementById('valName').textContent = p.leader_name || '—';
           document.getElementById('valCollege').textContent = p.college_name || 'PSCMR College of Engineering & Technology';
           document.getElementById('valBranchYear').textContent = `${p.branch || '—'} (${p.year || '—'})`;
           document.getElementById('valCategory').textContent = p.ieee_member === 'Yes' ? `IEEE Member (ID: ${p.ieee_id || 'Yes'})` : 'Non-IEEE Member';
-          document.getElementById('valPhone').textContent = (p.leader_phone && p.leader_phone !== 'N/A' && p.leader_phone !== '—') ? p.leader_phone : '9381478887';
-          document.getElementById('valEmail').textContent = (p.leader_email && p.leader_email !== 'N/A' && p.leader_email !== '—') ? p.leader_email : 'innowave2k26@pscmr.ac.in';
-          document.getElementById('valAmount').textContent = p.amount ? `₹${p.amount}` : 'Paid';
-          document.getElementById('valRef').textContent = p.payment_ref || 'Verified';
+          document.getElementById('valPhone').textContent = (p.leader_phone && p.leader_phone !== 'N/A' && p.leader_phone !== '—') ? p.leader_phone : '—';
+          document.getElementById('valEmail').textContent = (p.leader_email && p.leader_email !== 'N/A' && p.leader_email !== '—') ? p.leader_email : '—';
+          document.getElementById('valAmount').textContent = p.amount ? `₹${p.amount}` : '—';
+          document.getElementById('valRef').textContent = p.payment_ref || 'Pending Submission';
 
           loadingBox.style.display = 'none';
           detailsContent.style.display = 'block';
+
+          const box = document.getElementById('verifiedBadgeBox');
+          if (isPaid) {
+            box.style.background = 'rgba(0, 230, 118, 0.12)';
+            box.style.borderColor = '#00e676';
+            document.getElementById('verifiedIcon').textContent = '✅';
+            document.getElementById('verifiedTitle').textContent = 'VERIFIED OFFICIAL PARTICIPANT';
+            document.getElementById('verifiedTitle').style.color = '#00e676';
+            document.getElementById('verifiedSub').textContent = 'Authenticated & Approved by InnoWave-2K26 Admin Committee';
+          } else {
+            box.style.background = 'rgba(251, 191, 36, 0.12)';
+            box.style.borderColor = '#fbbf24';
+            document.getElementById('verifiedIcon').textContent = '⏳';
+            document.getElementById('verifiedTitle').textContent = 'PENDING ADMIN APPROVAL';
+            document.getElementById('verifiedTitle').style.color = '#fbbf24';
+            document.getElementById('verifiedSub').textContent = 'Registration & payment details received. Awaiting admin approval.';
+          }
         } else {
           loadingBox.style.display = 'none';
           detailsContent.style.display = 'block';
           
           const box = document.getElementById('verifiedBadgeBox');
-          box.classList.add('invalid');
+          box.style.background = 'rgba(239, 68, 68, 0.12)';
+          box.style.borderColor = '#ef4444';
           document.getElementById('verifiedIcon').textContent = '❌';
           document.getElementById('verifiedTitle').textContent = 'UNVERIFIED / INVALID PARTICIPANT';
+          document.getElementById('verifiedTitle').style.color = '#ef4444';
           document.getElementById('verifiedSub').textContent = 'This Participant ID was not found in the InnoWave-2K26 database.';
         }
       } catch (err) {
@@ -657,27 +679,112 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
     window.addEventListener('DOMContentLoaded', loadVerification);
   </script>
 
-  <!-- Floating Scroll To Top Button -->
-  <button type="button" id="scrollTopBtn" aria-label="Scroll to Top" onclick="scrollToTop()"
-    style="display:none; position:fixed; bottom:28px; right:28px; width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg, #00d4ff 0%, #0055ff 100%); color:#ffffff; border:1.5px solid rgba(255,255,255,0.4); font-size:20px; font-weight:900; cursor:pointer; z-index:99990; box-shadow:0 8px 24px rgba(0,212,255,0.45); transition:all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); justify-content:center; align-items:center; outline:none;"
-    onmouseenter="this.style.transform='translateY(-4px) scale(1.1)'; this.style.boxShadow='0 12px 30px rgba(0,212,255,0.65)';"
-    onmouseleave="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 8px 24px rgba(0,212,255,0.45)';">
+  <!-- Floating Movable & Draggable Scroll To Top Button -->
+  <button type="button" id="scrollTopBtn" aria-label="Scroll to Top"
+    style="display:none; position:fixed; bottom:28px; right:28px; width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg, #00d4ff 0%, #0055ff 100%); color:#ffffff; border:1.5px solid rgba(255,255,255,0.45); font-size:20px; font-weight:900; cursor:grab; z-index:99999; box-shadow:0 8px 24px rgba(0,212,255,0.45); transition:transform 0.2s, box-shadow 0.2s; justify-content:center; align-items:center; outline:none; touch-action:none; user-select:none; -webkit-user-select:none;"
+    onmouseenter="if(!window.__isDraggingScrollBtn){this.style.transform='scale(1.1)'; this.style.boxShadow='0 12px 30px rgba(0,212,255,0.65)';}"
+    onmouseleave="if(!window.__isDraggingScrollBtn){this.style.transform='scale(1)'; this.style.boxShadow='0 8px 24px rgba(0,212,255,0.45)';}">
     ▲
   </button>
 
   <script>
-    function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    window.addEventListener('scroll', () => {
+    (function initMovableScrollBtn() {
       const btn = document.getElementById('scrollTopBtn');
       if (!btn) return;
-      if (window.scrollY > 280) {
-        btn.style.display = 'flex';
-      } else {
-        btn.style.display = 'none';
+
+      let isDragging = false;
+      let hasMoved = false;
+      let startX = 0, startY = 0;
+      let initialLeft = 0, initialTop = 0;
+
+      function getCoords(e) {
+        if (e.touches && e.touches.length > 0) {
+          return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+        return { x: e.clientX, y: e.clientY };
       }
-    });
+
+      function onStart(e) {
+        isDragging = true;
+        window.__isDraggingScrollBtn = true;
+        hasMoved = false;
+        const c = getCoords(e);
+        startX = c.x;
+        startY = c.y;
+
+        const rect = btn.getBoundingClientRect();
+        initialLeft = rect.left;
+        initialTop = rect.top;
+
+        btn.style.cursor = 'grabbing';
+      }
+
+      function onMove(e) {
+        if (!isDragging) return;
+        const c = getCoords(e);
+        const dx = c.x - startX;
+        const dy = c.y - startY;
+
+        if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+          hasMoved = true;
+        }
+
+        if (hasMoved) {
+          if (e.cancelable) e.preventDefault();
+
+          let newLeft = initialLeft + dx;
+          let newTop = initialTop + dy;
+
+          const btnW = btn.offsetWidth || 48;
+          const btnH = btn.offsetHeight || 48;
+          const maxLeft = window.innerWidth - btnW - 8;
+          const maxTop = window.innerHeight - btnH - 8;
+
+          newLeft = Math.max(8, Math.min(newLeft, maxLeft));
+          newTop = Math.max(8, Math.min(newTop, maxTop));
+
+          btn.style.left = newLeft + 'px';
+          btn.style.top = newTop + 'px';
+          btn.style.right = 'auto';
+          btn.style.bottom = 'auto';
+        }
+      }
+
+      function onEnd(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        window.__isDraggingScrollBtn = false;
+        btn.style.cursor = 'grab';
+
+        if (!hasMoved) {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }
+
+      btn.addEventListener('mousedown', onStart);
+      window.addEventListener('mousemove', onMove, { passive: false });
+      window.addEventListener('mouseup', onEnd);
+
+      btn.addEventListener('touchstart', onStart, { passive: false });
+      window.addEventListener('touchmove', onMove, { passive: false });
+      window.addEventListener('touchend', onEnd);
+      window.addEventListener('touchcancel', onEnd);
+
+      btn.onclick = function(e) {
+        e.preventDefault();
+      };
+
+      function updateVisibility() {
+        if (window.scrollY > 160 || document.documentElement.scrollTop > 160) {
+          btn.style.display = 'flex';
+        } else {
+          btn.style.display = 'none';
+        }
+      }
+
+      window.addEventListener('scroll', updateVisibility);
+      updateVisibility();
+    })();
   </script>
 </body>
 </html>

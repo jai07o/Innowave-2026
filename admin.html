@@ -9,45 +9,45 @@
 <style>
   @media print {
     @page {
-      size: A4 portrait;
-      margin: 0 !important;
+      size: auto;
+      margin: 5mm;
     }
     html, body {
-      background: #ffffff !important;
-      color: #000000 !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      width: 100vw !important;
-      height: 100vh !important;
-      overflow: hidden !important;
-    }
-    body > *:not(#directPrintArea) {
-      display: none !important;
-    }
-    #directPrintArea {
-      display: flex !important;
-      visibility: visible !important;
-      position: absolute !important;
-      top: 50% !important;
-      left: 50% !important;
-      transform: translate(-50%, -50%) scale(0.85) !important;
-      transform-origin: center center !important;
-      width: 440px !important;
-      max-width: 440px !important;
-      margin: 0 auto !important;
-      padding: 0 !important;
-      border: none !important;
-      box-shadow: none !important;
-      background: transparent !important;
+      background: #04091a !important;
+      color: #ffffff !important;
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
-      page-break-inside: avoid !important;
-      break-inside: avoid !important;
-      page-break-before: avoid !important;
-      page-break-after: avoid !important;
+      color-adjust: exact !important;
     }
-    #directPrintArea * {
+    body * {
+      visibility: hidden !important;
+    }
+    #printableIdCard, #printableIdCard * {
       visibility: visible !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
+    }
+    #printableIdCard {
+      position: absolute !important;
+      left: 50% !important;
+      top: 10px !important;
+      transform: translateX(-50%) !important;
+      width: 440px !important;
+      max-width: 100% !important;
+      background: #04091a !important;
+      border: 2.5px solid #00f2fe !important;
+      box-shadow: none !important;
+    }
+    .modal-overlay, .modal-content {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    .modal-overlay button, #adminIdModal h3, .id-card-btn-bar, .no-print {
+      display: none !important;
     }
   }
 </style>
@@ -260,22 +260,37 @@ html[data-theme="light"] body, body.light-theme {
     html, body { overflow-x: hidden !important; width: 100% !important; }
     .dash { padding: 8px !important; }
     .container { padding: 12px 8px !important; }
-    header.bar { padding: 12px 14px !important; min-height: 52px !important; }
-    header.bar .in { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }
-    header.bar .actions { width: 100% !important; display: flex !important; flex-wrap: wrap !important; gap: 6px !important; }
-    header.bar .actions button { flex: 1 1 calc(50% - 6px) !important; font-size: 11.5px !important; padding: 10px 8px !important; min-height: 40px !important; }
     
-    .stats { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
-    .stat { padding: 12px 10px !important; }
-    .stat .v { font-size: 22px !important; margin-top: 4px !important; }
-    .stat .k { font-size: 10px !important; }
+    /* Header Bar: Compact, side-by-side action pills like laptop view */
+    header.bar { padding: 10px 12px !important; min-height: 50px !important; }
+    header.bar .in { flex-direction: column !important; align-items: stretch !important; gap: 10px !important; }
+    header.bar .title { font-size: 15px !important; display: flex !important; align-items: center !important; justify-content: space-between !important; flex-wrap: wrap !important; gap: 6px !important; }
+    header.bar .actions { width: 100% !important; display: flex !important; flex-direction: row !important; flex-wrap: wrap !important; gap: 6px !important; justify-content: flex-start !important; }
+    header.bar .actions button,
+    header.bar .actions .btn { flex: 1 1 calc(33.333% - 6px) !important; min-width: 0 !important; font-size: 11px !important; padding: 8px 6px !important; min-height: 36px !important; text-align: center !important; justify-content: center !important; white-space: nowrap !important; border-radius: 8px !important; }
     
-    .toolbar { flex-direction: column !important; align-items: stretch !important; gap: 8px !important; }
-    .toolbar input, .toolbar select { width: 100% !important; min-width: 100% !important; font-size: 14px !important; min-height: 44px !important; box-sizing: border-box !important; }
+    /* Bank Card on Mobile: Side-by-side details */
+    .admin-bank-card { padding: 14px 12px !important; border-radius: 14px !important; gap: 12px !important; }
+    .admin-bank-pills { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 6px !important; width: 100% !important; }
+    .admin-bank-pills > div { padding: 6px 8px !important; text-align: center !important; border-radius: 8px !important; }
+    .admin-bank-pills div[style*="font-size:15px"],
+    .admin-bank-pills div[style*="font-size:14px"] { font-size: 11px !important; }
     
-    .tablewrap { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; border-radius: 8px !important; width: 100% !important; }
-    table { min-width: 850px !important; }
-    th, td { padding: 8px 10px !important; font-size: 12px !important; }
+    /* Stats Grid: 2-Column Side-by-Side Grid matching laptop layout, NEVER 1-column */
+    .stats { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; margin-bottom: 16px !important; }
+    .stat { padding: 12px 8px !important; border-radius: 12px !important; text-align: center !important; }
+    .stat .k { font-size: 9.5px !important; line-height: 1.25 !important; }
+    .stat .v { font-size: 20px !important; margin-top: 4px !important; }
+    
+    /* Toolbar: Search and Filter side-by-side in horizontal row, just like laptop view */
+    .toolbar { display: flex !important; flex-direction: row !important; align-items: center !important; gap: 8px !important; width: 100% !important; flex-wrap: nowrap !important; margin-bottom: 12px !important; }
+    .toolbar input { flex: 1.3 !important; min-width: 0 !important; width: auto !important; font-size: 12px !important; padding: 9px 10px !important; min-height: 40px !important; box-sizing: border-box !important; }
+    .toolbar select { flex: 0.9 !important; min-width: 0 !important; width: auto !important; font-size: 11.5px !important; padding: 9px 6px !important; min-height: 40px !important; box-sizing: border-box !important; }
+    
+    /* Table Container */
+    .tablewrap { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; border-radius: 10px !important; width: 100% !important; }
+    table { min-width: 850px !important; font-size: 12px !important; }
+    th, td { padding: 8px 10px !important; }
     
     .login input { font-size: 15px !important; min-height: 44px !important; }
     .login button { min-height: 44px !important; font-size: 14px !important; }
@@ -285,11 +300,6 @@ html[data-theme="light"] body, body.light-theme {
     #adminIdModal > div { max-width: 96% !important; padding: 16px 10px !important; box-sizing: border-box !important; }
     #adminIdCardBody .delegate-pass-card { transform: scale(0.85); transform-origin: top center; margin-bottom: -40px !important; }
     #proofModal > div { max-width: 96% !important; padding: 16px 12px !important; box-sizing: border-box !important; }
-  }
-
-  @media (max-width: 480px) {
-    .stats { grid-template-columns: 1fr !important; }
-    header.bar .actions button { flex: 1 1 100% !important; }
   }
 /* ========================================================
    LIGHT MODE CONTRAST & READABILITY OVERRIDES (100% Crisp & Aggressive)
@@ -540,7 +550,7 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
       <div class="actions">
         <button class="btn" id="themeToggleBtn" onclick="toggleTheme()" style="padding:6px 14px;">☀️ LIGHT</button>
         <button class="btn" onclick="loadData()">↻ Refresh</button>
-        <button class="btn primary" onclick="downloadExcel()">⬇ Download Excel</button>
+        <button class="btn primary" onclick="downloadExcel()">⬇ Download HTML Admin Excel (.CSV)</button>
         <button class="btn" style="background:#dc2626; color:#ffffff; border:none; font-weight:700;" onclick="deleteAllRegistrations()">🗑️ DELETE ALL</button>
         <button class="btn" onclick="logout()">Logout</button>
       </div>
@@ -549,7 +559,7 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
 
   <div class="container">
     <!-- Official College Bank Account Details Summary Card for Organizers -->
-    <div style="background:linear-gradient(135deg, rgba(3,24,46,0.95) 0%, rgba(10,37,64,0.95) 100%); border:2px solid var(--accent); border-radius:18px; padding:18px 24px; margin-bottom:24px; box-shadow:0 12px 30px rgba(0,212,255,0.15); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+    <div class="admin-bank-card" style="background:linear-gradient(135deg, rgba(3,24,46,0.95) 0%, rgba(10,37,64,0.95) 100%); border:2px solid var(--accent); border-radius:18px; padding:18px 24px; margin-bottom:24px; box-shadow:0 12px 30px rgba(0,212,255,0.15); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
       <div style="display:flex; align-items:center; gap:14px;">
         <div style="background:rgba(0,212,255,0.15); border:1.5px solid var(--accent); width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:24px;">
           🏦
@@ -559,7 +569,7 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
           <div style="color:#ffffff; font-size:16px; font-weight:900; margin-top:2px;">POTTI SRIRAMULU CHALAVADI MALLIKARJUNA RAO COLLEGE</div>
         </div>
       </div>
-      <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+      <div class="admin-bank-pills" style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
         <div style="background:rgba(255,255,255,0.06); padding:8px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.15);">
           <div style="color:#94a3b8; font-size:10px; font-weight:700;">ACCOUNT NUMBER</div>
           <div style="color:#00e676; font-size:15px; font-weight:900; font-family:monospace; letter-spacing:1px;">1414155000131347</div>
@@ -627,16 +637,201 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
   </div>
 </div>
 
-<!-- Modal for Admin Participant ID Card View & Print -->
+<!-- Admin Official ID Card Printer Modal (Identical to admin.php) -->
 <div class="modal-overlay" id="adminIdModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:1000; align-items:center; justify-content:center; padding:20px; overflow-y:auto;" onclick="if(event.target===this) closeAdminIdModal();">
-  <div style="background:var(--bg-panel); border:1.5px solid var(--accent); border-radius:20px; max-width:480px; width:100%; padding:24px; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.8);" onclick="event.stopPropagation();">
-    <button type="button" onclick="closeAdminIdModal()" style="position:absolute; top:16px; right:16px; background:none; border:none; color:#fff; font-size:24px; cursor:pointer;">✕</button>
+  <div style="background:var(--bg-panel); border:2px solid var(--accent); border-radius:24px; max-width:480px; width:100%; padding:20px; text-align:center; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.8);" onclick="event.stopPropagation();">
+    <button type="button" onclick="closeAdminIdModal()" style="position:absolute; top:16px; right:16px; background:none; border:none; color:#fff; font-size:24px; cursor:pointer;" class="no-print">✕</button>
+    <h3 style="color:#fbbf24; font-size:16px; margin-bottom:12px; font-family:'Space Grotesk',sans-serif;" class="no-print">🪪 OFFICIAL PARTICIPANT ID CARD PRINTER</h3>
     
-    <div id="adminIdCardBody"></div>
+    <!-- Printable Card Container (Exact 1:1 Graphic Card Layout matching admin.php) -->
+    <div id="printableIdCard" style="width:100%; max-width:440px; margin:0 auto; background:#04091a; border:2.5px solid #00f2fe; border-radius:24px; padding:20px 16px; color:#ffffff; font-family:'Inter',sans-serif; box-sizing:border-box; position:relative; box-shadow:0 0 35px rgba(0,242,254,0.3); text-align:center;">
+      
+      <!-- TOP DARK NAVY BANNER HEADER -->
+      <div style="text-align:center; margin-bottom:12px;">
+        <div style="display:inline-block; background:rgba(251, 191, 36, 0.1); border:1.5px solid #fbbf24; color:#fbbf24; border-radius:20px; padding:4px 16px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">
+          👑 OFFICIAL DELEGATE PASS
+        </div>
+        
+        <div style="font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:900; color:#ffffff; letter-spacing:0.05em; line-height:1.1; margin-bottom:4px;">
+          INNOWAVE-2K26
+        </div>
 
-    <div style="margin-top:20px; display:flex; flex-direction:column; gap:10px;" class="no-print">
-      <button type="button" class="btn" onclick="window.print()" style="background:linear-gradient(135deg, #00d4ff 0%, #0066ff 100%); color:#041220; font-weight:900; font-size:14px; padding:12px 28px; width:100%; border-radius:12px; border:none; box-shadow:0 8px 24px rgba(0,212,255,0.3); cursor:pointer;">🖨️ PRINT ID CARD PASS (PDF / PRINTER)</button>
-      <button type="button" class="btn gold" onclick="downloadIdCardPng('adminIdCardBody')" style="padding:12px 28px; font-weight:800; font-size:14px; width:100%; border-radius:12px; box-shadow:0 8px 24px rgba(255,183,3,0.3); cursor:pointer;">📥 DOWNLOAD 4K ID CARD PASS (PNG IMAGE)</button>
+        <div style="font-size:11px; font-weight:800; color:#fbbf24; letter-spacing:0.08em; text-transform:uppercase;">
+          ENGINEER'S DAY CELEBRATION
+        </div>
+        <div style="font-size:10px; font-weight:800; color:#38bdf8; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:10px;">
+          NATIONAL LEVEL FEST
+        </div>
+
+        <div style="display:inline-flex; align-items:center; justify-content:center; gap:6px; background:rgba(0, 242, 254, 0.1); border:1.5px solid #00f2fe; color:#00f2fe; border-radius:20px; padding:5px 18px; font-size:12px; font-weight:800; font-family:'Space Grotesk',monospace;">
+          <span style="background:#00f2fe; color:#04091a; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:900;">ID</span>
+          <span>PARTICIPANT ID: <span id="cardTeamId">IW26-0001</span></span>
+        </div>
+      </div>
+
+      <!-- AMBER ACCENT DIVIDER LINE -->
+      <div style="height:3px; background:linear-gradient(90deg, transparent, #fbbf24, transparent); margin-bottom:14px; border-radius:2px;"></div>
+
+      <!-- MIDDLE BODY CONTAINER (White background, cyan border) -->
+      <div style="background:#ffffff; border:2px solid #00f2fe; border-radius:16px; padding:12px; color:#0f172a; margin-bottom:14px; text-align:left;">
+        
+        <!-- 1. Registered Participant Name Box (Cream Yellow) -->
+        <div style="background:#fffbeb; border:1.5px solid #fef08a; border-radius:12px; padding:10px 14px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="color:#92400e; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:4px; margin-bottom:2px;">
+              <span>👤</span> REGISTERED PARTICIPANT NAME
+            </div>
+            <div id="cardName" style="font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:900; color:#0f172a;">
+              Participant Name
+            </div>
+          </div>
+          <div style="background:#041b2d; color:#00f2fe; border:1px solid #00f2fe; font-size:11px; font-weight:800; padding:4px 10px; border-radius:8px; font-family:monospace;">
+            ID: <span id="cardBadgeId">IW26-0001</span>
+          </div>
+        </div>
+
+        <!-- 2. College / Institution Name Box -->
+        <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid #0284c7; border-radius:10px; padding:8px 12px; margin-bottom:10px;">
+          <div style="color:#0284c7; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:4px; margin-bottom:2px;">
+            <span>🏫</span> COLLEGE / INSTITUTION NAME
+          </div>
+          <div id="cardCollege" style="font-size:14px; font-weight:800; color:#0f172a;">
+            College Name
+          </div>
+        </div>
+
+        <!-- 3. Branch & Year of Study (with Admission No for PSCMR only) -->
+        <div id="cardBranchYearGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+          <div id="cardRollBox" style="display:none; background:#ffffff; border:1px solid #a7f3d0; border-left:4px solid #059669; border-radius:10px; padding:8px 12px; text-align:left;">
+            <div style="color:#059669; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:4px; margin-bottom:2px;">
+              <span>🎫</span> ADMISSION NO
+            </div>
+            <div id="cardRoll" style="font-size:14px; font-weight:800; color:#064e3b;">
+              -
+            </div>
+          </div>
+          <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid #0284c7; border-radius:10px; padding:8px 12px; text-align:left;">
+            <div style="color:#0284c7; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:4px; margin-bottom:2px;">
+              <span>🎓</span> BRANCH
+            </div>
+            <div id="cardBranch" style="font-size:14px; font-weight:800; color:#0f172a;">
+              Branch
+            </div>
+          </div>
+          <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid #0284c7; border-radius:10px; padding:8px 12px; text-align:left;">
+            <div style="color:#0284c7; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:4px; margin-bottom:2px;">
+              <span>📅</span> YEAR OF STUDY
+            </div>
+            <div id="cardYear" style="font-size:14px; font-weight:800; color:#0f172a;">
+              Year
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Events Evaluation Checklist Table -->
+        <div style="border:1px solid #cbd5e1; border-radius:12px; overflow:hidden;">
+          <div style="background:#04091a; color:#ffffff; padding:8px 12px; display:flex; justify-content:space-between; align-items:center; font-size:11px; font-weight:800;">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span>📋</span> EVENTS EVALUATION CHECKLIST
+            </div>
+            <div style="color:#00f2fe; font-family:'Space Grotesk',sans-serif;">
+              INNOWAVE-2K26
+            </div>
+          </div>
+          
+          <table style="width:100%; border-collapse:collapse; font-size:11px; background:#ffffff;">
+            <thead>
+              <tr style="border-bottom:1px solid #e2e8f0; color:#475569; font-size:9.5px; font-weight:800; text-transform:uppercase;">
+                <th style="padding:6px 10px; text-align:left;">BROCHURE EVENT NAME</th>
+                <th style="padding:6px 10px; text-align:center; width:70px;">MARK [✓]</th>
+                <th style="padding:6px 10px; text-align:right;">EVENT HEAD SIGN</th>
+              </tr>
+            </thead>
+            <tbody style="color:#0f172a; font-weight:700;">
+              <tr style="border-bottom:1px solid #f1f5f9;">
+                <td style="padding:6px 10px;">🧠 Technical Quiz</td>
+                <td style="padding:6px 10px; text-align:center;">
+                  <div style="width:16px; height:16px; border:1.5px solid #94a3b8; border-radius:3px; margin:0 auto;"></div>
+                </td>
+                <td style="padding:6px 10px; text-align:right; color:#cbd5e1;">___________________</td>
+              </tr>
+              <tr style="border-bottom:1px solid #f1f5f9;">
+                <td style="padding:6px 10px;">💻 Coding Challenge</td>
+                <td style="padding:6px 10px; text-align:center;">
+                  <div style="width:16px; height:16px; border:1.5px solid #94a3b8; border-radius:3px; margin:0 auto;"></div>
+                </td>
+                <td style="padding:6px 10px; text-align:right; color:#cbd5e1;">___________________</td>
+              </tr>
+              <tr style="border-bottom:1px solid #f1f5f9;">
+                <td style="padding:6px 10px;">🗺️ Tech Treasure Hunt</td>
+                <td style="padding:6px 10px; text-align:center;">
+                  <div style="width:16px; height:16px; border:1.5px solid #94a3b8; border-radius:3px; margin:0 auto;"></div>
+                </td>
+                <td style="padding:6px 10px; text-align:right; color:#cbd5e1;">___________________</td>
+              </tr>
+              <tr style="border-bottom:1px solid #f1f5f9;">
+                <td style="padding:6px 10px;">🚀 Project Expo</td>
+                <td style="padding:6px 10px; text-align:center;">
+                  <div style="width:16px; height:16px; border:1.5px solid #94a3b8; border-radius:3px; margin:0 auto;"></div>
+                </td>
+                <td style="padding:6px 10px; text-align:right; color:#cbd5e1;">___________________</td>
+              </tr>
+              <tr style="border-bottom:1px solid #f1f5f9;">
+                <td style="padding:6px 10px;">🤖 Prompt Engineering</td>
+                <td style="padding:6px 10px; text-align:center;">
+                  <div style="width:16px; height:16px; border:1.5px solid #94a3b8; border-radius:3px; margin:0 auto;"></div>
+                </td>
+                <td style="padding:6px 10px; text-align:right; color:#cbd5e1;">___________________</td>
+              </tr>
+              <tr>
+                <td style="padding:6px 10px;">🎬 Reels (1 Min)</td>
+                <td style="padding:6px 10px; text-align:center;">
+                  <div style="width:16px; height:16px; border:1.5px solid #94a3b8; border-radius:3px; margin:0 auto;"></div>
+                </td>
+                <td style="padding:6px 10px; text-align:right; color:#cbd5e1;">___________________</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- BOTTOM DARK NAVY FOOTER SECTION -->
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:4px 6px;">
+        <!-- Left: QR Code & Verify Text -->
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="background:#ffffff; padding:4px; border-radius:8px; border:1.5px solid #00f2fe; width:64px; height:64px; display:flex; align-items:center; justify-content:center;">
+            <img id="cardQrImg" src="" alt="QR Code" style="width:100%; height:100%; object-fit:contain;">
+          </div>
+          <div style="text-align:left;">
+            <div style="color:#00f2fe; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">
+              SCAN TO VERIFY
+            </div>
+            <div style="color:#94a3b8; font-size:9.5px; font-weight:600;">
+              Official Pass
+            </div>
+            <div style="color:#64748b; font-size:9.5px; font-weight:600;">
+              InnoWave-2k26
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Signature Line -->
+        <div style="text-align:right;">
+          <div style="color:#64748b; font-size:11px; margin-bottom:2px;">
+            ___________________
+          </div>
+          <div style="color:#fbbf24; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">
+            REGISTRATION SIGNATURE
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;" class="id-card-btn-bar no-print">
+      <button type="button" class="btn" onclick="printIdCard()" style="background:linear-gradient(135deg, #00d4ff 0%, #0066ff 100%); color:#041220; font-weight:900; font-size:14px; padding:12px 28px; width:100%; border-radius:12px; border:none; box-shadow:0 8px 24px rgba(0,212,255,0.3); cursor:pointer;">🖨️ PRINT ID CARD PASS (PDF / PRINTER)</button>
+      <button type="button" class="btn gold" onclick="downloadIdCardPng('printableIdCard')" style="padding:12px 28px; font-weight:800; font-size:14px; width:100%; border-radius:12px; box-shadow:0 8px 24px rgba(255,183,3,0.3); cursor:pointer;">📥 DOWNLOAD 4K ID CARD PASS (PNG IMAGE)</button>
       <button type="button" class="btn" onclick="closeAdminIdModal()" style="padding:10px 20px; font-size:13px; width:100%; border-radius:10px; border:1px solid var(--border); color:var(--text-primary); cursor:pointer;">⬅ BACK TO ADMIN DASHBOARD</button>
     </div>
   </div>
@@ -671,6 +866,11 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
     }
   }
   let autoRefreshInterval = null;
+  function downloadExcel() {
+    if (!TOKEN) { alert('Please log in first.'); return; }
+    window.location.href = 'api/admin.php?action=export-html&password=' + encodeURIComponent(TOKEN);
+  }
+
   function logout(){ 
     if(autoRefreshInterval) clearInterval(autoRefreshInterval); 
     localStorage.removeItem('iw_token'); 
@@ -701,13 +901,47 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
       const j = await r.json();
       if(!j || !j.ok){ logout(); return; }
       DATA = j.data || j.rows || [];
-      const s = j.stats || {};
-      if (document.getElementById('stTeams')) document.getElementById('stTeams').textContent = s.total || DATA.length || 0;
-      if (document.getElementById('stPeople')) document.getElementById('stPeople').textContent = s.total || DATA.length || 0;
-      if (document.getElementById('stIeeeCount')) document.getElementById('stIeeeCount').textContent = s.ieee || 0;
-      if (document.getElementById('stNonIeeeCount')) document.getElementById('stNonIeeeCount').textContent = s.non_ieee || 0;
-      if (document.getElementById('stCollected')) document.getElementById('stCollected').textContent = '₹' + (s.amount || 0).toLocaleString('en-IN');
-      if (document.getElementById('stPending')) document.getElementById('stPending').textContent = s.pending_ieee || 0;
+      
+      let expectedTotal = 0;
+      let expectedIeeeMoney = 0;
+      let expectedNonIeeeMoney = 0;
+      let actualCollected = 0;
+      let ieeeCount = 0;
+      let nonIeeeCount = 0;
+      let pendingCount = 0;
+
+      DATA.forEach(row => {
+        const amt = parseInt(row.amount, 10) || 0;
+        const isIeee = (row.ieee_member === 'Yes');
+        if (isIeee) {
+          ieeeCount++;
+          expectedIeeeMoney += amt;
+        } else {
+          nonIeeeCount++;
+          expectedNonIeeeMoney += amt;
+        }
+        expectedTotal += amt;
+        
+        if (row.payment_status === 'Paid') {
+          actualCollected += amt;
+        } else {
+          pendingCount++;
+        }
+      });
+
+      const gapMoney = Math.max(0, expectedTotal - actualCollected);
+
+      if (document.getElementById('stTeams')) document.getElementById('stTeams').textContent = DATA.length;
+      if (document.getElementById('stPeople')) document.getElementById('stPeople').textContent = DATA.length;
+      if (document.getElementById('stIeeeCount')) document.getElementById('stIeeeCount').textContent = ieeeCount;
+      if (document.getElementById('stNonIeeeCount')) document.getElementById('stNonIeeeCount').textContent = nonIeeeCount;
+      if (document.getElementById('stIeeeMoney')) document.getElementById('stIeeeMoney').textContent = '₹' + expectedIeeeMoney.toLocaleString('en-IN');
+      if (document.getElementById('stNonIeeeMoney')) document.getElementById('stNonIeeeMoney').textContent = '₹' + expectedNonIeeeMoney.toLocaleString('en-IN');
+      if (document.getElementById('stExpected')) document.getElementById('stExpected').textContent = '₹' + expectedTotal.toLocaleString('en-IN');
+      if (document.getElementById('stCollected')) document.getElementById('stCollected').textContent = '₹' + actualCollected.toLocaleString('en-IN');
+      if (document.getElementById('stGap')) document.getElementById('stGap').textContent = '₹' + gapMoney.toLocaleString('en-IN');
+      if (document.getElementById('stPending')) document.getElementById('stPending').textContent = pendingCount;
+      
       renderRows();
     }catch(e){ console.error(e); }
   }
@@ -764,6 +998,11 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
         }
       }
 
+      const isPscmr = isPscmrCollege(r.college_name);
+      const admBadge = (isPscmr && r.roll_no && r.roll_no !== 'N/A' && r.roll_no !== '-') 
+        ? `<br><span style="font-size:11px; font-weight:800; color:#00e676; background:rgba(0,230,118,0.12); border:1px solid rgba(0,230,118,0.3); padding:2px 7px; border-radius:5px; display:inline-block; margin-top:2px;">🎓 Adm No: ${esc(r.roll_no)}</span>` 
+        : '';
+
       const ieeeLabel = isIeee ? `<span class="badge yes">IEEE Member</span>` : `<span class="badge no">Non-IEEE</span>`;
       const ieeeCardBtn = r.ieee_card ? `<button class="btn" style="padding:4px 10px; font-size:11px;" onclick="viewProofModal('${esc(r.team_id)}','IEEE Card',${r.id})">🪪 View Card</button>` : '<span class="muted" style="font-size:11px;">No File</span>';
       const payProofBtn = r.payment_screenshot ? `<br><button class="btn" style="padding:3px 8px; font-size:10.5px; margin-top:4px; border-color:#00e676; color:#00e676;" onclick="viewPaymentProofModal('${esc(r.team_id)}',${r.id})">📸 View Payment Proof</button>` : '';
@@ -773,7 +1012,7 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
         <td>${payBadge(st)}<br><span class="amt" style="font-size:13px">₹${esc(r.amount||0)}</span>${r.payment_ref?`<br><span class="muted" style="font-size:11px">UTR: ${esc(r.payment_ref)}</span>`:''}${dupWarningBadge}${payProofBtn}</td>
         <td><b>${esc(r.leader_name)}</b></td>
         <td><a href="mailto:${esc(r.leader_email)}">${esc(r.leader_email)}</a><br><span class="muted">${esc(r.leader_phone)}</span></td>
-        <td>${esc(r.college_name||'—')}${r.roll_no ? `<br><span style="font-size:11px; font-weight:800; color:#00e676; background:rgba(0,230,118,0.1); padding:2px 6px; border-radius:4px; display:inline-block; margin-top:2px;">Adm/Roll: ${esc(r.roll_no)}</span>` : ''}<br><span class="muted">${esc(r.branch||'—')} (${esc(r.year||'')})</span></td>
+        <td>${esc(r.college_name||'—')}${admBadge}<br><span class="muted">${esc(r.branch||'—')} (${esc(r.year||'')})</span></td>
         <td>${ieeeLabel}${r.ieee_id?`<br><span class="muted" style="font-size:11px">ID: ${esc(r.ieee_id)}</span>`:''}<br><span style="font-size:11px; color:var(--accent); font-weight:700;">${esc(ieeeStatus)}</span>${ieeeMismatchBadge}</td>
         <td>${ieeeCardBtn}</td>
         <td class="muted" style="font-size:12.5px;white-space:nowrap">${esc(when)}</td>
@@ -858,159 +1097,42 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
     if (infoBox) { infoBox.innerHTML = ''; infoBox.style.display = 'none'; }
   }
 
-  async function openAdminIdCard(id) {
+  function printIdCard() {
+    window.print();
+  }
+
+  function openAdminIdCard(id) {
     const row = DATA.find(r => r.id === id);
     if (!row) { alert('Participant details not found.'); return; }
+    currentParticipantTeamId = row.team_id || ('IW26-' + String(row.id).padStart(4, '0'));
 
-    const body = document.getElementById('adminIdCardBody');
-    body.innerHTML = '<div style="text-align:center; padding:20px; color:var(--accent);">⌛ Generating Participant ID Card & QR Code…</div>';
-    document.getElementById('adminIdModal').style.display = 'none';
+    document.getElementById('cardTeamId').textContent = currentParticipantTeamId;
+    document.getElementById('cardBadgeId').textContent = currentParticipantTeamId;
+    document.getElementById('cardName').textContent = row.leader_name || 'Participant';
+    document.getElementById('cardCollege').textContent = row.college_name || 'PSCMR CET';
+    document.getElementById('cardBranch').textContent = row.branch || 'N/A';
+    document.getElementById('cardYear').textContent = row.year || 'N/A';
 
-    currentParticipantTeamId = row.team_id || row.id;
-      const p = row;
-      p.qr_code = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(window.location.origin + '/verify-id.html?id=' + (p.team_id || p.id))}`;
-        const cardHtml = `
-          <div class="delegate-pass-card" style="max-width:440px; margin:0 auto; background:#031527; border:2.5px solid #00d4ff; border-radius:24px; color:#fff; text-align:center; overflow:hidden; font-family:'Inter', sans-serif; box-shadow:0 20px 50px rgba(0,0,0,0.6); page-break-inside:avoid; break-inside:avoid;">
-            <!-- TOP NAVY HEADER -->
-            <div style="background:#03182e; padding:16px 14px 12px; position:relative; border-bottom:3px solid #f59e0b; text-align:center;">
-              <div style="display:inline-block; background:#0a2540; border:1.5px solid #f59e0b; color:#fbbf24; padding:4px 16px; border-radius:20px; font-size:10.5px; font-weight:800; letter-spacing:1.5px; margin-bottom:6px;">
-                👑 OFFICIAL DELEGATE PASS
-              </div>
-              <div style="color:#ffffff; text-shadow:0 0 12px rgba(0,212,255,0.8), 0 2px 4px rgba(0,0,0,0.9); font-family:'Space Grotesk',sans-serif; font-size:25px; font-weight:900; letter-spacing:1.5px; line-height:1.1; margin:4px 0;">
-                INNOWAVE-2K26
-              </div>
-              <div style="color:#f59e0b; font-weight:800; font-size:11.5px; letter-spacing:1.5px; margin-top:2px;">
-                ENGINEER'S DAY CELEBRATION
-              </div>
-              <div style="color:#cbd5e1; font-size:9.5px; font-weight:700; letter-spacing:2px; margin-top:2px;">
-                NATIONAL LEVEL FEST
-              </div>
-              <div style="display:inline-block; background:#082a4a; border:1.5px solid #00d4ff; color:#00d4ff; padding:5px 20px; border-radius:20px; font-size:12.5px; font-weight:900; letter-spacing:1.5px; margin-top:8px;">
-                🆔 PARTICIPANT ID: ${esc(p.team_id)}
-              </div>
-            </div>
+    const isPscmr = isPscmrCollege(row.college_name);
+    const rollBox = document.getElementById('cardRollBox');
+    const rollGrid = document.getElementById('cardBranchYearGrid');
+    const cardRoll = document.getElementById('cardRoll');
 
-            <!-- MIDDLE LIGHT BODY -->
-            <div style="background:#ffffff; color:#0f172a; padding:14px 14px; text-align:left;">
-              <!-- Participant Name Box -->
-              <div style="background:#fefce8; border:1.5px solid #fef08a; border-radius:12px; padding:8px 12px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
-                <div>
-                  <div style="font-size:9.5px; font-weight:800; color:#854d0e; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">
-                    👤 REGISTERED PARTICIPANT NAME
-                  </div>
-                  <div style="font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:800; color:#1e1b4b; line-height:1.2;">
-                    ${esc(p.leader_name)}
-                  </div>
-                </div>
-                <div style="background:#03182e; border:1.5px solid #00d4ff; color:#00d4ff; font-weight:900; font-size:11.5px; padding:3px 10px; border-radius:8px;">
-                  ID: ${esc(p.team_id)}
-                </div>
-              </div>
+    if (isPscmr && row.roll_no && row.roll_no !== 'N/A' && row.roll_no !== '-') {
+      cardRoll.textContent = row.roll_no;
+      rollBox.style.display = 'block';
+      rollGrid.style.gridTemplateColumns = '1.2fr 1fr 1fr';
+    } else {
+      rollBox.style.display = 'none';
+      rollGrid.style.gridTemplateColumns = '1fr 1fr';
+    }
 
-              <!-- College Name Box -->
-              <div style="background:#ffffff; border:1.5px solid #e2e8f0; border-left:4px solid #0284c7; border-radius:10px; padding:8px 12px; margin-bottom:8px;">
-                <div style="font-size:9.5px; font-weight:800; color:#0369a1; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">
-                  🏫 COLLEGE / INSTITUTION NAME
-                </div>
-                <div style="font-size:13.5px; font-weight:700; color:#0f172a; line-height:1.25;">
-                  ${esc(p.college_name)}
-                </div>
-              </div>
+    const pathDir = window.location.pathname.replace(/\/admin\.(html|php)$/, '').replace(/\/+$/, '');
+    const verifyTargetUrl = `${window.location.protocol}//${window.location.host}${pathDir}/verify-id.html?id=${encodeURIComponent(currentParticipantTeamId)}`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(verifyTargetUrl)}`;
+    document.getElementById('cardQrImg').src = qrUrl;
 
-              <!-- Branch & Year Row -->
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
-                <div style="background:#ffffff; border:1.5px solid #e2e8f0; border-left:4px solid #0284c7; border-radius:10px; padding:6px 10px;">
-                  <div style="font-size:9px; font-weight:800; color:#0369a1; text-transform:uppercase;">🎓 BRANCH</div>
-                  <div style="font-size:13px; font-weight:800; color:#0f172a; margin-top:1px;">${esc(p.branch)}</div>
-                </div>
-                <div style="background:#ffffff; border:1.5px solid #e2e8f0; border-left:4px solid #0284c7; border-radius:10px; padding:6px 10px;">
-                  <div style="font-size:9px; font-weight:800; color:#0369a1; text-transform:uppercase;">📅 YEAR OF STUDY</div>
-                  <div style="font-size:13px; font-weight:800; color:#0f172a; margin-top:1px;">${esc(p.year)}</div>
-                </div>
-              </div>
-
-              <!-- EVENTS EVALUATION CHECKLIST TABLE -->
-              <div style="border:1.5px solid #cbd5e1; border-radius:10px; overflow:hidden; margin-bottom:2px;">
-                <div style="background:#03182e; color:#ffffff; padding:6px 10px; font-size:10.5px; font-weight:800; display:flex; justify-content:space-between; align-items:center;">
-                  <span>📋 EVENTS EVALUATION CHECKLIST</span>
-                  <span style="color:#00d4ff; font-size:9.5px;">INNOWAVE-2K26</span>
-                </div>
-
-                <div style="background:#f8fafc; border-bottom:1.5px solid #cbd5e1; padding:4.5px 10px; font-size:9px; font-weight:800; color:#475569; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; text-align:left;">
-                  <div>BROCHURE EVENT NAME</div>
-                  <div style="text-align:center;">MARK [✓]</div>
-                  <div style="text-align:right;">EVENT HEAD SIGN</div>
-                </div>
-
-                <div style="font-size:10.5px; color:#0f172a; font-weight:700;">
-                  <div style="border-bottom:1px solid #f1f5f9; padding:5px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
-                    <div>🧠 Technical Quiz</div>
-                    <div style="text-align:center;"><span style="display:inline-block; width:14px; height:14px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
-                    <div style="text-align:right; color:#cbd5e1; font-size:9.5px;">__________________</div>
-                  </div>
-                  <div style="border-bottom:1px solid #f1f5f9; padding:5px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
-                    <div>💻 Coding Challenge</div>
-                    <div style="text-align:center;"><span style="display:inline-block; width:14px; height:14px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
-                    <div style="text-align:right; color:#cbd5e1; font-size:9.5px;">__________________</div>
-                  </div>
-                  <div style="border-bottom:1px solid #f1f5f9; padding:5px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
-                    <div>🗺️ Tech Treasure Hunt</div>
-                    <div style="text-align:center;"><span style="display:inline-block; width:14px; height:14px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
-                    <div style="text-align:right; color:#cbd5e1; font-size:9.5px;">__________________</div>
-                  </div>
-                  <div style="border-bottom:1px solid #f1f5f9; padding:5px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
-                    <div>🚀 Project Expo</div>
-                    <div style="text-align:center;"><span style="display:inline-block; width:14px; height:14px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
-                    <div style="text-align:right; color:#cbd5e1; font-size:9.5px;">__________________</div>
-                  </div>
-                  <div style="border-bottom:1px solid #f1f5f9; padding:5px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
-                    <div>🤖 Prompt Engineering</div>
-                    <div style="text-align:center;"><span style="display:inline-block; width:14px; height:14px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
-                    <div style="text-align:right; color:#cbd5e1; font-size:9.5px;">__________________</div>
-                  </div>
-                  <div style="padding:5px 10px; display:grid; grid-template-columns:2.2fr 1fr 1.8fr; align-items:center;">
-                    <div>🎬 Reels (1 Min)</div>
-                    <div style="text-align:center;"><span style="display:inline-block; width:14px; height:14px; border:1.5px solid #64748b; border-radius:3px;"></span></div>
-                    <div style="text-align:right; color:#cbd5e1; font-size:9.5px;">__________________</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- BOTTOM NAVY FOOTER WITH QR & SIGNATURE -->
-            <div style="background:#021224; padding:10px 14px; color:#ffffff; border-top:2px solid #00d4ff; display:flex; align-items:center; justify-content:space-between;">
-              <!-- Left QR Container -->
-              <div style="display:flex; align-items:center; gap:8px;">
-                <div style="background:#ffffff; padding:3px; border-radius:8px; border:1.5px solid #00d4ff; display:inline-block;">
-                  <img src="${p.qr_code}" style="width:56px; height:56px; display:block;" alt="Scan QR Code">
-                </div>
-                <div style="text-align:left;">
-                  <div style="font-size:10.5px; font-weight:900; color:#00d4ff; letter-spacing:0.5px;">SCAN TO VERIFY</div>
-                  <div style="font-size:9px; color:#94a3b8; margin-top:1px; line-height:1.2;">Official Pass<br>InnoWave-2k26</div>
-                </div>
-              </div>
-
-              <!-- Right Signature Area -->
-              <div style="text-align:right;">
-                <div style="color:#64748b; font-size:10px; margin-bottom:2px;">______________________</div>
-                <div style="font-size:9.5px; font-weight:800; color:#f59e0b; letter-spacing:0.5px;">REGISTRATION SIGNATURE</div>
-              </div>
-            </div>
-          </div>
-        `;
-        body.innerHTML = cardHtml;
-        let printBox = document.getElementById('directPrintArea');
-        if (!printBox) {
-          printBox = document.createElement('div');
-          printBox.id = 'directPrintArea';
-          document.body.appendChild(printBox);
-        }
-        printBox.innerHTML = cardHtml;
-
-        // Directly launch native print dialog for ID card pass (No blank page)
-        setTimeout(() => {
-          window.print();
-        }, 150);
+    document.getElementById('adminIdModal').style.display = 'flex';
   }
 
   function closeAdminIdModal() {
@@ -1075,10 +1197,6 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
     loadData();
   }
 
-  function downloadExcel() {
-    window.location.href = 'api/admin.php?action=export&password=' + encodeURIComponent(TOKEN);
-  }
-
   async function deleteAllRegistrations() {
     const confirmText = prompt("⚠️ CRITICAL WARNING: You are about to PERMANENTLY DELETE ALL REGISTRATIONS from the database.\n\nType 'DELETE ALL' below to confirm:");
     if (confirmText !== 'DELETE ALL') {
@@ -1109,7 +1227,7 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
       alert('Admin session expired. Please log in again.');
       return;
     }
-    window.location.href = `api/admin.php?action=export&password=${encodeURIComponent(token)}`;
+    window.location.href = `api/admin.php?action=export-html&password=${encodeURIComponent(token)}`;
   }
 
   // auto-login if token present
@@ -1320,27 +1438,112 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
   })();
 </script>
 
-<!-- Floating Scroll To Top Button -->
-<button type="button" id="scrollTopBtn" aria-label="Scroll to Top" onclick="scrollToTop()"
-  style="display:none; position:fixed; bottom:28px; right:28px; width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg, #00d4ff 0%, #0055ff 100%); color:#ffffff; border:1.5px solid rgba(255,255,255,0.4); font-size:20px; font-weight:900; cursor:pointer; z-index:99990; box-shadow:0 8px 24px rgba(0,212,255,0.45); transition:all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); justify-content:center; align-items:center; outline:none;"
-  onmouseenter="this.style.transform='translateY(-4px) scale(1.1)'; this.style.boxShadow='0 12px 30px rgba(0,212,255,0.65)';"
-  onmouseleave="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 8px 24px rgba(0,212,255,0.45)';">
+<!-- Floating Movable & Draggable Scroll To Top Button -->
+<button type="button" id="scrollTopBtn" aria-label="Scroll to Top"
+  style="display:none; position:fixed; bottom:28px; right:28px; width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg, #00d4ff 0%, #0055ff 100%); color:#ffffff; border:1.5px solid rgba(255,255,255,0.45); font-size:20px; font-weight:900; cursor:grab; z-index:99999; box-shadow:0 8px 24px rgba(0,212,255,0.45); transition:transform 0.2s, box-shadow 0.2s; justify-content:center; align-items:center; outline:none; touch-action:none; user-select:none; -webkit-user-select:none;"
+  onmouseenter="if(!window.__isDraggingScrollBtn){this.style.transform='scale(1.1)'; this.style.boxShadow='0 12px 30px rgba(0,212,255,0.65)';}"
+  onmouseleave="if(!window.__isDraggingScrollBtn){this.style.transform='scale(1)'; this.style.boxShadow='0 8px 24px rgba(0,212,255,0.45)';}">
   ▲
 </button>
 
 <script>
-  function scrollToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-  window.addEventListener('scroll', () => {
+  (function initMovableScrollBtn() {
     const btn = document.getElementById('scrollTopBtn');
     if (!btn) return;
-    if (window.scrollY > 280) {
-      btn.style.display = 'flex';
-    } else {
-      btn.style.display = 'none';
+
+    let isDragging = false;
+    let hasMoved = false;
+    let startX = 0, startY = 0;
+    let initialLeft = 0, initialTop = 0;
+
+    function getCoords(e) {
+      if (e.touches && e.touches.length > 0) {
+        return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      }
+      return { x: e.clientX, y: e.clientY };
     }
-  });
+
+    function onStart(e) {
+      isDragging = true;
+      window.__isDraggingScrollBtn = true;
+      hasMoved = false;
+      const c = getCoords(e);
+      startX = c.x;
+      startY = c.y;
+
+      const rect = btn.getBoundingClientRect();
+      initialLeft = rect.left;
+      initialTop = rect.top;
+
+      btn.style.cursor = 'grabbing';
+    }
+
+    function onMove(e) {
+      if (!isDragging) return;
+      const c = getCoords(e);
+      const dx = c.x - startX;
+      const dy = c.y - startY;
+
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+        hasMoved = true;
+      }
+
+      if (hasMoved) {
+        if (e.cancelable) e.preventDefault();
+
+        let newLeft = initialLeft + dx;
+        let newTop = initialTop + dy;
+
+        const btnW = btn.offsetWidth || 48;
+        const btnH = btn.offsetHeight || 48;
+        const maxLeft = window.innerWidth - btnW - 8;
+        const maxTop = window.innerHeight - btnH - 8;
+
+        newLeft = Math.max(8, Math.min(newLeft, maxLeft));
+        newTop = Math.max(8, Math.min(newTop, maxTop));
+
+        btn.style.left = newLeft + 'px';
+        btn.style.top = newTop + 'px';
+        btn.style.right = 'auto';
+        btn.style.bottom = 'auto';
+      }
+    }
+
+    function onEnd(e) {
+      if (!isDragging) return;
+      isDragging = false;
+      window.__isDraggingScrollBtn = false;
+      btn.style.cursor = 'grab';
+
+      if (!hasMoved) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    btn.addEventListener('mousedown', onStart);
+    window.addEventListener('mousemove', onMove, { passive: false });
+    window.addEventListener('mouseup', onEnd);
+
+    btn.addEventListener('touchstart', onStart, { passive: false });
+    window.addEventListener('touchmove', onMove, { passive: false });
+    window.addEventListener('touchend', onEnd);
+    window.addEventListener('touchcancel', onEnd);
+
+    btn.onclick = function(e) {
+      e.preventDefault();
+    };
+
+    function updateVisibility() {
+      if (window.scrollY > 160 || document.documentElement.scrollTop > 160) {
+        btn.style.display = 'flex';
+      } else {
+        btn.style.display = 'none';
+      }
+    }
+
+    window.addEventListener('scroll', updateVisibility);
+    updateVisibility();
+  })();
 </script>
 <div id="directPrintArea"></div>
 </body>

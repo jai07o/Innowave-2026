@@ -88,29 +88,7 @@ if (!empty($errors)) {
     exit;
 }
 
-// Check for Existing Registrations (Duplicate Email & IEEE ID)
-$cleanEmail = strtolower($leader_email);
-$cleanIeee = trim($ieee_id);
-
-if (!$existingId && !empty($cleanEmail)) {
-    $checkStmt = $pdo->prepare("SELECT id, team_id FROM registrations WHERE LOWER(leader_email) = ? LIMIT 1");
-    $checkStmt->execute([$cleanEmail]);
-    $matchEmail = $checkStmt->fetch();
-    if ($matchEmail) {
-        $existingId = intval($matchEmail['id']);
-    }
-}
-
-if (!$existingId && !empty($cleanIeee) && strlen($cleanIeee) >= 4) {
-    $checkIeeeStmt = $pdo->prepare("SELECT id, team_id FROM registrations WHERE ieee_id = ? AND ieee_id != '' LIMIT 1");
-    $checkIeeeStmt->execute([$cleanIeee]);
-    $matchIeee = $checkIeeeStmt->fetch();
-    if ($matchIeee) {
-        $existingId = intval($matchIeee['id']);
-    }
-}
-
-// Compute Fee
+// Compute Fee (Other College IEEE Member = EXACTLY ₹100 | PSCMR CET IEEE = ₹50)
 $isPscmr = false;
 $cLower = strtolower($college_name);
 if (strpos($cLower, 'pscmr') !== false || strpos($cLower, 'potti sriramulu') !== false || strpos($cLower, 'chalavadi') !== false || strpos($cLower, 'mallikarjuna rao') !== false) {
@@ -128,6 +106,127 @@ if ($ieee_count > 0 && $non_ieee_count > 0) {
     $fee_label = "{$ieee_count} IEEE Member(s) × ₹{$ieeeRate} = ₹{$amount}";
 } else {
     $fee_label = "{$non_ieee_count} Non-IEEE Member(s) × ₹{$nonIeeeRate} = ₹{$amount}";
+}
+
+// 🚫 STRICT ANTI-CLONING & DUPLICATE BLOCK LOGIC
+
+// 1. Strictly Block Duplicate Email Address
+$cleanEmail = strtolower(trim($leader_email));
+if (!empty($cleanEmail)) {
+    $emailSql = "SELECT id, team_id, leader_name FROM registrations WHERE LOWER(TRIM(leader_email)) = ?";
+    $emailParams = [$cleanEmail];
+    if (!empty($existingId)) {
+        $emailSql .= " AND id != ?";
+        $emailParams[] = $existingId;
+    }
+    $emailSql .= " LIMIT 1";
+    $emailStmt = $pdo->prepare($emailSql);
+    $emailStmt->execute($emailParams);
+    $dupEmail = $emailStmt->fetch();
+    if ($dupEmail) {
+        echo json_encode([
+            'ok' => false,
+            'errors' => [
+                "🚫 DUPLICATE EMAIL ADDRESS DETECTED:\n\nThe email address '{$cleanEmail}' is ALREADY registered with Participant ID {$dupEmail['team_id']}.\n\nCloned or duplicate submissions using the same email address are strictly blocked. Please use your unique email address or check your status on the homepage."
+            ]
+        ]);
+        exit;
+    }
+}
+
+// 2. Strictly Block Duplicate IEEE Membership ID
+$cleanIeee = trim($ieee_id);
+if ($ieee_member === 'Yes' && !empty($cleanIeee) && strlen($cleanIeee) >= 4) {
+    $ieeeSql = "SELECT id, team_id, leader_name FROM registrations WHERE TRIM(ieee_id) = ? AND TRIM(ieee_id) != ''";
+    $ieeeParams = [$cleanIeee];
+    if (!empty($existingId)) {
+        $ieeeSql .= " AND id != ?";
+        $ieeeParams[] = $existingId;
+    }
+    $ieeeSql .= " LIMIT 1";
+    $ieeeStmt = $pdo->prepare($ieeeSql);
+    $ieeeStmt->execute($ieeeParams);
+    $dupIeee = $ieeeStmt->fetch();
+    if ($dupIeee) {
+        echo json_encode([
+            'ok' => false,
+            'errors' => [
+                "🚫 DUPLICATE IEEE MEMBERSHIP ID DETECTED:\n\nThe IEEE Membership Number '{$cleanIeee}' has ALREADY been registered by participant {$dupIeee['leader_name']} ({$dupIeee['team_id']}).\n\nCloned or shared IEEE Membership IDs are strictly prohibited. Each IEEE Membership ID can only be registered once."
+            ]
+        ]);
+        exit;
+    }
+}
+
+// 3. Strictly Validate and Block Duplicate Admission / Roll Number (for PSCMR CET participants)
+$cleanRoll = strtoupper(trim($roll_no));
+if ($isPscmr) {
+    if (empty($cleanRoll)) {
+        echo json_encode([
+            'ok' => false,
+            'errors' => [
+                "⚠️ GIVE FULL ADMISSION NUMBER:\n\nPSCMR CET students must provide their full College Admission / Roll Number (10 to 11 characters)."
+            ]
+        ]);
+        exit;
+    }
+    $rollLen = strlen($cleanRoll);
+    if ($rollLen < 10 || $rollLen > 11) {
+        echo json_encode([
+            'ok' => false,
+            'errors' => [
+                "⚠️ GIVE FULL ADMISSION NUMBER:\n\nPlease enter your full admission number (must be 10 to 11 characters, e.g. 22HP1A0501). You entered {$rollLen} character(s)."
+            ]
+        ]);
+        exit;
+    }
+
+    $rollSql = "SELECT id, team_id, leader_name FROM registrations WHERE UPPER(TRIM(roll_no)) = ? AND TRIM(roll_no) != ''";
+    $rollParams = [$cleanRoll];
+    if (!empty($existingId)) {
+        $rollSql .= " AND id != ?";
+        $rollParams[] = $existingId;
+    }
+    $rollSql .= " LIMIT 1";
+    $rollStmt = $pdo->prepare($rollSql);
+    $rollStmt->execute($rollParams);
+    $dupRoll = $rollStmt->fetch();
+    if ($dupRoll) {
+        echo json_encode([
+            'ok' => false,
+            'errors' => [
+                "🚫 DUPLICATE ADMISSION / ROLL NUMBER DETECTED:\n\nThe PSCMR CET Admission / Roll Number '{$cleanRoll}' has ALREADY been registered with Participant ID {$dupRoll['team_id']}.\n\nMultiple registrations under the same student roll number are strictly blocked."
+            ]
+        ]);
+        exit;
+    }
+}
+
+// 4. Strictly Block Duplicate UTR Reference Number (if provided in registration payload)
+$submittedUtr = trim($data['payment_ref'] ?? $data['utrRef'] ?? '');
+if (!empty($submittedUtr)) {
+    $cleanUtr = strtoupper(preg_replace('/\s+/', '', $submittedUtr));
+    if (strlen($cleanUtr) >= 6) {
+        $utrSql = "SELECT id, team_id, leader_name FROM registrations WHERE payment_ref IS NOT NULL AND TRIM(payment_ref) != '' AND UPPER(REPLACE(TRIM(payment_ref), ' ', '')) = ?";
+        $utrParams = [$cleanUtr];
+        if (!empty($existingId)) {
+            $utrSql .= " AND id != ?";
+            $utrParams[] = $existingId;
+        }
+        $utrSql .= " LIMIT 1";
+        $utrStmt = $pdo->prepare($utrSql);
+        $utrStmt->execute($utrParams);
+        $dupUtr = $utrStmt->fetch();
+        if ($dupUtr) {
+            echo json_encode([
+                'ok' => false,
+                'errors' => [
+                    "🚫 DUPLICATE UTR DETECTED:\n\nThe UTR Reference ID '{$cleanUtr}' has ALREADY been submitted by another participant ({$dupUtr['team_id']}).\n\nCloned or reused payment transaction references are strictly blocked."
+                ]
+            ]);
+            exit;
+        }
+    }
 }
 
 $isIeeeMember = ($ieee_member === 'Yes');

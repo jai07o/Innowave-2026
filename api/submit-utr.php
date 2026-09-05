@@ -70,7 +70,7 @@ $dupStmt = $pdo->prepare("
     FROM registrations
     WHERE payment_ref IS NOT NULL
       AND TRIM(payment_ref) != ''
-      AND UPPER(TRIM(payment_ref)) = UPPER(TRIM(?))
+      AND UPPER(REPLACE(TRIM(payment_ref), ' ', '')) = UPPER(TRIM(?))
       AND id != ?
     LIMIT 1
 ");
@@ -88,7 +88,7 @@ if ($existingUtrRow) {
 }
 
 $paidAt = date('Y-m-d H:i:s');
-$paymentStatus = 'Paid';
+$paymentStatus = 'Pending Payment Confirmation';
 
 $updateStmt = $pdo->prepare("
     UPDATE registrations SET
