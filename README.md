@@ -15,8 +15,9 @@
 ## 📋 Table of Contents
 1. [Executive Overview](#-executive-overview)
 2. [Technology Stack & Architecture](#-technology-stack--architecture)
-3. [End-to-End System Workflow](#-end-to-end-system-workflow)
-4. [Granular Feature Breakdown (Point-by-Point)](#-granular-feature-breakdown-point-by-point)
+3. [Registration & Participant Workflow](#-registration--participant-workflow)
+4. [Organizer Admin Portal Workflow & Lifecycle](#-organizer-admin-portal-workflow--lifecycle)
+5. [Granular Feature Breakdown (Point-by-Point)](#-granular-feature-breakdown-point-by-point)
    - [1. Fest Landing Page (`index.html`)](#1-fest-landing-page-indexhtml)
    - [2. IEEE Registration Portal (`register-ieee.html`)](#2-ieee-registration-portal-register-ieeehtml)
    - [3. Non-IEEE Registration Portal (`register-non-ieee.html`)](#3-non-ieee-registration-portal-register-non-ieeehtml)
@@ -30,12 +31,12 @@
    - [11. Financial Telemetry & Real-Time Statistics](#11-financial-telemetry--real-time-statistics)
    - [12. Dual Excel (.CSV) Data Export Engine](#12-dual-excel-csv-data-export-engine)
    - [13. Movable & Draggable Scroll-to-Top Control](#13-movable--draggable-scroll-to-top-control)
-5. [Database Architecture & Schema Specification](#-database-architecture--schema-specification)
-6. [Backend PHP REST API Reference](#-backend-php-rest-api-reference)
-7. [Universal Server & cPanel Deployment Guide](#-universal-server--cpanel-deployment-guide)
-8. [Security & Data Integrity Standards](#-security--data-integrity-standards)
-9. [Complete Directory Map](#-complete-directory-map)
-10. [Author & Attribution](#-author--attribution)
+6. [Database Architecture & Schema Specification](#-database-architecture--schema-specification)
+7. [Backend PHP REST API Reference](#-backend-php-rest-api-reference)
+8. [Universal Server & cPanel Deployment Guide](#-universal-server--cpanel-deployment-guide)
+9. [Security & Data Integrity Standards](#-security--data-integrity-standards)
+10. [Complete Directory Map](#-complete-directory-map)
+11. [Author & Attribution](#-author--attribution)
 
 ---
 
@@ -69,7 +70,7 @@ Designed to be **100% server-agnostic**, the platform operates on any standard P
 
 ---
 
-## 🔄 End-to-End System Workflow
+## 🔄 Registration & Participant Workflow
 
 ```text
                                 [ User Visits Website (index.html) ]
@@ -105,26 +106,100 @@ Designed to be **100% server-agnostic**, the platform operates on any standard P
                   • Client-side AI OCR extracts UTR from payment receipt.
                   • Saved immediately to MySQL `registrations` table.
                   • Direct transition to receipt confirmation state.
-                                                 │
-                                                 ▼
-                     [ Organizer Admin Dashboard (admin.php) — Live Control ]
-                  • Passcode-protected access.
-                  • Real-time table view of all registrations, UTRs, & uploaded proofs.
-                  • Actions: "Approve (Paid)", "Mark Pending", "Reject", "Delete".
-                  • Real-time financial telemetry & 1-click Excel (.CSV) export.
-                                                 │
-                                                 ▼
-                              [ Official 4K Delegate Badge Pass ]
-                  • 1760×2900px @ 300+ DPI physical printable ID card.
-                  • Contains 6-Event Brochure Evaluation Checklist ([✓]).
-                  • Displays Admission Number for PSCMR delegates.
-                  • Includes scannable verification QR code.
-                                                 │
-                                                 ▼
-                           [ Gate Pass Scan Verification (verify-id.html) ]
-                  • Volunteers scan badge QR code using any smartphone.
-                  • Instant confirmation of delegate name, status, and event eligibility.
 ```
+
+---
+
+## 👑 Organizer Admin Portal Workflow & Lifecycle
+
+The **Organizer Admin Portal (`admin.php` & `admin.html`)** provides complete end-to-end control over all participant records, payment verifications, delegate pass issuance, and financial telemetry.
+
+```text
+                       [ Organizer Opens Admin Portal (admin.php) ]
+                                            │
+                                            ▼
+                    [ Secure Passcode Authentication Verification ]
+             • Verifies against `ADMIN_PASSCODE` in `api/config.php`.
+                                            │
+                                            ▼
+                [ Real-Time Data Ingestion & Live Table Rendering ]
+             • Direct PDO query against MySQL `registrations` table.
+             • Renders ALL registrations immediately (No hidden records).
+                                            │
+                                            ▼
+                   ┌────────────────────────┼────────────────────────┐
+                   ▼                        ▼                        ▼
+         [ Live Search & Filter ]    [ Financial Telemetry ]   [ Record Verification ]
+         • Instant search by:        • Total Expected (₹)      • Click "View Proof" to inspect
+           ID (INNO-XXXX), Name,     • Actual Received (Got)     UTR receipt screenshot.
+           Email, Phone, College,    • Pending Gap (₹)         • Check ⚠️ Duplicate UTR Warning.
+           Roll No, or 12-Digit UTR. • IEEE vs Non-IEEE money  • Inspect IEEE Card & OCR flags.
+                   │                        │                        │
+                   └────────────────────────┼────────────────────────┘
+                                            ▼
+                        [ Execute Administrative Action ]
+            ┌───────────────────────────────┼───────────────────────────────┐
+            ▼                               ▼                               ▼
+    [ Approve (Paid) ]              [ Mark Pending ]                [ Reject / Delete ]
+  • Status -> "Paid"              • Reverts status to            • Rejects invalid records or
+  • Sets `paid_at` timestamp        "Pending Confirmation"         deletes duplicate test entries
+  • Unlocks 4K Delegate Pass        for re-inspection.             from MySQL database.
+            │
+            ▼
+    [ Official 4K Delegate Pass Generation ]
+  • One-click trigger renders ~1760×2900px badge (`html2canvas`).
+  • Renders Admission Number for PSCMR delegates.
+  • Displays official 6-Event Brochure Evaluation Checklist ([✓]).
+  • Generates embedded gate verification QR code.
+            │
+            ▼
+    [ Event Day Gate Verification (verify-id.html) ]
+  • Volunteers scan pass QR code with smartphone.
+  • Verifies pass authenticity & event eligibility.
+            │
+            ▼
+    [ 1-Click Excel (.CSV) Data Export Engine ]
+  • Downloads full UTF-8 BOM formatted spreadsheet (`innowave_2k26_php_admin_export_YYYY-MM-DD.csv`).
+```
+
+### Granular Step-by-Step Admin Workflow:
+
+1. **Authentication & Access Control**:
+   - Organizers navigate to `https://your-domain.com/admin.php`.
+   - Access is secured by passcode verification configured in [`api/config.php`](file:///api/config.php).
+   - Once authenticated, an admin session is initialized.
+
+2. **Real-Time Registration Stream**:
+   - All submitted registrations appear in real time without arbitrary status filters.
+   - Status indicators clearly demarcate records:
+     - 🟢 **Paid / Approved**: Payment confirmed, delegate pass unlocked.
+     - 🟡 **Pending Payment Confirmation**: Form submitted, awaiting UTR or proof verification.
+     - 🔴 **Rejected**: Invalid transaction or unverified proof.
+
+3. **Proof Inspection & Warning Badges**:
+   - **Payment Screenshot Modal**: Organizers click **View Proof** to view the full resolution payment receipt.
+   - **IEEE Card Screenshot Modal**: Organizers click **View IEEE Card** to inspect membership cards.
+   - **⚠️ Duplicate UTR Badge**: Highlights if a 12-digit UTR number has been submitted by more than one participant.
+   - **⚠️ OCR Mismatch Badge**: Flags entries where AI OCR extracted data differs from user input.
+
+4. **Action Handlers (`api/admin-action.php`)**:
+   - **Approve (Paid)**: Updates `payment_status = 'Paid'`, updates `paid_at = NOW()`, and enables instant delegate ID pass generation.
+   - **Mark Pending**: Resets status to `Pending Payment Confirmation`.
+   - **Reject**: Marks status as `Rejected`.
+   - **Delete**: Permanently removes entry from the MySQL `registrations` table.
+
+5. **Delegate Pass Generation**:
+   - Organizers click **Print / View Pass** on any approved participant row.
+   - Opens `#idCardModal`, rendering a high-definition 4K badge (~1760×2900px @ 300+ DPI).
+   - Includes student photo, team ID, branch, year, college, roll number (for PSCMR delegates), brochure evaluation checklist, and vector QR verification code.
+
+6. **Gate QR Verification (`verify-id.html`)**:
+   - Gate volunteers scan the badge QR code on event day.
+   - Instantly checks the live MySQL database and confirms delegate authenticity and eligible events.
+
+7. **Financial Telemetry & CSV Export**:
+   - Top metrics dashboard calculates **Total Expected Amount**, **Actual Collected Amount**, **Pending Difference**, **IEEE Revenue**, and **Non-IEEE Revenue**.
+   - Organizers click **Export to Excel (.CSV)** to download a complete spreadsheet containing all fields with UTF-8 BOM encoding.
 
 ---
 
