@@ -1,11 +1,17 @@
 # INNOWAVE-2K26 — API Directory Apache Rules
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteBase /api/
-
+<IfModule mod_headers.c>
     Header set Access-Control-Allow-Origin "*"
     Header set Access-Control-Allow-Methods "GET, POST, OPTIONS, DELETE"
     Header set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, X-Admin-Password"
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # If file exists physically, serve directly
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
 
     RewriteRule ^register$ register.php [L,QSA]
     RewriteRule ^register/([0-9]+)/confirm$ submit-utr.php?id=$1 [L,QSA]

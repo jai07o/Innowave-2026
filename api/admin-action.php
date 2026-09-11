@@ -29,10 +29,19 @@ try {
         $stmt = $pdo->prepare("UPDATE registrations SET payment_status = 'Pending Payment Confirmation' WHERE id = ?");
         $stmt->execute([$id]);
         echo json_encode(['ok' => true, 'msg' => 'Status updated to Pending.']);
+    } else if ($action === 'update_amount') {
+        $newAmt = intval($_POST['amount'] ?? $_GET['amount'] ?? 0);
+        if ($newAmt < 0) {
+            echo json_encode(['ok' => false, 'error' => 'Participant amount must be 0 or greater.']);
+            exit;
+        }
+        $stmt = $pdo->prepare("UPDATE registrations SET amount = ? WHERE id = ?");
+        $stmt->execute([$newAmt, $id]);
+        echo json_encode(['ok' => true, 'msg' => 'Participant amount updated successfully.', 'amount' => $newAmt]);
     } else if ($action === 'delete') {
-        $stmt = $pdo->prepare("DELETE FROM registrations WHERE id = ? OR team_id = ?");
-        $stmt->execute([$id, strval($id)]);
-        echo json_encode(['ok' => true, 'msg' => 'Registration record deleted directly from database.']);
+        $stmt = $pdo->prepare("DELETE FROM registrations WHERE id = ?");
+        $stmt->execute([$id]);
+        echo json_encode(['ok' => true, 'msg' => 'Registration record successfully deleted.']);
     } else {
         echo json_encode(['ok' => false, 'error' => 'Unknown action.']);
     }

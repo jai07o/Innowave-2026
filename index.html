@@ -550,11 +550,11 @@
        ======================================================== */
     html[data-theme="light"] {
       background: #f0f4f8 !important;
-      background-image: 
+      background-image:
         radial-gradient(at 10% 20%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
         radial-gradient(at 90% 10%, rgba(129, 140, 248, 0.15) 0px, transparent 50%),
         radial-gradient(at 50% 80%, rgba(52, 211, 153, 0.12) 0px, transparent 50%),
-        radial-gradient(#cbd5e1 1.2px, transparent 1.2px), 
+        radial-gradient(#cbd5e1 1.2px, transparent 1.2px),
         radial-gradient(#cbd5e1 1.2px, #f0f4f8 1.2px) !important;
       background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px !important;
       background-position: 0 0, 0 0, 0 0, 0 0, 20px 20px !important;
@@ -627,9 +627,17 @@
     }
 
     @keyframes floatLightOrb {
-      0% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
-      50% { transform: translate3d(60px, -40px, 0) scale(1.12) rotate(180deg); }
-      100% { transform: translate3d(-40px, 50px, 0) scale(0.95) rotate(360deg); }
+      0% {
+        transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+      }
+
+      50% {
+        transform: translate3d(60px, -40px, 0) scale(1.12) rotate(180deg);
+      }
+
+      100% {
+        transform: translate3d(-40px, 50px, 0) scale(0.95) rotate(360deg);
+      }
     }
 
     /* Headings, Titles & Brand Logo */
@@ -741,7 +749,7 @@
       background: rgba(255, 255, 255, 0.88) !important;
       backdrop-filter: blur(20px) saturate(180%) !important;
       border: 1.5px solid rgba(255, 255, 255, 0.95) !important;
-      box-shadow: 
+      box-shadow:
         0 18px 45px -10px rgba(14, 165, 233, 0.15),
         0 8px 24px -6px rgba(99, 102, 241, 0.12),
         inset 0 2px 0 rgba(255, 255, 255, 1) !important;
@@ -836,7 +844,7 @@
     body.light-theme .chooser-card:hover {
       transform: translateY(-8px) scale(1.02) !important;
       border-color: #0284c7 !important;
-      box-shadow: 
+      box-shadow:
         0 30px 60px -12px rgba(14, 165, 233, 0.28),
         0 14px 30px -6px rgba(99, 102, 241, 0.22),
         inset 0 2px 0 rgba(255, 255, 255, 1) !important;
@@ -2839,7 +2847,9 @@
         display: block !important;
       }
 
-      input, select, textarea {
+      input,
+      select,
+      textarea {
         font-size: 16px !important;
       }
 
@@ -2875,6 +2885,7 @@
         -webkit-overflow-scrolling: touch !important;
         scrollbar-width: none !important;
       }
+
       .nav-links::-webkit-scrollbar {
         display: none !important;
       }
@@ -3493,14 +3504,22 @@
         font-size: 12.5px !important;
       }
 
-      div[style*="grid-template-columns:1fr 1fr"],
-      div[style*="grid-template-columns: 1fr 1fr"] {
+      div[style*="grid-template-columns:1fr 1fr"]:not(#receiptSlipCard *):not(#successSlip *),
+      div[style*="grid-template-columns: 1fr 1fr"]:not(#receiptSlipCard *):not(#successSlip *) {
         grid-template-columns: 1fr !important;
         gap: 10px !important;
       }
 
-      div[style*="grid-column: span 2"],
-      div[style*="grid-column:span 2"] {
+      #receiptSlipCard div[style*="grid-template-columns:1fr 1fr"],
+      #receiptSlipCard div[style*="grid-template-columns: 1fr 1fr"],
+      #successSlip div[style*="grid-template-columns:1fr 1fr"],
+      #successSlip div[style*="grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+      }
+
+      div[style*="grid-column: span 2"]:not(#receiptSlipCard *):not(#successSlip *),
+      div[style*="grid-column:span 2"]:not(#receiptSlipCard *):not(#successSlip *) {
         grid-column: 1 / -1 !important;
       }
 
@@ -3609,7 +3628,8 @@
     <div class="wrap" style="max-width:1280px; margin:0 auto; padding:0 20px;">
 
       <!-- Side-by-Side Grid Container (Visvesvaraya Card on Left, Fest Details on Right) -->
-      <div class="hero-tribute-grid" style="display:grid; grid-template-columns:0.85fr 1.15fr; gap:32px; align-items:center;">
+      <div class="hero-tribute-grid"
+        style="display:grid; grid-template-columns:0.85fr 1.15fr; gap:32px; align-items:center;">
 
         <!-- Left Column: Saluting Bharat Ratna Sri Mokshagundam Visvesvaraya Tribute Card -->
         <div id="about" class="hero-left-col-tribute"
@@ -3620,13 +3640,15 @@
             ENGINEERS' DAY TRIBUTE
           </div>
 
-          <h2 class="sec-title" style="font-size:1.35rem; font-weight:800; margin-bottom:18px; color:var(--text-primary); line-height:1.3; text-align:center;">
+          <h2 class="sec-title"
+            style="font-size:1.35rem; font-weight:800; margin-bottom:18px; color:var(--text-primary); line-height:1.3; text-align:center;">
             Saluting Bharat Ratna Sri Mokshagundam Visvesvaraya
           </h2>
 
           <!-- Clean Portrait Box -->
           <div style="text-align:center; display:flex; flex-direction:column; align-items:center;">
-            <div style="width:195px; height:240px; border-radius:20px; overflow:hidden; border:2.5px solid var(--accent); box-shadow:0 12px 35px rgba(0,212,255,0.22); margin-bottom:12px; background:#ffffff;">
+            <div
+              style="width:195px; height:240px; border-radius:20px; overflow:hidden; border:2.5px solid var(--accent); box-shadow:0 12px 35px rgba(0,212,255,0.22); margin-bottom:12px; background:#ffffff;">
               <img src="assets/visvesvaraya.png" alt="Bharat Ratna Sri Mokshagundam Visvesvaraya Classic Photograph"
                 style="width:100%; height:100%; object-fit:cover; object-position:center top; display:block;">
             </div>
@@ -3634,13 +3656,15 @@
               style="margin-top:4px; font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:14px; color:var(--text-primary); letter-spacing:0.04em; text-transform:uppercase;">
               Sri Mokshagundam Visvesvaraya
             </div>
-            <div style="font-size:12px; color:var(--gold); font-weight:700; margin-top:2px;">(1861 – 1962) · Bharat Ratna</div>
+            <div style="font-size:12px; color:var(--gold); font-weight:700; margin-top:2px;">(1861 – 1962) · Bharat
+              Ratna</div>
           </div>
 
         </div>
 
         <!-- Right Column: Hero Fest Title & Registration Details -->
-        <div class="hero-right-col-fest" style="text-align:left; display:flex; flex-direction:column; align-items:flex-start;">
+        <div class="hero-right-col-fest"
+          style="text-align:left; display:flex; flex-direction:column; align-items:flex-start;">
 
           <div class="hero-badge"
             style="display:inline-flex; align-items:center; gap:6px; background:var(--accent-dim); border:1.5px solid var(--border); color:var(--accent); padding:6px 18px; border-radius:20px; font-weight:800; font-size:11.5px; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:14px;">
@@ -3680,7 +3704,8 @@
           <!-- Registration Deadline & Event Date Banner -->
           <div class="hero-date-banner"
             style="background:var(--card-bg); backdrop-filter:blur(14px); border:1.5px solid var(--border); border-radius:16px; padding:12px 20px; font-size:13px; font-weight:700; color:var(--text-primary); margin-bottom:22px; box-shadow:0 10px 30px rgba(15,23,42,0.06); display:inline-flex; align-items:center; gap:8px; flex-wrap:wrap;">
-            📅 Event Date: <span style="color:var(--accent); font-weight:800;">15 SEPTEMBER 2026</span> | ⏰ Reg Deadline:
+            📅 Event Date: <span style="color:var(--accent); font-weight:800;">15 SEPTEMBER 2026</span> | ⏰ Reg
+            Deadline:
             <span style="color:var(--gold); font-weight:800;">10 SEPTEMBER 2026</span>
           </div>
 
@@ -3708,7 +3733,7 @@
       </div>
 
       <!-- Participation Limit Policy Rule Banner -->
-     <div class="rule-banner-box">
+      <div class="rule-banner-box">
         <div class="rule-banner-title">
           ⚡ PARTICIPATION RULE & EVENT SELECTION GUIDELINE ⚡
         </div>
@@ -3717,7 +3742,7 @@
             MAXIMUM</b>
         </p>
         <p class="rule-banner-note">
-       <!--   * Note: On official printed ID cards, event evaluation checkboxes are left blank for manual on-spot marking &
+          <!--   * Note: On official printed ID cards, event evaluation checkboxes are left blank for manual on-spot marking &
           scoring by event coordinators during live demos.
         </p>-->
       </div>
@@ -3765,7 +3790,8 @@
             <div class="event-name">CODING</div>
             <p class="event-desc">Solve programming challenges and demonstrate your coding logic and algorithmic
               thinking skills.</p>
-          <p class="event-desc">Technical Coding Contest will be organized by: IoT & MCA<br>From MCA: Coordinator – Mrs. J. Pavani<br>From CIC: Coordinator – Mrs. M. Nikith</p>
+            <p class="event-desc">Technical Coding Contest will be organized by: IoT & MCA<br>From MCA: Coordinator –
+              Mrs. J. Pavani<br>From CIC: Coordinator – Mrs. M. Nikith</p>
           </div>
           <button class="btn-view-details"
             onclick="openModal('Coding Challenge', 'Competitive algorithmic programming. Solve problem statements with optimal efficiency.')">View
@@ -3788,10 +3814,10 @@
           <div>
             <div class="event-name"> ULTIMATE TECHNICAL TREASURE HUNT </div>
             <p class="event-desc">Organized by CSE(Data Science) and MBA Departments</p>
-           <p class="event-desc">Event Coordinators : 	 1. Dr.T.Srinivasa Reddy, CSD Department <br>	2. Md.Bushra, CSD Department <br>  3. Sd.Zareena Begum, MBA Department</p>
+            <p class="event-desc">Event Coordinators : 1. Dr.T.Srinivasa Reddy, CSD Department <br> 2. Md.Bushra, CSD
+              Department <br> 3. Sd.Zareena Begum, MBA Department</p>
           </div>
-          <button class="btn-view-details"
-            onclick="openModal('ULTIMATE TECHNICAL TREASURE HUNT')">View Details</button>
+          <button class="btn-view-details" onclick="openModal('ULTIMATE TECHNICAL TREASURE HUNT')">View Details</button>
         </div>
 
         <!-- 04: Project Expo -->
@@ -3812,7 +3838,8 @@
             <div class="event-name">PROJECT EXPO</div>
             <p class="event-desc">Showcase your innovative working project, hardware/software prototype, or engineering
               solution.</p>
-          <p class="event-desc">Organizing Departments: ECE & EEE<br>Coordinators:<br>1. Mr N. Siva Govind, ECE Department<br>2. Mr A. Vamsi Krishna, EEE Department</p>
+            <p class="event-desc">Organizing Departments: ECE & EEE<br>Coordinators:<br>1. Mr N. Siva Govind, ECE
+              Department<br>2. Mr A. Vamsi Krishna, EEE Department</p>
           </div>
           <button class="btn-view-details"
             onclick="openModal('Project Expo', 'Display your working prototype before expert judges. Evaluated on innovation and execution.')">View
@@ -3838,7 +3865,8 @@
             <div class="event-name">PROMPT ENGINEERING</div>
             <p class="event-desc">Demonstrate your ability to design effective prompts and leverage Generative AI tools
               strategically.</p>
-           <p class="event-desc">Faculty Coordinators:<br>1. M. Manasa, AI Department<br>2. V. Agaphi Bob, AIML Department<br>3. D. Vinay Kumar, AIML Department<br>4. T. Kiran, AI Department</p>
+            <p class="event-desc">Faculty Coordinators:<br>1. M. Manasa, AI Department<br>2. V. Agaphi Bob, AIML
+              Department<br>3. D. Vinay Kumar, AIML Department<br>4. T. Kiran, AI Department</p>
           </div>
           <button class="btn-view-details"
             onclick="openModal('Prompt Engineering', 'Craft precise AI prompts to generate optimal solutions and code using state-of-the-art LLMs.')">View
@@ -3864,7 +3892,8 @@
             <div class="event-name">REELS (1 MIN)</div>
             <p class="event-desc">Create an engaging 1-minute video reel centered on the Engineering Day theme and
               innovation.</p>
-          <p class="event-desc"><a href="https://forms.gle/UFBS2ncRkGYmZbUT6">Upload your reel (After Registration)</a></p>
+            <p class="event-desc"><a href="https://forms.gle/UFBS2ncRkGYmZbUT6">Upload your reel (After
+                Registration)</a></p>
           </div>
           <button class="btn-view-details"
             onclick="openModal('Reels (1 Min)', 'Record and edit a high-impact 60-second video reflecting the spirit of Engineer\'s Day.')">View
@@ -4933,6 +4962,8 @@
     // Membership & Fee Selection (Conditional IEEE ID display)
     let selectedMembership = 'IEEE';
     let currentFee = 100;
+    let currentRegistration = null;
+    let uploadedScreenshotBase64 = '';
 
     function selectMembership(type) {
       if (type === 'IEEE') {
@@ -4942,7 +4973,7 @@
       }
     }
 
-    async function performUtrOcrVerification(utrRef, screenshotBase64, expectedAmount) {
+    async function performUtrOcrVerification(utrRef, screenshotBase64, expectedAmount, categoryInfo = '') {
       const rawInput = String(utrRef || '').trim();
       const cleanUtr = rawInput.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
       const digitsOnly = rawInput.replace(/\D/g, '');
@@ -4959,7 +4990,7 @@
 
       try {
         if (window.Tesseract) {
-          const res = await Tesseract.recognize(screenshotBase64, 'eng', { logger: () => {} });
+          const res = await Tesseract.recognize(screenshotBase64, 'eng', { logger: () => { } });
           const ocrRawText = (res && res.data && res.data.text) ? res.data.text : '';
           const ocrUpper = ocrRawText.toUpperCase();
           const ocrClean = ocrUpper.replace(/[^A-Za-z0-9]/g, '');
@@ -4973,10 +5004,26 @@
             };
           }
 
-          // RULE 1: UTR MATCH
-          let isMatch = ocrRawText.includes(rawInput) ||
-                        ocrUpper.includes(cleanUtr) ||
-                        ocrClean.includes(cleanUtr);
+          // RULE 1: UTR MATCH (12-DIGIT PRIORITY)
+          let isMatch = false;
+          if (digitsOnly.length === 12) {
+            if (ocrDigits.includes(digitsOnly) || ocrRawText.includes(digitsOnly)) {
+              isMatch = true;
+            } else {
+              const sub1 = digitsOnly.slice(0, 8);
+              const sub2 = digitsOnly.slice(4, 12);
+              const sub3 = digitsOnly.slice(2, 10);
+              if (ocrDigits.includes(sub1) || ocrDigits.includes(sub2) || ocrDigits.includes(sub3)) {
+                isMatch = true;
+              }
+            }
+          }
+
+          if (!isMatch) {
+            isMatch = ocrRawText.includes(rawInput) ||
+              ocrUpper.includes(cleanUtr) ||
+              ocrClean.includes(cleanUtr);
+          }
 
           if (!isMatch && digitsOnly.length >= 6) {
             isMatch = ocrDigits.includes(digitsOnly);
@@ -4996,42 +5043,99 @@
             };
           }
 
-          // RULE 2: EXACT AMOUNT MATCH
+          // RULE 2: PARTICIPANT CATEGORY AMOUNT MATCH CHECK
+          // Matches screenshot against participant details:
+          // PSCMR IEEE: ₹50 | PSCMR Non-IEEE: ₹100 | Other College IEEE: ₹100 | Other College Non-IEEE: ₹200
           if (amtNum > 0) {
             const amtStr = String(amtNum);
             let isAmtMatch = false;
 
-            const amtPatterns = [
-              `₹${amtStr}`,
-              `₹ ${amtStr}`,
-              `\u20B9${amtStr}`,
-              `\u20B9 ${amtStr}`,
-              `INR ${amtStr}`,
-              `INR${amtStr}`,
-              `RS ${amtStr}`,
-              `RS. ${amtStr}`,
-              `RS.${amtStr}`,
-              `RUPEES ${amtStr}`,
-              `${amtStr}.00`,
-              `${amtStr}.0`,
-              `₹${amtStr}.00`,
-              `₹ ${amtStr}.00`,
-              `PAID ₹${amtStr}`,
-              `PAID ${amtStr}`,
-              `SUCCESS ₹${amtStr}`
-            ];
+            // 1. Written words check (Paytm always writes "Rupees Two Hundred Only" without stamps)
+            if (amtNum === 200 && /TWO\s*HUNDRED/i.test(ocrRawText)) {
+              isAmtMatch = true;
+            } else if (amtNum === 100 && /ONE\s*HUNDRED/i.test(ocrRawText)) {
+              isAmtMatch = true;
+            } else if (amtNum === 50 && /FIFTY/i.test(ocrRawText)) {
+              isAmtMatch = true;
+            }
 
-            for (const p of amtPatterns) {
-              if (ocrRawText.includes(p) || ocrUpper.includes(p.toUpperCase())) {
-                isAmtMatch = true;
-                break;
+            // 1b. Check for explicit currency amounts in text (e.g. ₹12,000, Paid ₹12,000)
+            const currMatches = [];
+            const cReg = /(?:[₹\u20B9]|INR|RS\.?|RUPEES)\s*([0-9]{1,3}(?:,[0-9]{3})*(?:\.[0-9]{1,2})?|[0-9]+(?:\.[0-9]{1,2})?)/gi;
+            let cMatch;
+            while ((cMatch = cReg.exec(ocrRawText)) !== null) {
+              const val = parseFloat(cMatch[1].replace(/,/g, ''));
+              if (!isNaN(val) && val > 0) currMatches.push(Math.round(val));
+            }
+            if (currMatches.length > 0 && !currMatches.includes(amtNum)) {
+              return {
+                ok: false,
+                error: `🚫 PAYMENT AMOUNT MISMATCH:\n\n• Required Fee for Your Category: ₹${amtNum}\n  (${categoryInfo || 'Participant Payment Details'})\n\n• The uploaded screenshot shows a payment of ₹${currMatches[0].toLocaleString()}.\n\nFee Breakdown:\n- PSCMR CET IEEE Member: ₹50\n- PSCMR CET Non-IEEE: ₹100\n- Other College IEEE Member: ₹100\n- Other College Non-IEEE: ₹200\n\nPlease upload the correct payment receipt showing your completed transfer of ₹${amtNum} and 12-digit UTR!`
+              };
+            }
+
+            // 2. Stamp zero-stripping (Paytm circular green checkmark badge after ₹200 / ₹100 / ₹50 often reads as extra 0 or O)
+            const textCleanStamp = ocrRawText
+              .replace(/([₹\u20B9]|INR|RS\.?)\s*200\s*[0OoQqCc@\u2705\u2714\u2713]/gi, '$1 200')
+              .replace(/([₹\u20B9]|INR|RS\.?)\s*100\s*[0OoQqCc@\u2705\u2714\u2713]/gi, '$1 100')
+              .replace(/([₹\u20B9]|INR|RS\.?)\s*50\s*[0OoQqCc@\u2705\u2714\u2713]/gi, '$1 50');
+
+            if (!isAmtMatch) {
+              const amtPatterns = [
+                `₹${amtStr}`,
+                `₹ ${amtStr}`,
+                `\u20B9${amtStr}`,
+                `\u20B9 ${amtStr}`,
+                `INR ${amtStr}`,
+                `INR${amtStr}`,
+                `RS ${amtStr}`,
+                `RS. ${amtStr}`,
+                `RS.${amtStr}`,
+                `RUPEES ${amtStr}`,
+                `${amtStr}.00`,
+                `${amtStr}.0`,
+                `₹${amtStr}.00`,
+                `₹ ${amtStr}.00`,
+                `PAID ₹${amtStr}`,
+                `PAID ${amtStr}`,
+                `SUCCESS ₹${amtStr}`,
+                `AMOUNT ${amtStr}`,
+                `AMOUNT: ${amtStr}`
+              ];
+
+              for (const p of amtPatterns) {
+                if (ocrRawText.includes(p) || ocrUpper.includes(p.toUpperCase()) || textCleanStamp.includes(p)) {
+                  isAmtMatch = true;
+                  break;
+                }
               }
             }
 
             if (!isAmtMatch) {
-              const amtRegex = new RegExp('(?:[₹\\u20B9]|INR|RS\\.?|Rs\\.?|RUPEES|AMT|AMOUNT|PAID|TRANSFER)?\\s*' + amtStr + '(?:\\.00|\\.0)?(?:\\b|[^0-9]|$)', 'i');
-              const broadRegex = new RegExp('(?:^|\\s|[₹\\u20B9]|INR|RS\\.?|Rs\\.?|:)' + amtStr + '(?:\\.00|\\.0)?(?:\\s|$|[^0-9])', 'i');
-              if ((amtRegex.test(ocrRawText) || amtRegex.test(ocrUpper)) && (broadRegex.test(ocrRawText) || broadRegex.test(ocrUpper))) {
+              const lines = textCleanStamp.split(/\r?\n/);
+              for (const line of lines) {
+                const cleanLine = line.trim().replace(/[₹\u20B9INRrsRS.,\s*?:!=]/g, '');
+                if (cleanLine === amtStr || cleanLine === `${amtStr}00`) {
+                  isAmtMatch = true;
+                  break;
+                }
+              }
+            }
+
+            if (!isAmtMatch) {
+              const boundaryRegex = new RegExp('(?:^|[^0-9])' + amtStr + '(?:\\.00|\\.0)?(?:[^0-9]|$)', 'i');
+              if (boundaryRegex.test(ocrRawText) || boundaryRegex.test(ocrUpper) || boundaryRegex.test(textCleanStamp)) {
+                isAmtMatch = true;
+              }
+            }
+
+            // 3. Stamp Guardrail: If OCR read 2000 / 1000 / 500 because of the round checkmark badge (bounded, no leading digits)
+            if (!isAmtMatch) {
+              if (amtNum === 200 && /(?<!\d)200[0OoQq](?!\d)/.test(ocrRawText)) {
+                isAmtMatch = true;
+              } else if (amtNum === 100 && /(?<!\d)100[0OoQq](?!\d)/.test(ocrRawText)) {
+                isAmtMatch = true;
+              } else if (amtNum === 50 && /(?<!\d)50[0OoQq](?!\d)/.test(ocrRawText)) {
                 isAmtMatch = true;
               }
             }
@@ -5039,7 +5143,7 @@
             if (!isAmtMatch) {
               return {
                 ok: false,
-                error: `🚫 PAYMENT AMOUNT MISMATCH:\n\nThe uploaded payment receipt screenshot image does NOT show the required transfer amount.\n\nPlease check your screenshot and upload the correct payment receipt showing a completed transfer!`
+                error: `🚫 PAYMENT AMOUNT MISMATCH:\n\n• Required Fee for Your Category: ₹${amtNum}\n  (${categoryInfo || 'Participant Payment Details'})\n\n• The uploaded screenshot does NOT show a transfer of ₹${amtNum}.\n\nFee Breakdown:\n- PSCMR CET IEEE Member: ₹50\n- PSCMR CET Non-IEEE: ₹100\n- Other College IEEE Member: ₹100\n- Other College Non-IEEE: ₹200\n\nPlease upload the correct payment receipt showing your completed transfer of ₹${amtNum} and 12-digit UTR!`
               };
             }
           }
@@ -5211,94 +5315,94 @@
         schedule: '15 Sept 2026 · IN CAMPUS',
         team: 'Team of 3 Members',
         rounds: [
-        '<b>The Technical Quiz will consist of 4 rounds:',
-      '<b>Round 1 – Preliminary Selection:</b>',
-'<b> All registered teams will participate in Round 1.',
-'<b> Round 1 will consist of technical questions covering areas such as:',
-'<b> Programming',
-'<b> Computer Science',
-'<b> Artificial Intelligence',
-'<b> Data Science',
-'<b> Computer Networks',
-'<b> Cyber Security',
-'<b> Emerging Technologies',
-'<b> The <b>top 8 teams</b> will be selected based on their performance in Round 1.',
-'<b> In case of a tie for the 8th position, a <b>tie-breaker question/round</b> will be conducted.',
-'<b> The decision of the Quiz Master/Judges will be final.',
+          '<b>The Technical Quiz will consist of 4 rounds:',
+          '<b>Round 1 – Preliminary Selection:</b>',
+          '<b> All registered teams will participate in Round 1.',
+          '<b> Round 1 will consist of technical questions covering areas such as:',
+          '<b> Programming',
+          '<b> Computer Science',
+          '<b> Artificial Intelligence',
+          '<b> Data Science',
+          '<b> Computer Networks',
+          '<b> Cyber Security',
+          '<b> Emerging Technologies',
+          '<b> The <b>top 8 teams</b> will be selected based on their performance in Round 1.',
+          '<b> In case of a tie for the 8th position, a <b>tie-breaker question/round</b> will be conducted.',
+          '<b> The decision of the Quiz Master/Judges will be final.',
 
-'<b>Round 2 – Technical Knowledge:</b>',
-'<b> The <b>8 selected teams</b> will participate in Round 2.',
-'<b> Questions will be asked directly to the participating teams.',
-'<b> Each correct answer will carry designated marks.',
-'<b> Incorrect answers may attract negative marks, if announced by the Quiz Master.',
-'<b> The highest-performing teams will qualify for the next round.',
+          '<b>Round 2 – Technical Knowledge:</b>',
+          '<b> The <b>8 selected teams</b> will participate in Round 2.',
+          '<b> Questions will be asked directly to the participating teams.',
+          '<b> Each correct answer will carry designated marks.',
+          '<b> Incorrect answers may attract negative marks, if announced by the Quiz Master.',
+          '<b> The highest-performing teams will qualify for the next round.',
 
-'<b>Round 3 – Rapid Fire:</b>',
-'<b> Qualified teams will answer a series of questions within a <b>specified time limit</b>.',
-'<b> Teams must answer as many questions as possible within the allotted time.',
-'<b> No discussion with audience members or other teams is permitted.',
-'<b> Passing questions will be allowed only according to the Quiz Master’s instructions.',
+          '<b>Round 3 – Rapid Fire:</b>',
+          '<b> Qualified teams will answer a series of questions within a <b>specified time limit</b>.',
+          '<b> Teams must answer as many questions as possible within the allotted time.',
+          '<b> No discussion with audience members or other teams is permitted.',
+          '<b> Passing questions will be allowed only according to the Quiz Master’s instructions.',
 
-'<b>Round 4 – Final/Buzzer Round:</b>',
-'<b> The final qualified teams will compete for the <b>winning position</b>.',
-'<b> Questions will be open to all finalist teams.',
-'<b> Teams may use the buzzer to answer.',
-'<b> The first team to press the buzzer will get the opportunity to answer.',
-'<b> Wrong answers may result in negative marking or an opportunity for other teams, as decided by the Quiz Master.',
-'<b> The team with the <b>highest score at the end of the final round</b> will be declared the winner.',
+          '<b>Round 4 – Final/Buzzer Round:</b>',
+          '<b> The final qualified teams will compete for the <b>winning position</b>.',
+          '<b> Questions will be open to all finalist teams.',
+          '<b> Teams may use the buzzer to answer.',
+          '<b> The first team to press the buzzer will get the opportunity to answer.',
+          '<b> Wrong answers may result in negative marking or an opportunity for other teams, as decided by the Quiz Master.',
+          '<b> The team with the <b>highest score at the end of the final round</b> will be declared the winner.',
 
-'<b>General Rules:</b>',
-'<b> Participants must maintain discipline and decorum throughout the event.',
-'<b> Use of mobile phones, smart watches, internet access, books, notes, or any external assistance is strictly prohibited unless specifically permitted.',
-'<b> Teams must not communicate with the audience during the quiz.',
-'<b> Any form of malpractice or misconduct will result in immediate disqualification.',
-'<b> Answers must be given within the time specified by the Quiz Master.',
-'<b> Only the Team Leader may communicate the final answer unless otherwise instructed.',
-'<b> Once an answer is announced, it cannot be changed.',
-'<b> In case of a tie, additional tie-breaker questions will be conducted.',
-'<b> The decision of the Quiz Master/Judges will be final and binding.',
+          '<b>General Rules:</b>',
+          '<b> Participants must maintain discipline and decorum throughout the event.',
+          '<b> Use of mobile phones, smart watches, internet access, books, notes, or any external assistance is strictly prohibited unless specifically permitted.',
+          '<b> Teams must not communicate with the audience during the quiz.',
+          '<b> Any form of malpractice or misconduct will result in immediate disqualification.',
+          '<b> Answers must be given within the time specified by the Quiz Master.',
+          '<b> Only the Team Leader may communicate the final answer unless otherwise instructed.',
+          '<b> Once an answer is announced, it cannot be changed.',
+          '<b> In case of a tie, additional tie-breaker questions will be conducted.',
+          '<b> The decision of the Quiz Master/Judges will be final and binding.',
           '<b>Rules:</b> No electronic gadgets or web searches allowed. Decision of judges is final.',
-        '<b>	Participants must maintain discipline and decorum throughout the event. ',
-        '<b>	Use of mobile phones, smart watches, internet access, books, notes, or any external assistance is strictly prohibited unless specifically permitted. ',
-        '<b>	Teams must not communicate with the audience during the quiz. ',
-        '<b>	Any form of malpractice or misconduct will result in immediate disqualification. ',
-        '<b>	Answers must be given within the time specified by the Quiz Master. ',
-        '<b>	Only the Team Leader may communicate the final answer unless otherwise instructed. ',
-        '<b>	Once an answer is announced, it cannot be changed. ',
-        '<b>	The Quiz Judges decision will be final and binding. ',
-        '<b>	In case of a tie, additional tie-breaker questions will be conducted. ',
-        '<b>Important Note:</b>',
-'<b>•</b> The organizers reserve the right to modify the round structure, marking scheme, or rules if required.',
-'<b>•</b> Any changes will be communicated to the participants before the commencement of the respective round.',
+          '<b>	Participants must maintain discipline and decorum throughout the event. ',
+          '<b>	Use of mobile phones, smart watches, internet access, books, notes, or any external assistance is strictly prohibited unless specifically permitted. ',
+          '<b>	Teams must not communicate with the audience during the quiz. ',
+          '<b>	Any form of malpractice or misconduct will result in immediate disqualification. ',
+          '<b>	Answers must be given within the time specified by the Quiz Master. ',
+          '<b>	Only the Team Leader may communicate the final answer unless otherwise instructed. ',
+          '<b>	Once an answer is announced, it cannot be changed. ',
+          '<b>	The Quiz Judges decision will be final and binding. ',
+          '<b>	In case of a tie, additional tie-breaker questions will be conducted. ',
+          '<b>Important Note:</b>',
+          '<b>•</b> The organizers reserve the right to modify the round structure, marking scheme, or rules if required.',
+          '<b>•</b> Any changes will be communicated to the participants before the commencement of the respective round.',
         ]
       },
       'Coding Challenge': {
         badge: '02 · ALGORITHMIC LOGIC',
         color: '#8e24aa',
         schedule: '15 Sept 2026 · Computer Lab ',
-       team: 'Team of 2 Members',
+        team: 'Team of 2 Members',
         rounds: [
           '<b> Both team members must belong to the same institution. ',
-        '<b>Interdisciplinary teams may be permitted with prior approval',
-        '<b>A participant can be a member of only one team.  ',
-        '<b> The contest will be conducted in three levels:',
+          '<b>Interdisciplinary teams may be permitted with prior approval',
+          '<b>A participant can be a member of only one team.  ',
+          '<b> The contest will be conducted in three levels:',
           '<b>Level 1: Technical Quiz:</b> Questions on programming fundamentals, logical reasoning, data structures, algorithms, and computer science basics.',
           '<b>Level 2: Coding Challenge:</b> Teams must solve programming problems within the allotted time. ',
-          '<b>Level 3: Final Coding Challenge:</b> Qualified teams will solve advanced problems involving algorithms, optimization, debugging, or real-world scenarios. ', 
-         '<b> Teams will qualify for the next level based on their score, accuracy, and completion time.',
-        '<b> Both members must report at least 30 minutes before the contest begins and carry a valid college ID card. ',
-        '<b>Teams must use only the systems, programming languages, software, and resources permitted by the organizers. ',
-        '<b>Internet access, mobile phones, smartwatches, external storage devices, AI tools, books, and personal notes are prohibited unless specifically allowed.  ',
-        '<b> Team members may discuss and collaborate only with each other. Communication with other teams or outsiders is strictly prohibited. ',
-        '<b> Copying code, sharing solutions, impersonation, or any other malpractice will lead to immediate disqualification.',
-        '<b>Submitted programs must compile and produce the correct output for the specified test cases.  ',
-        '<b>Evaluation will be based on: <br>•	Number of problems solved <br>•	Correctness and accuracy <br>•	Execution time and memory usage <br> •	Time taken to submit the correct solution <br>•	Code quality, where applicable  ',
-        '<b> In case of a tie, priority will be given to the team with more correct solutions, fewer incorrect submissions, and the shortest completion time.',
-        '<b>Teams must submit their solutions within the prescribed time. Late submissions will not be accepted.  ',
-        '<b>Participants must not damage or modify the hardware, software, network settings, or contest platform ',
-        '<b> Any technical issue must be reported immediately to the coordinators. Additional time may be granted only at the organizers’ discretion. ',
-        '<b> The judging panel’s decision regarding evaluation, qualification, ties, and disqualification will be final. ',
-        '<b>All participants must maintain discipline, professional conduct, and the spirit of fair competition throughout the event. '
+          '<b>Level 3: Final Coding Challenge:</b> Qualified teams will solve advanced problems involving algorithms, optimization, debugging, or real-world scenarios. ',
+          '<b> Teams will qualify for the next level based on their score, accuracy, and completion time.',
+          '<b> Both members must report at least 30 minutes before the contest begins and carry a valid college ID card. ',
+          '<b>Teams must use only the systems, programming languages, software, and resources permitted by the organizers. ',
+          '<b>Internet access, mobile phones, smartwatches, external storage devices, AI tools, books, and personal notes are prohibited unless specifically allowed.  ',
+          '<b> Team members may discuss and collaborate only with each other. Communication with other teams or outsiders is strictly prohibited. ',
+          '<b> Copying code, sharing solutions, impersonation, or any other malpractice will lead to immediate disqualification.',
+          '<b>Submitted programs must compile and produce the correct output for the specified test cases.  ',
+          '<b>Evaluation will be based on: <br>•	Number of problems solved <br>•	Correctness and accuracy <br>•	Execution time and memory usage <br> •	Time taken to submit the correct solution <br>•	Code quality, where applicable  ',
+          '<b> In case of a tie, priority will be given to the team with more correct solutions, fewer incorrect submissions, and the shortest completion time.',
+          '<b>Teams must submit their solutions within the prescribed time. Late submissions will not be accepted.  ',
+          '<b>Participants must not damage or modify the hardware, software, network settings, or contest platform ',
+          '<b> Any technical issue must be reported immediately to the coordinators. Additional time may be granted only at the organizers’ discretion. ',
+          '<b> The judging panel’s decision regarding evaluation, qualification, ties, and disqualification will be final. ',
+          '<b>All participants must maintain discipline, professional conduct, and the spirit of fair competition throughout the event. '
         ]
       },
       'ULTIMATE TECHNICAL TREASURE HUNT': {
@@ -5306,20 +5410,20 @@
         color: '#1e88e5',
         schedule: '15 Sept 2026 · Campus Grounds',
         team: 'Team of 2 Members',
-        rounds: [ '<b> The total time for the hunt is 60 minutes. Teams must complete all challenges within this time.',
-                 '<b>Teams must follow the clues given by the organizers.','<b>3. Teams must solve the clues in the given order skipping or bypassing a clue is not permitted. ',
-                 '<b> Participants have to solve the technical questions(Cryptography, Programming, Logic and Mathematics, Networking , QR Code and Mixed Technical) and clues to move forward.',
-                 '<b> Participants must NOT carry their own mobile phones during the hunt.',
-                 '<b>  Organizers will have mobile phones. If you need to search for any information, ask the organizers. They will search using their phone and provide the required information.',
-                 '<b> Participants may not seek help from other teams, organizers, faculty, volunteers, or outside  individuals.',
-                 '<b> Teams must not reveal, exchange, copy, or communicate their clues or solutions to other teams.',
-                 '<b> Participants must stay within the designated college areas.',
-                 '<b> Running, pushing, climbing, or damaging college property is strictly not allowed.',
-                 '<b> Both team members should actively participate in the hunt.',
-                 '<b> The team that completes the maximum challenges correctly within 60 minutes will be the winner.',
-                 '<b> In case of a tie, the team that finishes first will be given preference.',
-                 '<b> Any rule violation may lead to a penalty or disqualification.',
-                 '<b> The Organizing Committee"s decision will be final.'        
+        rounds: ['<b> The total time for the hunt is 60 minutes. Teams must complete all challenges within this time.',
+          '<b>Teams must follow the clues given by the organizers.', '<b>3. Teams must solve the clues in the given order skipping or bypassing a clue is not permitted. ',
+          '<b> Participants have to solve the technical questions(Cryptography, Programming, Logic and Mathematics, Networking , QR Code and Mixed Technical) and clues to move forward.',
+          '<b> Participants must NOT carry their own mobile phones during the hunt.',
+          '<b>  Organizers will have mobile phones. If you need to search for any information, ask the organizers. They will search using their phone and provide the required information.',
+          '<b> Participants may not seek help from other teams, organizers, faculty, volunteers, or outside  individuals.',
+          '<b> Teams must not reveal, exchange, copy, or communicate their clues or solutions to other teams.',
+          '<b> Participants must stay within the designated college areas.',
+          '<b> Running, pushing, climbing, or damaging college property is strictly not allowed.',
+          '<b> Both team members should actively participate in the hunt.',
+          '<b> The team that completes the maximum challenges correctly within 60 minutes will be the winner.',
+          '<b> In case of a tie, the team that finishes first will be given preference.',
+          '<b> Any rule violation may lead to a penalty or disqualification.',
+          '<b> The Organizing Committee"s decision will be final.'
         ]
       },
       'Project Expo': {
@@ -5330,24 +5434,24 @@
         team: 'Team of 1 to 4 Members',
         rounds: [
           '<b>Project Expo – Rules & Regulations:</b>',
-'<b>• Originality:</b> The project should be the original work of the participating students.',
-'<b>• Project Selection:</b> Projects should preferably focus on innovation, emerging technologies, societal needs, sustainability, or industry-related problems.',
-'<b>• Registration:</b> Teams must register their project with the concerned coordinator before the prescribed deadline.',
-'<b>• Project Details:</b> Each team should submit the project title, team members, department, problem statement, objectives and brief description.',
-'<b>• Working Model:</b> Students are encouraged to present a working prototype/model or software demonstration.',
-'<b>• Display Materials:</b> Students should bring their own charts/posters, laptop, components, cables, adapters and other required materials.',
-'<b>• Setup:</b> Projects must be installed and ready at the allotted stall before the reporting time.',
-'<b>• Presentation:</b> Each team should be prepared to explain the problem, objectives, methodology, working principle, results, applications and future scope.',
-'<b>• Demonstration:</b> Students should demonstrate the working of the project to the judges within the allotted time.',
-'<b>• Judging:</b> Projects will be evaluated based on innovation, technical content, functionality, practical application, presentation and response to questions.',
-'<b>• Safety:</b> Students must follow all prescribed safety precautions while setting up and demonstrating their projects.',
-'<b>• Discipline:</b> Students must maintain discipline and proper conduct throughout the event.',
-'<b>• Cleanliness:</b> Each team is responsible for keeping its project display area clean, neat and organized.',
-'<b>• Attendance:</b> At least two team members must remain at the project stall throughout the exhibition.',
-'<b>• Equipment:</b> The college will not be responsible for any loss or damage to personal equipment brought by students.',
-'<b>• Time Limit:</b> Students must strictly follow the time allotted for project presentation and demonstration.',
-'<b>• Judges’ Decision:</b> The decision of the evaluation committee/judges will be final and binding.',
-'<b>• Certificates & Prizes:</b> Participation certificates and prizes will be awarded as per the decision of the organizing committee.'
+          '<b>• Originality:</b> The project should be the original work of the participating students.',
+          '<b>• Project Selection:</b> Projects should preferably focus on innovation, emerging technologies, societal needs, sustainability, or industry-related problems.',
+          '<b>• Registration:</b> Teams must register their project with the concerned coordinator before the prescribed deadline.',
+          '<b>• Project Details:</b> Each team should submit the project title, team members, department, problem statement, objectives and brief description.',
+          '<b>• Working Model:</b> Students are encouraged to present a working prototype/model or software demonstration.',
+          '<b>• Display Materials:</b> Students should bring their own charts/posters, laptop, components, cables, adapters and other required materials.',
+          '<b>• Setup:</b> Projects must be installed and ready at the allotted stall before the reporting time.',
+          '<b>• Presentation:</b> Each team should be prepared to explain the problem, objectives, methodology, working principle, results, applications and future scope.',
+          '<b>• Demonstration:</b> Students should demonstrate the working of the project to the judges within the allotted time.',
+          '<b>• Judging:</b> Projects will be evaluated based on innovation, technical content, functionality, practical application, presentation and response to questions.',
+          '<b>• Safety:</b> Students must follow all prescribed safety precautions while setting up and demonstrating their projects.',
+          '<b>• Discipline:</b> Students must maintain discipline and proper conduct throughout the event.',
+          '<b>• Cleanliness:</b> Each team is responsible for keeping its project display area clean, neat and organized.',
+          '<b>• Attendance:</b> At least two team members must remain at the project stall throughout the exhibition.',
+          '<b>• Equipment:</b> The college will not be responsible for any loss or damage to personal equipment brought by students.',
+          '<b>• Time Limit:</b> Students must strictly follow the time allotted for project presentation and demonstration.',
+          '<b>• Judges’ Decision:</b> The decision of the evaluation committee/judges will be final and binding.',
+          '<b>• Certificates & Prizes:</b> Participation certificates and prizes will be awarded as per the decision of the organizing committee.'
         ]
       },
       'Prompt Engineering': {
@@ -5359,12 +5463,12 @@
           '<b>Professional Conduct: Students must maintain discipline throughout the event.',
           '<b>Fair Play: Any cheating, copying , unfair assistance, using mobile phones will lead to disqualification.',
           '<b> AI Tools: Students must use tool given by the coordinators and a system is allotted to each team.',
-        '<b>Originality: Copying another student&apos;s prompt or answer is not allowed. ',
-        '<b> Internet: Internet access may be allowed only if announced by the organizers.',
-        '<b> Multiple Attempts: Students may improve/refine their prompt within the given time.',
-        '<b> Output: Team will be qualified based on the score accuracy and complete in time.',
-        '<b> Decision: The judges&apos; decision will be final and binding.',
-        ' Note: All the above rules must be followed otherwise the team will be disqualified'
+          '<b>Originality: Copying another student&apos;s prompt or answer is not allowed. ',
+          '<b> Internet: Internet access may be allowed only if announced by the organizers.',
+          '<b> Multiple Attempts: Students may improve/refine their prompt within the given time.',
+          '<b> Output: Team will be qualified based on the score accuracy and complete in time.',
+          '<b> Decision: The judges&apos; decision will be final and binding.',
+          ' Note: All the above rules must be followed otherwise the team will be disqualified'
         ]
       },
       'Reels (1 Min)': {
@@ -5373,7 +5477,7 @@
         schedule: '15 Sept 2026 · Media Desk',
         team: 'Individual or Team of 2 Members',
         rounds: [
-         
+
         ]
       }
     };
@@ -5548,7 +5652,7 @@
       window.addEventListener('touchend', onEnd);
       window.addEventListener('touchcancel', onEnd);
 
-      btn.onclick = function(e) {
+      btn.onclick = function (e) {
         e.preventDefault();
       };
 

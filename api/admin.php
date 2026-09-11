@@ -2,6 +2,20 @@
 /**
  * INNOWAVE-2K26 — Admin Portal API Endpoint (PHP + MySQL)
  */
+@ini_set('memory_limit', '512M');
+@ini_set('max_execution_time', '120');
+
+if (!ob_get_level()) {
+    if (extension_loaded('zlib') && !ini_get('zlib.output_compression')) {
+        @ob_start('ob_gzhandler');
+    } else {
+        @ob_start();
+    }
+}
+if (session_status() === PHP_SESSION_NONE) {
+    @session_start();
+}
+
 require_once __DIR__ . '/db.php';
 
 header('Content-Type: application/json');
@@ -23,14 +37,25 @@ $ADMIN_PASSWORD = 'innowave2k26';
 
 function isAuthorizedPassword($p) {
     global $ADMIN_PASSWORD;
+    if (!empty($_SESSION['admin_auth'])) return true;
     if (empty($p)) return false;
     $pClean = trim($p);
     return ($pClean === $ADMIN_PASSWORD || $pClean === 'innowave2026' || $pClean === 'innowave2k26');
 }
 
+if ($action === 'check-auth') {
+    if (isAuthorizedPassword($pass)) {
+        echo json_encode(['ok' => true, 'token' => $ADMIN_PASSWORD]);
+    } else {
+        echo json_encode(['ok' => false]);
+    }
+    exit;
+}
+
 if ($action === 'login') {
     $loginPw = $jsonBody['password'] ?? $pass;
     if (isAuthorizedPassword($loginPw)) {
+        $_SESSION['admin_auth'] = true;
         echo json_encode(['ok' => true, 'token' => $ADMIN_PASSWORD, 'message' => 'Admin authenticated successfully.']);
     } else {
         http_response_code(401);
@@ -45,11 +70,122 @@ if (!isAuthorizedPassword($pass)) {
     exit;
 }
 
-if ($action === 'list' || empty($action)) {
-    $stmt = $pdo->query("SELECT * FROM registrations ORDER BY id DESC");
-    $rows = $stmt->fetchAll();
+if (!isset($pdo) || !$pdo) {
+    http_response_code(500);
+    echo json_encode([
+        'ok' => false,
+        'error' => 'MySQL Database is offline: ' . ($lastMysqlError ?: 'Please verify MySQL database credentials in api/config.php.')
+    ]);
+    exit;
+}
 
-    $totalTeams = count($rows);
+if ($action === 'get-image') {
+    $imgId = intval($_GET['id'] ?? 0);
+    $type = trim($_GET['type'] ?? 'payment');
+    if (!$imgId) {
+        http_response_code(400);
+        exit('Invalid record ID');
+    }
+
+    $stmt = $pdo->prepare("SELECT id, payment_screenshot, payment_proof, ieee_card FROM registrations WHERE id = ?");
+    $stmt->execute([$imgId]);
+    $imgRow = $stmt->fetch();
+    if (!$imgRow) {
+        http_response_code(404);
+        exit('Record not found');
+    }
+
+    $rawImg = ($type === 'ieee') 
+        ? ($imgRow['ieee_card'] ?? '') 
+        : (!empty($imgRow['payment_screenshot']) ? $imgRow['payment_screenshot'] : ($imgRow['payment_proof'] ?? ''));
+
+    if (empty($rawImg)) {
+        http_response_code(404);
+        exit('No image uploaded');
+    }
+
+    if (preg_match('/^data:image\/(\w+);base64,(.+)$/', $rawImg, $m)) {
+        header('Content-Type: image/' . $m[1]);
+        header('Cache-Control: public, max-age=86400');
+        echo base64_decode($m[2]);
+        exit;
+    } else {
+        header('Location: ' . $rawImg);
+        exit;
+    }
+}
+
+if ($action === 'list' || empty($action)) {
+    $viewMode = $_REQUEST['view'] ?? $jsonBody['view'] ?? 'all';
+    
+    $cols = "
+        id, team_id, reg_seq, project_title, track, events_selected, description,
+        leader_name, leader_email, leader_phone, college_name, roll_no, branch, year,
+        ieee_member, ieee_id, ieee_verification_status, ieee_email, ieee_grade,
+        ieee_count, non_ieee_count, team_size, member2, member3, member4,
+        amount, fee_label, payment_mode, payment_status, payment_ref,
+        duplicate_utr, utr_mismatch, utr_warning, ieee_ocr_mismatch, ieee_warning,
+        paid_at, created_at,
+        (CASE WHEN (payment_screenshot IS NOT NULL AND TRIM(payment_screenshot) != '' AND TRIM(payment_screenshot) != 'NULL')
+                OR (payment_proof IS NOT NULL AND TRIM(payment_proof) != '' AND TRIM(payment_proof) != 'NULL')
+              THEN 1 ELSE 0 END) AS has_payment_screenshot,
+        (CASE WHEN (ieee_card IS NOT NULL AND TRIM(ieee_card) != '' AND TRIM(ieee_card) != 'NULL')
+              THEN 1 ELSE 0 END) AS has_ieee_card
+    ";
+
+    try {
+        $stmt = $pdo->query("SELECT {$cols} FROM registrations ORDER BY id DESC");
+        $allRows = $stmt ? $stmt->fetchAll() : [];
+    } catch (Throwable $e) {
+        $allRows = [];
+    }
+
+    $completedRows = [];
+    $incompleteRows = [];
+
+    foreach ($allRows as &$r) {
+        $hasScreenshot = !empty($r['has_payment_screenshot']);
+        $hasIeee = !empty($r['has_ieee_card']);
+
+        $r['has_payment_screenshot'] = $hasScreenshot ? 1 : 0;
+        $r['has_ieee_card'] = $hasIeee ? 1 : 0;
+
+        // Lightweight on-demand image streaming URLs (zero RAM footprint)
+        if ($hasScreenshot) {
+            $r['payment_screenshot'] = 'api/admin.php?action=get-image&id=' . $r['id'] . '&type=payment&password=' . urlencode($pass);
+            $r['payment_proof'] = $r['payment_screenshot'];
+        } else {
+            $r['payment_screenshot'] = '';
+            $r['payment_proof'] = '';
+        }
+
+        if ($hasIeee) {
+            $r['ieee_card'] = 'api/admin.php?action=get-image&id=' . $r['id'] . '&type=ieee&password=' . urlencode($pass);
+        } else {
+            $r['ieee_card'] = '';
+        }
+
+        if ($hasScreenshot) {
+            $completedRows[] = $r;
+        } else {
+            $incompleteRows[] = $r;
+        }
+    }
+    unset($r);
+
+    $allCount = count($allRows);
+    $completedCount = count($completedRows);
+    $incompleteCount = count($incompleteRows);
+
+    if ($viewMode === 'completed') {
+        $rows = $completedRows;
+    } else if ($viewMode === 'incomplete') {
+        $rows = $incompleteRows;
+    } else {
+        $rows = $allRows;
+    }
+
+    $totalTeams = count($allRows);
     $ieeeParticipants = 0;
     $nonIeeeParticipants = 0;
     $totalExpectedAmount = 0;
@@ -59,20 +195,39 @@ if ($action === 'list' || empty($action)) {
     $ieeeTeams = 0;
     $nonIeeeTeams = 0;
 
+    $ieeeMoney = 0;
+    $nonIeeeMoney = 0;
+
     foreach ($rows as $r) {
+        $cClean = strtolower(preg_replace('/[^a-z0-9]/', '', $r['college_name'] ?? ''));
+        $isPscmr = (
+            strpos($cClean, 'pscmr') !== false ||
+            strpos($cClean, 'pottisriramulu') !== false ||
+            strpos($cClean, 'pottisreeramulu') !== false ||
+            strpos($cClean, 'chalavadi') !== false ||
+            strpos($cClean, 'mallikarjuna') !== false
+        );
+        $ieeeRate = $isPscmr ? 50 : 100;
+        $nonIeeeRate = $isPscmr ? 100 : 200;
+
         $ic = intval($r['ieee_count'] ?? 0);
         $nic = intval($r['non_ieee_count'] ?? 0);
 
-        if ($ic > 0 || $nic > 0) {
-            $ieeeParticipants += $ic;
-            $nonIeeeParticipants += $nic;
-        } else {
+        if ($ic <= 0 && $nic <= 0) {
             if (($r['ieee_member'] ?? '') === 'Yes') {
-                $ieeeParticipants += 1;
+                $ic = max(1, intval($r['team_size'] ?? 1));
             } else {
-                $nonIeeeParticipants += 1;
+                $nic = max(1, intval($r['team_size'] ?? 1));
             }
         }
+
+        $ieeeParticipants += $ic;
+        $nonIeeeParticipants += $nic;
+
+        $rIeeeAmt = $ic * $ieeeRate;
+        $rNonIeeeAmt = $nic * $nonIeeeRate;
+        $ieeeMoney += $rIeeeAmt;
+        $nonIeeeMoney += $rNonIeeeAmt;
 
         if (($r['ieee_member'] ?? '') === 'Yes') {
             $ieeeTeams++;
@@ -81,6 +236,9 @@ if ($action === 'list' || empty($action)) {
         }
 
         $amt = intval($r['amount'] ?? 0);
+        if ($amt <= 0) {
+            $amt = $rIeeeAmt + $rNonIeeeAmt;
+        }
         $totalExpectedAmount += $amt;
         $st = $r['payment_status'] ?? '';
 
@@ -93,12 +251,14 @@ if ($action === 'list' || empty($action)) {
     }
 
     $totalParticipants = $ieeeParticipants + $nonIeeeParticipants;
-    $ieeeMoney = $ieeeParticipants * 100;
-    $nonIeeeMoney = $nonIeeeParticipants * 200;
-    $collectionGap = $totalExpectedAmount - $amountCollected;
+    $collectionGap = max(0, $totalExpectedAmount - $amountCollected);
 
     echo json_encode([
         'ok' => true,
+        'view' => $viewMode,
+        'allCount' => $allCount,
+        'completedCount' => $completedCount,
+        'incompleteCount' => $incompleteCount,
         'totalTeams' => $totalTeams,
         'totalParticipants' => $totalParticipants,
         'ieeeParticipants' => $ieeeParticipants,
@@ -119,6 +279,9 @@ if ($action === 'list' || empty($action)) {
             'amount' => $amountCollected,
             'pending_ieee' => $pendingVerification
         ],
+        'db_engine' => $activeEngine ?? 'mysql',
+        'db_connected' => ($pdo !== null),
+        'db_name' => $cfg_name ?? 'innowave_db',
         'rows' => $rows,
         'data' => $rows
     ]);
@@ -209,7 +372,12 @@ if ($action === 'export' || $action === 'export-php') {
         'Registration Date & Time'
     ]);
 
-    $stmt = $pdo->query("SELECT * FROM registrations ORDER BY id ASC");
+    $stmt = $pdo->query("
+        SELECT * FROM registrations 
+        WHERE (payment_screenshot IS NOT NULL AND TRIM(payment_screenshot) != '' AND TRIM(payment_screenshot) != 'NULL')
+           OR (payment_proof IS NOT NULL AND TRIM(payment_proof) != '' AND TRIM(payment_proof) != 'NULL')
+        ORDER BY id ASC
+    ");
     $sno = 1;
     while ($r = $stmt->fetch()) {
         $eventsStr = $r['events_selected'] ?? '';
@@ -284,7 +452,12 @@ if ($action === 'export-html') {
         'Registered Timestamp'
     ]);
 
-    $stmt = $pdo->query("SELECT * FROM registrations ORDER BY id ASC");
+    $stmt = $pdo->query("
+        SELECT * FROM registrations 
+        WHERE (payment_screenshot IS NOT NULL AND TRIM(payment_screenshot) != '' AND TRIM(payment_screenshot) != 'NULL')
+           OR (payment_proof IS NOT NULL AND TRIM(payment_proof) != '' AND TRIM(payment_proof) != 'NULL')
+        ORDER BY id ASC
+    ");
     $sno = 1;
     while ($r = $stmt->fetch()) {
         $eventsStr = $r['events_selected'] ?? '';

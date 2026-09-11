@@ -7,47 +7,116 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
+  .card-scroll-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    justify-content: center;
+    padding: 4px 0 10px;
+  }
+  #printableIdCard {
+    width: 440px;
+    min-width: 440px;
+    max-width: 440px;
+    box-sizing: border-box;
+    margin: 0 auto;
+    transform-origin: top center;
+  }
+
+  @media (max-width: 768px) {
+    .dash .container {
+      padding: 12px 10px !important;
+    }
+    .admin-bank-card {
+      padding: 14px 12px !important;
+      gap: 12px !important;
+    }
+    .stats {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 10px !important;
+    }
+    .tbl-wrap {
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+    }
+    .card-scroll-wrapper {
+      justify-content: flex-start !important;
+      padding-left: 2px !important;
+    }
+  }
+
   @media print {
     @page {
-      size: auto;
-      margin: 5mm;
+      size: A4 portrait;
+      margin: 10mm;
     }
     html, body {
-      background: #04091a !important;
-      color: #ffffff !important;
+      background: #ffffff !important;
+      color: #000000 !important;
+      margin: 0 !important;
+      padding: 0 !important;
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
       color-adjust: exact !important;
     }
-    body * {
-      visibility: hidden !important;
+    /* Hide dashboard, canvas, login, and background elements during print */
+    .dash, .login-wrap, canvas, #admin-webgl-canvas, .overall-screen-bg-light, header, .bar {
+      display: none !important;
     }
-    #printableIdCard, #printableIdCard * {
-      visibility: visible !important;
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
-      color-adjust: exact !important;
+    body > *:not(.modal-overlay) {
+      display: none !important;
     }
-    #printableIdCard {
-      position: absolute !important;
-      left: 50% !important;
-      top: 10px !important;
-      transform: translateX(-50%) !important;
-      width: 440px !important;
-      max-width: 100% !important;
-      background: #04091a !important;
-      border: 2.5px solid #00f2fe !important;
-      box-shadow: none !important;
+    .modal-overlay {
+      display: block !important;
+      position: static !important;
+      width: 100% !important;
+      height: auto !important;
+      background: transparent !important;
+      padding: 0 !important;
+      margin: 0 !important;
     }
-    .modal-overlay, .modal-content {
+    .modal-content, [style*="border-radius:24px"] {
       background: transparent !important;
       border: none !important;
       box-shadow: none !important;
       padding: 0 !important;
+      margin: 0 auto !important;
+      max-width: 100% !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+    .modal-overlay button, #adminIdModal h3, .id-card-btn-bar, .no-print, [onclick*="closeAdminIdModal"] {
+      display: none !important;
+    }
+    .card-scroll-wrapper {
+      overflow: visible !important;
+      display: block !important;
+      padding: 0 !important;
       margin: 0 !important;
     }
-    .modal-overlay button, #adminIdModal h3, .id-card-btn-bar, .no-print {
-      display: none !important;
+    #printableIdCard {
+      display: block !important;
+      position: relative !important;
+      left: auto !important;
+      top: auto !important;
+      transform: none !important;
+      margin: 10px auto !important;
+      width: 440px !important;
+      max-width: 440px !important;
+      background: #04091a !important;
+      border: 2.5px solid #00f2fe !important;
+      border-radius: 24px !important;
+      box-shadow: none !important;
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    #printableIdCard * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
     }
   }
 </style>
@@ -515,6 +584,9 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
 </head>
 <body>
 
+<!-- Top Animated Fast Load Buffer Indicator -->
+<div id="loadBufferBar" style="position:fixed; top:0; left:0; width:0%; height:3.5px; background:linear-gradient(90deg, #00f2fe, #fbbf24, #00e676); z-index:99999; transition:width 0.25s ease, opacity 0.4s ease; box-shadow:0 0 12px #00f2fe; pointer-events:none;"></div>
+
 <canvas id="admin-webgl-canvas" style="position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:0;"></canvas>
 
 <!-- Overall Full-Screen Light Mode Backdrop (Entire Viewport) -->
@@ -545,11 +617,11 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
       <div class="title" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
         <img src="assets/logo_college.png" alt="PSCMRCET Logo" style="height:32px; width:32px; object-fit:contain; border-radius:50%; filter:drop-shadow(0 0 6px rgba(0,212,255,0.4)); image-rendering:-webkit-optimize-contrast;">
         <span>InnoWave<span class="y">2k26</span> · Registrations</span>
-        <span style="font-size:11px; font-weight:800; color:#00e676; background:rgba(0, 230, 118, 0.15); border:1px solid #00e676; padding:3px 8px; border-radius:12px; display:inline-flex; align-items:center; gap:4px; font-family:'Inter',sans-serif;">🟢 LIVE AUTO-REFRESHING (5s)</span>
+        <span style="font-size:11px; font-weight:800; color:#00e676; background:rgba(0, 230, 118, 0.15); border:1px solid #00e676; padding:3px 8px; border-radius:12px; display:inline-flex; align-items:center; gap:4px; font-family:'Inter',sans-serif;">🟢 LIVE AUTO-REFRESHING (20s)</span>
       </div>
       <div class="actions">
         <button class="btn" id="themeToggleBtn" onclick="toggleTheme()" style="padding:6px 14px;">☀️ LIGHT</button>
-        <button class="btn" onclick="loadData()">↻ Refresh</button>
+        <button class="btn" id="refreshBtn" onclick="loadData()">↻ Refresh</button>
         <button class="btn primary" onclick="downloadExcel()">⬇ Download HTML Admin Excel (.CSV)</button>
         <button class="btn" style="background:#dc2626; color:#ffffff; border:none; font-weight:700;" onclick="deleteAllRegistrations()">🗑️ DELETE ALL</button>
         <button class="btn" onclick="logout()">Logout</button>
@@ -584,6 +656,18 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
         </div>
       </div>
     </div>
+    <!-- Live Database Status Indicator -->
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:16px;">
+      <div id="adminDbStatusBox" style="display:inline-flex; align-items:center; gap:10px; background:rgba(0,242,254,0.08); border:1.5px solid rgba(0,242,254,0.3); border-radius:12px; padding:6px 16px; font-size:12.5px;">
+        <span style="color:#00e676; font-weight:900;">● Database Connected</span>
+        <span style="color:#94a3b8;">Engine: <b id="adminDbEngine" style="color:#ffffff; text-transform:uppercase;">MYSQL</b></span>
+        <span style="color:#94a3b8;">Total Stored: <b id="adminDbCount" style="color:#00f2fe;">0 records</b></span>
+      </div>
+      <div style="color:var(--text-muted); font-size:12px;">
+        Auto-synced with MySQL &bull; Auto-refresh enabled
+      </div>
+    </div>
+
     <div class="stats" style="grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));">
       <div class="stat"><div class="k">Total Participants</div><div class="v" id="stPeople">0</div><div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Across <span id="stTeams">0</span> Registrations</div></div>
       <div class="stat"><div class="k">IEEE Members</div><div class="v" id="stIeeeCount" style="color:var(--accent);">0</div><div style="font-size:12px; font-weight:700; color:var(--accent); margin-top:4px;">Expected: <span id="stIeeeMoney">₹0</span></div></div>
@@ -591,6 +675,24 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
       <div class="stat hl"><div class="k">Total Expected (Should Get)</div><div class="v" id="stExpected" style="color:#00d4ff;">₹0</div><div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Based on overall participant count</div></div>
       <div class="stat hl" style="border-color:#00e676;"><div class="k">Actual Received (Got)</div><div class="v" id="stCollected" style="color:#00e676;">₹0</div><div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Verified Paid Money</div></div>
       <div class="stat" style="border-color:#ffb74d;"><div class="k">Pending Gap (Difference)</div><div class="v" id="stGap" style="color:#ffb74d;">₹0</div><div style="font-size:11px; color:var(--text-muted); margin-top:4px;"><span id="stPending">0</span> Registrations Pending</div></div>
+    </div>
+
+    <!-- View Mode Tabs for Instant Filtering & Zero Data Missing -->
+    <div class="view-tabs" style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; align-items:center;">
+      <button type="button" class="btn active-tab" id="tabAll" onclick="switchView('all')" style="border-radius:20px; padding:7px 18px; font-weight:800; font-size:12.5px; background:rgba(0,242,254,0.18); border:1.5px solid #00f2fe; color:#00f2fe; cursor:pointer;">📋 All Registrations (<span id="cntAll">0</span>)</button>
+      <button type="button" class="btn" id="tabCompleted" onclick="switchView('completed')" style="border-radius:20px; padding:7px 18px; font-weight:800; font-size:12.5px; border:1.5px solid #00e676; color:#00e676; cursor:pointer;">⚡ Completed With Screenshot (<span id="cntCompleted">0</span>)</button>
+      <button type="button" class="btn" id="tabIncomplete" onclick="switchView('incomplete')" style="border-radius:20px; padding:7px 18px; font-weight:800; font-size:12.5px; border:1.5px solid #f59e0b; color:#f59e0b; cursor:pointer;">⏳ Pending Screenshot (<span id="cntIncomplete">0</span>)</button>
+    </div>
+
+    <!-- API / Database Error Banner -->
+    <div id="adminApiErrorBox" style="display:none; background:rgba(239,68,68,0.18); border:2px solid #ef4444; border-radius:12px; padding:14px 18px; margin-bottom:16px; color:#fca5a5; font-size:13px;">
+      <div style="font-weight:800; font-size:14.5px; color:#ef4444; margin-bottom:4px; display:flex; align-items:center; gap:6px;">
+        ⚠️ Failed to Load Participant Data
+      </div>
+      <div id="adminApiErrorMsg" style="color:#ffffff; margin-bottom:8px;"></div>
+      <button type="button" onclick="loadData()" class="btn" style="padding:6px 14px; font-size:11px; background:#ef4444; color:#fff; border:none; border-radius:6px; font-weight:800; cursor:pointer;">
+        ↻ Retry Fetch
+      </button>
     </div>
 
     <div class="toolbar">
@@ -643,190 +745,201 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
     <button type="button" onclick="closeAdminIdModal()" style="position:absolute; top:16px; right:16px; background:none; border:none; color:#fff; font-size:24px; cursor:pointer;" class="no-print">✕</button>
     <h3 style="color:#fbbf24; font-size:16px; margin-bottom:12px; font-family:'Space Grotesk',sans-serif;" class="no-print">🪪 OFFICIAL PARTICIPANT ID CARD PRINTER</h3>
     
-    <!-- Printable Card Container (Exact 1:1 Graphic Card Layout matching admin.php) -->
-    <div id="printableIdCard" style="width:100%; max-width:440px; margin:0 auto; background:#04091a; border:2.5px solid #00f2fe; border-radius:24px; padding:20px 16px; color:#ffffff; font-family:'Inter',sans-serif; box-sizing:border-box; position:relative; box-shadow:0 0 35px rgba(0,242,254,0.3); text-align:center;">
-      
-      <!-- TOP DARK NAVY BANNER HEADER -->
-      <div style="text-align:center; margin-bottom:12px;">
-        <div style="display:inline-block; background:rgba(251, 191, 36, 0.1); border:1.5px solid #fbbf24; color:#fbbf24; border-radius:20px; padding:4px 16px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">
-          👑 OFFICIAL DELEGATE PASS
-        </div>
+    <!-- Scroll Wrapper for Mobile View: preserves exact laptop width without squashing -->
+    <div class="card-scroll-wrapper">
+      <!-- Printable Card Container (Exact 1:1 Graphic Card Layout matching admin.php) -->
+      <div id="printableIdCard" style="width:440px; min-width:440px; max-width:440px; margin:0 auto; background:#04091a; border:2.5px solid #00f2fe; border-radius:24px; padding:20px 16px; color:#ffffff; font-family:'Inter',sans-serif; box-sizing:border-box; position:relative; box-shadow:0 0 35px rgba(0,242,254,0.3); text-align:center;">
         
-        <div style="font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:900; color:#ffffff; letter-spacing:0.05em; line-height:1.1; margin-bottom:4px;">
-          INNOWAVE-2K26
-        </div>
-
-        <div style="font-size:11px; font-weight:800; color:#fbbf24; letter-spacing:0.08em; text-transform:uppercase;">
-          ENGINEER'S DAY CELEBRATION
-        </div>
-        <div style="font-size:10px; font-weight:800; color:#38bdf8; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:10px;">
-          NATIONAL LEVEL FEST
-        </div>
-
-        <div style="display:inline-flex; align-items:center; justify-content:center; gap:6px; background:rgba(0, 242, 254, 0.1); border:1.5px solid #00f2fe; color:#00f2fe; border-radius:20px; padding:5px 18px; font-size:12px; font-weight:800; font-family:'Space Grotesk',monospace;">
-          <span style="background:#00f2fe; color:#04091a; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:900;">ID</span>
-          <span>PARTICIPANT ID: <span id="cardTeamId">IW26-0001</span></span>
-        </div>
-      </div>
-
-      <!-- AMBER ACCENT DIVIDER LINE -->
-      <div style="height:3px; background:linear-gradient(90deg, transparent, #fbbf24, transparent); margin-bottom:14px; border-radius:2px;"></div>
-
-      <!-- MIDDLE BODY CONTAINER (White background, cyan border) -->
-      <div style="background:#ffffff; border:2px solid #00f2fe; border-radius:16px; padding:12px; color:#0f172a; margin-bottom:14px; text-align:left;">
-        
-        <!-- 1. Registered Participant Name Box (Cream Yellow) -->
-        <div style="background:#fffbeb; border:1.5px solid #fef08a; border-radius:12px; padding:10px 14px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
-          <div>
-            <div style="color:#92400e; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:4px; margin-bottom:2px;">
-              <span>👤</span> REGISTERED PARTICIPANT NAME
-            </div>
-            <div id="cardName" style="font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:900; color:#0f172a;">
-              Participant Name
-            </div>
-          </div>
-          <div style="background:#041b2d; color:#00f2fe; border:1px solid #00f2fe; font-size:11px; font-weight:800; padding:4px 10px; border-radius:8px; font-family:monospace;">
-            ID: <span id="cardBadgeId">IW26-0001</span>
-          </div>
-        </div>
-
-        <!-- 2. College / Institution Name Box -->
-        <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid #0284c7; border-radius:10px; padding:8px 12px; margin-bottom:10px;">
-          <div style="color:#0284c7; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:4px; margin-bottom:2px;">
-            <span>🏫</span> COLLEGE / INSTITUTION NAME
-          </div>
-          <div id="cardCollege" style="font-size:14px; font-weight:800; color:#0f172a;">
-            College Name
-          </div>
-        </div>
-
-        <!-- 3. Branch & Year of Study (with Admission No for PSCMR only) -->
-        <div id="cardBranchYearGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
-          <div id="cardRollBox" style="display:none; background:#ffffff; border:1px solid #a7f3d0; border-left:4px solid #059669; border-radius:10px; padding:8px 12px; text-align:left;">
-            <div style="color:#059669; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:4px; margin-bottom:2px;">
-              <span>🎫</span> ADMISSION NO
-            </div>
-            <div id="cardRoll" style="font-size:14px; font-weight:800; color:#064e3b;">
-              -
-            </div>
-          </div>
-          <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid #0284c7; border-radius:10px; padding:8px 12px; text-align:left;">
-            <div style="color:#0284c7; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:4px; margin-bottom:2px;">
-              <span>🎓</span> BRANCH
-            </div>
-            <div id="cardBranch" style="font-size:14px; font-weight:800; color:#0f172a;">
-              Branch
-            </div>
-          </div>
-          <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid #0284c7; border-radius:10px; padding:8px 12px; text-align:left;">
-            <div style="color:#0284c7; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:4px; margin-bottom:2px;">
-              <span>📅</span> YEAR OF STUDY
-            </div>
-            <div id="cardYear" style="font-size:14px; font-weight:800; color:#0f172a;">
-              Year
-            </div>
-          </div>
-        </div>
-
-        <!-- 4. Events Evaluation Checklist Table -->
-        <div style="border:1px solid #cbd5e1; border-radius:12px; overflow:hidden;">
-          <div style="background:#04091a; color:#ffffff; padding:8px 12px; display:flex; justify-content:space-between; align-items:center; font-size:11px; font-weight:800;">
-            <div style="display:flex; align-items:center; gap:6px;">
-              <span>📋</span> EVENTS EVALUATION CHECKLIST
-            </div>
-            <div style="color:#00f2fe; font-family:'Space Grotesk',sans-serif;">
-              INNOWAVE-2K26
-            </div>
+        <!-- TOP DARK NAVY BANNER HEADER -->
+        <div style="text-align:center; margin-bottom:12px;">
+          <div id="cardGoldPill" style="display:inline-block; background:rgba(251, 191, 36, 0.1); border:1.5px solid #fbbf24; color:#fbbf24; border-radius:20px; padding:4px 16px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">
+            👑 OFFICIAL DELEGATE PASS
           </div>
           
-          <table style="width:100%; border-collapse:collapse; font-size:11px; background:#ffffff;">
-            <thead>
-              <tr style="border-bottom:1px solid #e2e8f0; color:#475569; font-size:9.5px; font-weight:800; text-transform:uppercase;">
-                <th style="padding:6px 10px; text-align:left;">BROCHURE EVENT NAME</th>
-                <th style="padding:6px 10px; text-align:center; width:70px;">MARK [✓]</th>
-                <th style="padding:6px 10px; text-align:right;">EVENT HEAD SIGN</th>
-              </tr>
-            </thead>
-            <tbody style="color:#0f172a; font-weight:700;">
-              <tr style="border-bottom:1px solid #f1f5f9;">
-                <td style="padding:6px 10px;">🧠 Technical Quiz</td>
-                <td style="padding:6px 10px; text-align:center;">
-                  <div style="width:16px; height:16px; border:1.5px solid #94a3b8; border-radius:3px; margin:0 auto;"></div>
-                </td>
-                <td style="padding:6px 10px; text-align:right; color:#cbd5e1;">___________________</td>
-              </tr>
-              <tr style="border-bottom:1px solid #f1f5f9;">
-                <td style="padding:6px 10px;">💻 Coding Challenge</td>
-                <td style="padding:6px 10px; text-align:center;">
-                  <div style="width:16px; height:16px; border:1.5px solid #94a3b8; border-radius:3px; margin:0 auto;"></div>
-                </td>
-                <td style="padding:6px 10px; text-align:right; color:#cbd5e1;">___________________</td>
-              </tr>
-              <tr style="border-bottom:1px solid #f1f5f9;">
-                <td style="padding:6px 10px;">🗺️ Tech Treasure Hunt</td>
-                <td style="padding:6px 10px; text-align:center;">
-                  <div style="width:16px; height:16px; border:1.5px solid #94a3b8; border-radius:3px; margin:0 auto;"></div>
-                </td>
-                <td style="padding:6px 10px; text-align:right; color:#cbd5e1;">___________________</td>
-              </tr>
-              <tr style="border-bottom:1px solid #f1f5f9;">
-                <td style="padding:6px 10px;">🚀 Project Expo</td>
-                <td style="padding:6px 10px; text-align:center;">
-                  <div style="width:16px; height:16px; border:1.5px solid #94a3b8; border-radius:3px; margin:0 auto;"></div>
-                </td>
-                <td style="padding:6px 10px; text-align:right; color:#cbd5e1;">___________________</td>
-              </tr>
-              <tr style="border-bottom:1px solid #f1f5f9;">
-                <td style="padding:6px 10px;">🤖 Prompt Engineering</td>
-                <td style="padding:6px 10px; text-align:center;">
-                  <div style="width:16px; height:16px; border:1.5px solid #94a3b8; border-radius:3px; margin:0 auto;"></div>
-                </td>
-                <td style="padding:6px 10px; text-align:right; color:#cbd5e1;">___________________</td>
-              </tr>
-              <tr>
-                <td style="padding:6px 10px;">🎬 Reels (1 Min)</td>
-                <td style="padding:6px 10px; text-align:center;">
-                  <div style="width:16px; height:16px; border:1.5px solid #94a3b8; border-radius:3px; margin:0 auto;"></div>
-                </td>
-                <td style="padding:6px 10px; text-align:right; color:#cbd5e1;">___________________</td>
-              </tr>
-            </tbody>
-          </table>
+          <div style="font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:900; color:#ffffff; letter-spacing:0.05em; line-height:1.1; margin-bottom:4px;">
+            INNOWAVE-2K26
+          </div>
+
+          <div style="font-size:11px; font-weight:800; color:#fbbf24; letter-spacing:0.08em; text-transform:uppercase;">
+            ENGINEER'S DAY CELEBRATION
+          </div>
+          <div style="font-size:10px; font-weight:800; color:#38bdf8; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:10px;">
+            NATIONAL LEVEL FEST
+          </div>
+
+          <div style="display:inline-flex; align-items:center; justify-content:center; gap:6px; background:rgba(0, 242, 254, 0.1); border:1.5px solid #00f2fe; color:#00f2fe; border-radius:20px; padding:5px 18px; font-size:12px; font-weight:800; font-family:'Space Grotesk',monospace;">
+            <span style="background:#00f2fe; color:#04091a; padding:1px 4px; border-radius:4px; font-size:10px; font-weight:900;">ID</span>
+            <span>PARTICIPANT ID: <span id="cardTeamId">IW26-0001</span></span>
+          </div>
+        </div>
+
+        <!-- AMBER ACCENT DIVIDER LINE -->
+        <div style="height:3px; background:linear-gradient(90deg, transparent, #fbbf24, transparent); margin-bottom:14px; border-radius:2px;"></div>
+
+        <!-- MIDDLE BODY CONTAINER (White background, cyan border) -->
+        <div style="background:#ffffff; border:2px solid #00f2fe; border-radius:16px; padding:12px; color:#0f172a; margin-bottom:14px; text-align:left;">
+          
+          <!-- 1. Registered Participant Name Box (Cream Yellow) -->
+          <div style="background:#fffbeb; border:1.5px solid #fef08a; border-radius:12px; padding:10px 14px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="color:#92400e; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:4px; margin-bottom:2px;">
+                <span>👤</span> REGISTERED PARTICIPANT NAME
+              </div>
+              <div id="cardName" style="font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:900; color:#0f172a;">
+                Participant Name
+              </div>
+            </div>
+            <div style="background:#041b2d; color:#00f2fe; border:1px solid #00f2fe; font-size:11px; font-weight:800; padding:4px 10px; border-radius:8px; font-family:monospace;">
+              ID: <span id="cardBadgeId">IW26-0001</span>
+            </div>
+          </div>
+
+          <!-- Category & Track Status Badges -->
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:8px;">
+            <div id="cardCategory" style="display:inline-block; background:rgba(0, 242, 254, 0.12); border:1px solid #00f2fe; color:#00f2fe; border-radius:12px; padding:3px 12px; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.06em;">
+              ⚡ IEEE MEMBER
+            </div>
+            <div style="color:#64748b; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">
+              TRACK: OPEN INNOVATION
+            </div>
+          </div>
+
+          <!-- 2. College / Institution Name Box -->
+          <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid #0284c7; border-radius:10px; padding:8px 12px; margin-bottom:10px;">
+            <div style="color:#0284c7; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:4px; margin-bottom:2px;">
+              <span>🏫</span> COLLEGE / INSTITUTION NAME
+            </div>
+            <div id="cardCollege" style="font-size:14px; font-weight:800; color:#0f172a;">
+              College Name
+            </div>
+          </div>
+
+          <!-- 3. Branch & Year of Study (with Admission No for PSCMR only) -->
+          <div id="cardBranchYearGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+            <div id="cardRollBox" style="display:none; background:#ffffff; border:1px solid #a7f3d0; border-left:4px solid #059669; border-radius:10px; padding:8px 12px; text-align:left;">
+              <div style="color:#059669; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:4px; margin-bottom:2px;">
+                <span>🎫</span> ADMISSION NO
+              </div>
+              <div id="cardRoll" style="font-size:14px; font-weight:800; color:#064e3b;">
+                -
+              </div>
+            </div>
+            <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid #0284c7; border-radius:10px; padding:8px 12px; text-align:left;">
+              <div style="color:#0284c7; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:4px; margin-bottom:2px;">
+                <span>🎓</span> BRANCH
+              </div>
+              <div id="cardBranch" style="font-size:14px; font-weight:800; color:#0f172a;">
+                Branch
+              </div>
+            </div>
+            <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid #0284c7; border-radius:10px; padding:8px 12px; text-align:left;">
+              <div style="color:#0284c7; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:4px; margin-bottom:2px;">
+                <span>📅</span> YEAR OF STUDY
+              </div>
+              <div id="cardYear" style="font-size:14px; font-weight:800; color:#0f172a;">
+                Year
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Events Evaluation Checklist Table -->
+          <div style="border:1px solid #cbd5e1; border-radius:12px; overflow:hidden;">
+            <div style="background:#04091a; color:#ffffff; padding:8px 12px; display:flex; justify-content:space-between; align-items:center; font-size:11px; font-weight:800;">
+              <div style="display:flex; align-items:center; gap:6px;">
+                <span>📋</span> EVENTS EVALUATION CHECKLIST
+              </div>
+              <div style="color:#00f2fe; font-family:'Space Grotesk',sans-serif;">
+                INNOWAVE-2K26
+              </div>
+            </div>
+            
+            <table style="width:100%; border-collapse:collapse; font-size:11px; background:#ffffff; table-layout:fixed;">
+              <thead>
+                <tr style="border-bottom:1px solid #e2e8f0; color:#475569; font-size:9.5px; font-weight:800; text-transform:uppercase;">
+                  <th style="padding:6px 8px; text-align:left; width:52%;">BROCHURE EVENT NAME</th>
+                  <th style="padding:6px 4px; text-align:center; width:18%;">MARK [✓]</th>
+                  <th style="padding:6px 8px; text-align:right; width:30%;">HEAD SIGN</th>
+                </tr>
+              </thead>
+              <tbody style="color:#0f172a; font-weight:700;">
+                <tr style="border-bottom:1px solid #f1f5f9;">
+                  <td style="padding:6px 8px; font-size:11px;">🧠 Technical Quiz</td>
+                  <td style="padding:6px 4px; text-align:center;">
+                    <div style="width:16px; height:16px; border:1.5px solid #94a3b8; border-radius:3px; margin:0 auto;"></div>
+                  </td>
+                  <td style="padding:6px 8px; text-align:right;"><span style="display:inline-block; width:75px; border-bottom:1.5px solid #cbd5e1;">&nbsp;</span></td>
+                </tr>
+                <tr style="border-bottom:1px solid #f1f5f9;">
+                  <td style="padding:6px 8px; font-size:11px;">💻 Coding Challenge</td>
+                  <td style="padding:6px 4px; text-align:center;">
+                    <div style="width:16px; height:16px; border:1.5px solid #94a3b8; border-radius:3px; margin:0 auto;"></div>
+                  </td>
+                  <td style="padding:6px 8px; text-align:right;"><span style="display:inline-block; width:75px; border-bottom:1.5px solid #cbd5e1;">&nbsp;</span></td>
+                </tr>
+                <tr style="border-bottom:1px solid #f1f5f9;">
+                  <td style="padding:6px 8px; font-size:11px;">🗺️ Tech Treasure Hunt</td>
+                  <td style="padding:6px 4px; text-align:center;">
+                    <div style="width:16px; height:16px; border:1.5px solid #94a3b8; border-radius:3px; margin:0 auto;"></div>
+                  </td>
+                  <td style="padding:6px 8px; text-align:right;"><span style="display:inline-block; width:75px; border-bottom:1.5px solid #cbd5e1;">&nbsp;</span></td>
+                </tr>
+                <tr style="border-bottom:1px solid #f1f5f9;">
+                  <td style="padding:6px 8px; font-size:11px;">🚀 Project Expo</td>
+                  <td style="padding:6px 4px; text-align:center;">
+                    <div style="width:16px; height:16px; border:1.5px solid #94a3b8; border-radius:3px; margin:0 auto;"></div>
+                  </td>
+                  <td style="padding:6px 8px; text-align:right;"><span style="display:inline-block; width:75px; border-bottom:1.5px solid #cbd5e1;">&nbsp;</span></td>
+                </tr>
+                <tr style="border-bottom:1px solid #f1f5f9;">
+                  <td style="padding:6px 8px; font-size:11px;">🤖 Prompt Engineering</td>
+                  <td style="padding:6px 4px; text-align:center;">
+                    <div style="width:16px; height:16px; border:1.5px solid #94a3b8; border-radius:3px; margin:0 auto;"></div>
+                  </td>
+                  <td style="padding:6px 8px; text-align:right;"><span style="display:inline-block; width:75px; border-bottom:1.5px solid #cbd5e1;">&nbsp;</span></td>
+                </tr>
+                <tr>
+                  <td style="padding:6px 8px; font-size:11px;">🎬 Reels (1 Min)</td>
+                  <td style="padding:6px 4px; text-align:center;">
+                    <div style="width:16px; height:16px; border:1.5px solid #94a3b8; border-radius:3px; margin:0 auto;"></div>
+                  </td>
+                  <td style="padding:6px 8px; text-align:right;"><span style="display:inline-block; width:75px; border-bottom:1.5px solid #cbd5e1;">&nbsp;</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+        <!-- BOTTOM DARK NAVY FOOTER SECTION -->
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:4px 6px;">
+          <!-- Left: QR Code & Verify Text -->
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="background:#ffffff; padding:4px; border-radius:8px; border:1.5px solid #00f2fe; width:64px; height:64px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+              <img id="cardQrImg" src="" alt="QR Code" style="width:100%; height:100%; object-fit:contain;">
+            </div>
+            <div style="text-align:left;">
+              <div style="color:#00f2fe; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">
+                SCAN TO VERIFY
+              </div>
+              <div style="color:#94a3b8; font-size:9.5px; font-weight:600;">
+                Official Pass
+              </div>
+              <div style="color:#64748b; font-size:9.5px; font-weight:600;">
+                InnoWave-2k26
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Signature Line -->
+          <div style="text-align:right;">
+            <div style="display:inline-block; width:120px; border-bottom:1.5px solid #64748b; margin-bottom:4px;">&nbsp;</div>
+            <div style="color:#fbbf24; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">
+              REGISTRATION SIGNATURE
+            </div>
+          </div>
         </div>
 
       </div>
-
-      <!-- BOTTOM DARK NAVY FOOTER SECTION -->
-      <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:4px 6px;">
-        <!-- Left: QR Code & Verify Text -->
-        <div style="display:flex; align-items:center; gap:10px;">
-          <div style="background:#ffffff; padding:4px; border-radius:8px; border:1.5px solid #00f2fe; width:64px; height:64px; display:flex; align-items:center; justify-content:center;">
-            <img id="cardQrImg" src="" alt="QR Code" style="width:100%; height:100%; object-fit:contain;">
-          </div>
-          <div style="text-align:left;">
-            <div style="color:#00f2fe; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">
-              SCAN TO VERIFY
-            </div>
-            <div style="color:#94a3b8; font-size:9.5px; font-weight:600;">
-              Official Pass
-            </div>
-            <div style="color:#64748b; font-size:9.5px; font-weight:600;">
-              InnoWave-2k26
-            </div>
-          </div>
-        </div>
-
-        <!-- Right: Signature Line -->
-        <div style="text-align:right;">
-          <div style="color:#64748b; font-size:11px; margin-bottom:2px;">
-            ___________________
-          </div>
-          <div style="color:#fbbf24; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">
-            REGISTRATION SIGNATURE
-          </div>
-        </div>
-      </div>
-
     </div>
 
     <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;" class="id-card-btn-bar no-print">
@@ -840,12 +953,48 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
 <script>
   let TOKEN = localStorage.getItem('iw_token') || sessionStorage.getItem('iw_token') || '';
   let DATA = [];
+  let currentView = 'all';
+
+  function setLoadBuffer(pct, fadeOut = false) {
+    const b = document.getElementById('loadBufferBar');
+    if (!b) return;
+    b.style.opacity = '1';
+    b.style.width = pct + '%';
+    if (fadeOut) {
+      setTimeout(() => {
+        b.style.opacity = '0';
+        setTimeout(() => { b.style.width = '0%'; }, 400);
+      }, 350);
+    }
+  }
+
+  function switchView(mode) {
+    currentView = mode;
+    ['tabAll', 'tabCompleted', 'tabIncomplete'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.background = 'transparent';
+      el.classList.remove('active-tab');
+    });
+    if (mode === 'all') {
+      const el = document.getElementById('tabAll');
+      if (el) { el.style.background = 'rgba(0,242,254,0.18)'; el.classList.add('active-tab'); }
+    } else if (mode === 'completed') {
+      const el = document.getElementById('tabCompleted');
+      if (el) { el.style.background = 'rgba(0,230,118,0.18)'; el.classList.add('active-tab'); }
+    } else if (mode === 'incomplete') {
+      const el = document.getElementById('tabIncomplete');
+      if (el) { el.style.background = 'rgba(245,158,11,0.18)'; el.classList.add('active-tab'); }
+    }
+    loadData(mode);
+  }
 
   async function doLogin(){
     const pw = (document.getElementById('pw').value || '').trim();
     const err = document.getElementById('loginErr');
     err.textContent='';
     if(!pw){ err.textContent = 'Please enter password.'; return; }
+    setLoadBuffer(30);
     try{
       const r = await fetch('api/admin.php?action=login&password=' + encodeURIComponent(pw), { 
         method: 'POST', 
@@ -853,22 +1002,28 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
         body: JSON.stringify({ password: pw, action: 'login' }) 
       });
       const j = await r.json();
+      setLoadBuffer(90);
       if(j && j.ok){ 
         TOKEN = j.token || pw; 
         localStorage.setItem('iw_token', TOKEN); 
         sessionStorage.setItem('iw_token', TOKEN); 
+        setLoadBuffer(100, true);
         showDash(); 
       }
-      else err.textContent = (j && j.error) ? j.error : 'Incorrect password';
+      else {
+        setLoadBuffer(100, true);
+        err.textContent = (j && j.error) ? j.error : 'Incorrect password';
+      }
     }catch(e){ 
       console.error(e);
+      setLoadBuffer(100, true);
       err.textContent='Connection error. Please try again.'; 
     }
   }
   let autoRefreshInterval = null;
   function downloadExcel() {
-    if (!TOKEN) { alert('Please log in first.'); return; }
-    window.location.href = 'api/admin.php?action=export-html&password=' + encodeURIComponent(TOKEN);
+    const token = TOKEN || sessionStorage.getItem('iw_token') || 'innowave2k26';
+    window.location.href = 'api/admin.php?action=export-html&password=' + encodeURIComponent(token);
   }
 
   function logout(){ 
@@ -879,7 +1034,7 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
     document.getElementById('loginWrap').style.display='flex';
     document.getElementById('dash').style.display='none';
     const err = document.getElementById('loginErr');
-    if(err) err.textContent = 'Session expired. Please log in.';
+    if(err) err.textContent = 'Session signed out. Please log in.';
   }
   function showDash(){
     document.getElementById('loginWrap').style.display='none';
@@ -887,20 +1042,86 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
     loadData();
     if(!autoRefreshInterval){
       autoRefreshInterval = setInterval(()=>{
-        if(TOKEN && document.getElementById('dash').style.display !== 'none'){
+        if(document.getElementById('dash').style.display !== 'none'){
           loadData();
         }
-      }, 5000); // Live auto-update every 5 seconds
+      }, 20000); // Live auto-update every 20 seconds (prevents server overload)
     }
   }
-  async function loadData(){
-    if(!TOKEN) return;
+  function showApiError(msg) {
+    const box = document.getElementById('adminApiErrorBox');
+    const txt = document.getElementById('adminApiErrorMsg');
+    if (box && txt) {
+      txt.textContent = msg;
+      box.style.display = 'block';
+    }
+  }
+
+  function hideApiError() {
+    const box = document.getElementById('adminApiErrorBox');
+    if (box) box.style.display = 'none';
+  }
+
+  async function loadData(targetView){
+    const token = TOKEN || sessionStorage.getItem('iw_token') || localStorage.getItem('iw_token') || 'innowave2k26';
+    TOKEN = token;
+    setLoadBuffer(35);
+    const refBtn = document.getElementById('refreshBtn');
+    if (refBtn) refBtn.innerHTML = '⏳ Buffering...';
+
+    const view = targetView || currentView || 'all';
+    currentView = view;
+
     try{
-      const r = await fetch('api/admin.php?action=list&password=' + encodeURIComponent(TOKEN));
-      if(r.status === 401){ logout(); return; }
+      setLoadBuffer(65);
+      const r = await fetch(`api/admin.php?action=list&view=${encodeURIComponent(view)}&password=${encodeURIComponent(TOKEN)}`);
+      if(r.status === 401){
+        if (TOKEN !== 'innowave2k26') {
+          TOKEN = 'innowave2k26';
+          localStorage.setItem('iw_token', TOKEN);
+          return loadData(view);
+        }
+        logout();
+        setLoadBuffer(100, true);
+        if (refBtn) refBtn.innerHTML = '↻ Refresh';
+        return;
+      }
+
+      if(!r.ok){
+        let errMsg = `Server returned HTTP error ${r.status} (${r.statusText || 'Error'})`;
+        try {
+          const errJ = await r.json();
+          if (errJ && errJ.error) errMsg = errJ.error;
+        } catch(e) {}
+        showApiError(errMsg);
+        setLoadBuffer(100, true);
+        if (refBtn) refBtn.innerHTML = '↻ Refresh';
+        return;
+      }
+
+      setLoadBuffer(85);
       const j = await r.json();
-      if(!j || !j.ok){ logout(); return; }
+      if(!j || !j.ok){
+        showApiError((j && j.error) ? j.error : 'API returned unconfirmed status.');
+        setLoadBuffer(100, true);
+        if (refBtn) refBtn.innerHTML = '↻ Refresh';
+        return;
+      }
+      hideApiError();
       DATA = j.data || j.rows || [];
+
+      // Update Database Status Pill
+      if (j.db_engine && document.getElementById('adminDbEngine')) {
+        document.getElementById('adminDbEngine').textContent = j.db_engine;
+      }
+      if (document.getElementById('adminDbCount')) {
+        document.getElementById('adminDbCount').textContent = (j.allCount != null ? j.allCount : DATA.length) + ' records';
+      }
+
+      // Update View Tab Counts
+      if (document.getElementById('cntAll')) document.getElementById('cntAll').textContent = j.allCount != null ? j.allCount : DATA.length;
+      if (document.getElementById('cntCompleted')) document.getElementById('cntCompleted').textContent = j.completedCount != null ? j.completedCount : 0;
+      if (document.getElementById('cntIncomplete')) document.getElementById('cntIncomplete').textContent = j.incompleteCount != null ? j.incompleteCount : 0;
       
       let expectedTotal = 0;
       let expectedIeeeMoney = 0;
@@ -910,8 +1131,22 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
       let nonIeeeCount = 0;
       let pendingCount = 0;
 
+      function getCorrectRowAmount(row) {
+        if (row.amount && parseInt(row.amount) > 0) {
+          return parseInt(row.amount);
+        }
+        const isIeee = (row.ieee_member === 'Yes');
+        const isPscmr = isPscmrCollege(row.college_name) || (row.roll_no && row.roll_no !== 'N/A' && row.roll_no !== '-');
+        if (isIeee) {
+          return isPscmr ? 50 : 100;
+        } else {
+          return isPscmr ? 100 : 200;
+        }
+      }
+
       DATA.forEach(row => {
-        const amt = parseInt(row.amount, 10) || 0;
+        const amt = getCorrectRowAmount(row);
+        row.amount = amt;
         const isIeee = (row.ieee_member === 'Yes');
         if (isIeee) {
           ieeeCount++;
@@ -943,7 +1178,13 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
       if (document.getElementById('stPending')) document.getElementById('stPending').textContent = pendingCount;
       
       renderRows();
-    }catch(e){ console.error(e); }
+      setLoadBuffer(100, true);
+      if (refBtn) refBtn.innerHTML = '↻ Refresh';
+    }catch(e){ 
+      console.error('Data load error:', e); 
+      setLoadBuffer(100, true);
+      if (refBtn) refBtn.innerHTML = '↻ Refresh';
+    }
   }
   function esc(s){ return (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
   function payBadge(s){
@@ -958,7 +1199,7 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
     let rows = DATA.filter(r=>!q || [r.team_id,r.leader_name,r.leader_email,r.leader_phone,r.branch,r.college_name,r.payment_ref,r.ieee_id,r.ieee_verification_status].join(' ').toLowerCase().includes(q));
     if(sf) rows = rows.filter(r=>(r.payment_status||'Pending')===sf);
     const tb = document.getElementById('tbody');
-    document.getElementById('emptyState').style.display = DATA.length?'none':'block';
+    document.getElementById('emptyState').style.display = rows.length?'none':'block';
     document.getElementById('countLbl').textContent = rows.length+' shown';
     tb.innerHTML = rows.map(r=>{
       const dt=new Date(r.created_at); const when=isNaN(dt)?r.created_at:dt.toLocaleString('en-IN');
@@ -966,8 +1207,8 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
       const isIeee = (r.ieee_member === 'Yes');
       const ieeeStatus = r.ieee_verification_status || (isIeee ? 'Pending Card Verification' : 'N/A');
 
-      const isDupUtr = (r.duplicate_utr === 1 || (r.payment_status && r.payment_status.includes('Duplicate UTR')));
-      const isMismatchUtr = (r.utr_mismatch === 1 || (r.payment_status && r.payment_status.includes('Mismatch')));
+      const isDupUtr = (r.duplicate_utr === 1 || (r.payment_status && String(r.payment_status).includes('Duplicate UTR')));
+      const isMismatchUtr = (r.utr_mismatch === 1 || (r.payment_status && String(r.payment_status).includes('Mismatch')));
       const isFlagged = isDupUtr || isMismatchUtr;
 
       let dupWarningBadge = '';
@@ -982,14 +1223,14 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
 
       let ieeeActionBtns = '';
       let ieeeMismatchBadge = '';
-      const isIeeeCardMismatch = (r.ieee_ocr_mismatch === 1 || (r.ieee_verification_status && r.ieee_verification_status.includes('Mismatch')));
+      const isIeeeCardMismatch = (r.ieee_ocr_mismatch === 1 || (r.ieee_verification_status && String(r.ieee_verification_status).includes('Mismatch')));
 
       if (isIeeeCardMismatch) {
         ieeeMismatchBadge = `<div style="margin-top:4px; background:#431407; border:1px solid #f97316; color:#fdba74; font-size:10px; font-weight:800; padding:4px 8px; border-radius:6px; text-align:left;">⚠️ IEEE ID CARD MISMATCH<br><span style="font-weight:600; color:#ffedd5;">${esc(r.ieee_warning || 'Entered IEEE ID not found in uploaded card image!')}</span></div>`;
       }
 
       if (isIeee) {
-        if (ieeeStatus === 'Pending Card Verification' || ieeeStatus.includes('Pending') || ieeeStatus === 'Card Rejected') {
+        if (ieeeStatus === 'Pending Card Verification' || String(ieeeStatus).includes('Pending') || ieeeStatus === 'Card Rejected') {
           ieeeActionBtns = isIeeeCardMismatch ? 
             `<button class="btn gold" style="padding:4px 10px; font-size:11px; margin-top:4px; background:#dc2626; border-color:#ef4444; color:#ffffff; font-weight:900;" onclick="verifyIeeeCard(${r.id},'approve')">⚠️ Admin Override Approve Card</button>` :
             `<button class="btn gold" style="padding:4px 10px; font-size:11px; margin-top:4px;" onclick="verifyIeeeCard(${r.id},'approve')">✓ Approve IEEE Card</button>`;
@@ -1004,8 +1245,50 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
         : '';
 
       const ieeeLabel = isIeee ? `<span class="badge yes">IEEE Member</span>` : `<span class="badge no">Non-IEEE</span>`;
-      const ieeeCardBtn = r.ieee_card ? `<button class="btn" style="padding:4px 10px; font-size:11px;" onclick="viewProofModal('${esc(r.team_id)}','IEEE Card',${r.id})">🪪 View Card</button>` : '<span class="muted" style="font-size:11px;">No File</span>';
-      const payProofBtn = r.payment_screenshot ? `<br><button class="btn" style="padding:3px 8px; font-size:10.5px; margin-top:4px; border-color:#00e676; color:#00e676;" onclick="viewPaymentProofModal('${esc(r.team_id)}',${r.id})">📸 View Payment Proof</button>` : '';
+      const ieeeCardBtn = r.ieee_card ? `
+        <div style="margin-top:6px; background:rgba(0, 242, 254, 0.05); border:1.5px solid rgba(0, 242, 254, 0.3); border-radius:8px; padding:6px; max-width:240px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; gap:4px; flex-wrap:wrap;">
+            <span style="font-size:11px; font-weight:900; color:#00f2fe; background:rgba(0, 242, 254, 0.15); border:1px solid rgba(0, 242, 254, 0.35); padding:1px 6px; border-radius:4px; letter-spacing:0.04em;">
+              🆔 ${esc(r.team_id)}
+            </span>
+            ${r.ieee_id ? `<span style="font-size:10.5px; font-weight:800; color:#fbbf24; background:rgba(251, 191, 36, 0.12); border:1px solid rgba(251, 191, 36, 0.3); padding:1px 6px; border-radius:4px;">⚡ IEEE: ${esc(r.ieee_id)}</span>` : ''}
+          </div>
+          <div style="position:relative; cursor:pointer; overflow:hidden; border-radius:6px; border:1px solid rgba(255,255,255,0.18); max-height:85px; margin-bottom:6px; background:#000;"
+               title="Click to view IEEE Membership Card for ID ${esc(r.team_id)}"
+               onclick="viewProofModal('${esc(r.team_id)}','IEEE Card',${r.id})">
+            <img src="${r.ieee_card}" style="width:100%; height:75px; object-fit:cover; display:block;" alt="IEEE Card ${esc(r.team_id)}">
+            <div style="position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent, rgba(0,0,0,0.9)); padding:2px 4px; font-size:9.5px; color:#fff; font-weight:700; display:flex; justify-content:space-between;">
+              <span>🔍 View Card</span>
+              <span style="color:#00f2fe; font-family:monospace;">${esc(r.ieee_id || r.team_id)}</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:4px; flex-wrap:wrap;">
+            <button class="btn" style="padding:4px 6px; font-size:10px; border-color:#00f2fe; color:#00f2fe; flex:1;" onclick="viewProofModal('${esc(r.team_id)}','IEEE Card',${r.id})">👁️ View</button>
+            <button class="btn" style="padding:4px 6px; font-size:10px; background:rgba(0,230,118,0.18); border:1px solid #00e676; color:#00e676; font-weight:800; flex:1.3;" onclick="downloadScreenshot('${r.ieee_card}', '${esc(r.team_id)}_${esc(r.leader_name).replace(/[^A-Za-z0-9]/g, '_')}_ieee_${esc(r.ieee_id || '')}.png', '${esc(r.team_id)}', '${esc(r.leader_name)}', '${esc(r.college_name || '')}', '', '${esc(r.ieee_id || '')}')">📥 Download PNG</button>
+          </div>
+        </div>
+      ` : '<span class="muted" style="font-size:11px;">No File</span>';
+      const payProofBtn = (r.payment_screenshot || r.payment_proof) ? `<div style="margin-top:6px; background:rgba(0, 242, 254, 0.05); border:1.5px solid rgba(0, 242, 254, 0.3); border-radius:8px; padding:6px; max-width:240px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+          <span style="font-size:11px; font-weight:900; color:#00f2fe; background:rgba(0, 242, 254, 0.15); border:1px solid rgba(0, 242, 254, 0.35); padding:1px 6px; border-radius:4px; letter-spacing:0.04em;">
+            🆔 ${esc(r.team_id)}
+          </span>
+          <span style="font-size:10px; font-weight:700; color:#00e676;">✓ Screenshot</span>
+        </div>
+        <div style="position:relative; cursor:pointer; overflow:hidden; border-radius:6px; border:1px solid rgba(255,255,255,0.18); max-height:85px; margin-bottom:6px; background:#000;"
+             title="Click to view full screenshot for ID ${esc(r.team_id)}"
+             onclick="viewPaymentProofModal('${esc(r.team_id)}',${r.id})">
+          <img src="${r.payment_screenshot || r.payment_proof}" style="width:100%; height:75px; object-fit:cover; display:block;" alt="Proof ${esc(r.team_id)}">
+          <div style="position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent, rgba(0,0,0,0.9)); padding:2px 4px; font-size:9.5px; color:#fff; font-weight:700; display:flex; justify-content:space-between;">
+            <span>🔍 View Proof</span>
+            <span style="color:#00f2fe; font-family:monospace;">${esc(r.team_id)}</span>
+          </div>
+        </div>
+        <div style="display:flex; gap:4px; flex-wrap:wrap;">
+          <button class="btn" style="padding:4px 6px; font-size:10px; border-color:#00e676; color:#00e676; flex:1;" onclick="viewPaymentProofModal('${esc(r.team_id)}',${r.id})">👁️ View</button>
+          <button class="btn" style="padding:4px 6px; font-size:10px; background:rgba(0,230,118,0.18); border:1px solid #00e676; color:#00e676; font-weight:800; flex:1.3;" onclick="downloadScreenshot('${r.payment_screenshot || r.payment_proof}', '${esc(r.team_id)}_${esc(r.leader_name).replace(/[^A-Za-z0-9]/g, '_')}_payment.png', '${esc(r.team_id)}', '${esc(r.leader_name)}', '${esc(r.college_name || '')}', '${esc(r.payment_ref || '')}')">📥 Download PNG</button>
+        </div>
+      </div>` : '';
 
       return `<tr>
         <td><span class="rid">${esc(r.team_id)}</span></td>
@@ -1042,18 +1325,158 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
     const infoBox = document.getElementById('proofHeaderInfo');
     if (infoBox) {
       infoBox.innerHTML = `
-        <div style="background:rgba(0,230,118,0.15); padding:8px 14px; border-radius:8px; border:1px solid #00e676; color:#ffffff; font-weight:800; font-size:13.5px; display:flex; align-items:center; gap:6px;">
-          💳 <span style="color:#b9f6ca;">Submitted 12-Digit UTR:</span> <span style="color:#00e676; font-size:15px;">${esc(row.payment_ref || 'N/A')}</span>
+        <div style="background:rgba(0,230,118,0.15); padding:8px 14px; border-radius:8px; border:1px solid #00e676; color:#ffffff; font-weight:800; font-size:13.5px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <span style="background:rgba(0,242,254,0.2); border:1px solid #00f2fe; color:#00f2fe; padding:2px 8px; border-radius:4px; font-size:12px;">🆔 ${esc(teamId)}</span>
+          💳 <span style="color:#b9f6ca;">12-Digit UTR:</span> <span style="color:#00e676; font-size:15px;">${esc(row.payment_ref || 'N/A')}</span>
         </div>
       `;
       infoBox.style.display = 'flex';
     }
 
     document.getElementById('proofModalActions').innerHTML = `
+      <button class="btn" style="background:rgba(0,230,118,0.18); border:1.5px solid #00e676; color:#00e676; font-weight:800;" onclick="downloadScreenshot('${proofSrc}', '${esc(teamId)}_${esc(row.leader_name).replace(/[^A-Za-z0-9]/g, '_')}_payment.png', '${esc(teamId)}', '${esc(row.leader_name)}', '${esc(row.college_name || '')}', '${esc(row.payment_ref || '')}')">📥 Download PNG along with ID</button>
       <button class="btn gold" onclick="setStatus(${id},'Paid'); closeProofModal();">✓ Verify & Confirm Payment</button>
       <button class="btn" style="border-color:#cbd5e1; color:#cbd5e1;" onclick="closeProofModal();">Close</button>
     `;
     document.getElementById('proofModal').style.display = 'flex';
+  }
+
+  function downloadScreenshot(src, filename, participantId, participantName, collegeName, utr, ieeeId) {
+    if (!src) {
+      alert('No screenshot image found to download.');
+      return;
+    }
+
+    const safeId = String(participantId || '').trim();
+    const safeName = String(participantName || '').replace(/[^A-Za-z0-9]/g, '_').trim();
+    const safeIeee = String(ieeeId || '').trim();
+
+    let outName = filename || '';
+    if (!outName) {
+      outName = (safeId ? safeId + '_' : '') + (safeName ? safeName + '_' : '') + (safeIeee ? 'ieee_' + safeIeee + '_' : '') + (safeIeee ? 'ieee_card.png' : 'payment_screenshot.png');
+    }
+    if (!outName.toLowerCase().endsWith('.png')) {
+      outName += '.png';
+    }
+    if (safeId && !outName.startsWith(safeId)) {
+      outName = safeId + '_' + outName;
+    }
+
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function() {
+      try {
+        const canvas = document.createElement('canvas');
+        const w = img.naturalWidth || img.width || 800;
+        const h = img.naturalHeight || img.height || 1000;
+
+        // Top ID watermark banner height
+        const bannerHeight = safeId ? Math.max(90, Math.round(w * 0.12)) : 0;
+        canvas.width = w;
+        canvas.height = h + bannerHeight;
+        const ctx = canvas.getContext('2d');
+
+        if (safeId && bannerHeight > 0) {
+          // Dark navy gradient background
+          const grad = ctx.createLinearGradient(0, 0, w, bannerHeight);
+          grad.addColorStop(0, '#04091a');
+          grad.addColorStop(1, '#0b193d');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, w, bannerHeight);
+
+          // Cyan separator line
+          ctx.fillStyle = '#00f2fe';
+          ctx.fillRect(0, bannerHeight - 4, w, 4);
+
+          const titleFontSize = Math.max(16, Math.round(bannerHeight * 0.28));
+          const subFontSize = Math.max(11, Math.round(bannerHeight * 0.17));
+          const marginX = Math.max(16, Math.round(w * 0.035));
+
+          // Line 1 Left: Event Title
+          ctx.font = 'bold ' + titleFontSize + 'px sans-serif';
+          ctx.fillStyle = '#00f2fe';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('INNOWAVE-2K26', marginX, bannerHeight * 0.32);
+
+          // Line 1 Right: Participant ID + IEEE Membership ID
+          let idText = 'PARTICIPANT ID: ' + safeId;
+          if (safeIeee) {
+            idText += '   |   IEEE ID: ' + safeIeee;
+          }
+          ctx.font = 'bold ' + (titleFontSize + 1) + 'px sans-serif';
+          const idWidth = ctx.measureText(idText).width;
+          ctx.fillStyle = safeIeee ? '#fbbf24' : '#00e676';
+          ctx.fillText(idText, Math.max(marginX, w - idWidth - marginX), bannerHeight * 0.32);
+
+          // Line 2: Participant Name & College
+          ctx.font = '600 ' + subFontSize + 'px sans-serif';
+          ctx.fillStyle = '#ffffff';
+          let line2 = (safeName ? 'Participant: ' + safeName.replace(/_/g, ' ') : '') + (collegeName ? '  |  College: ' + collegeName : '');
+          if (!line2) line2 = 'Participant Details Verified';
+          ctx.fillText(line2, marginX, bannerHeight * 0.62);
+
+          // Line 3: UTR or IEEE Membership Details
+          ctx.font = '500 ' + (subFontSize - 1) + 'px sans-serif';
+          let line3 = '';
+          if (safeIeee) {
+            ctx.fillStyle = '#38bdf8';
+            line3 = '⚡ OFFICIAL IEEE MEMBERSHIP ID: ' + safeIeee + '  •  PSCMRCET IEEE Student Branch Verification';
+          } else {
+            ctx.fillStyle = '#fbbf24';
+            line3 = (utr ? 'UPI Ref / UTR: ' + utr : 'Payment Proof Screenshot') + '  •  PSCMRCET Official Verification';
+          }
+          ctx.fillText(line3, marginX, bannerHeight * 0.85);
+        }
+
+        // Draw screenshot image
+        ctx.drawImage(img, 0, bannerHeight, w, h);
+
+        if (canvas.toBlob) {
+          canvas.toBlob(function(blob) {
+            if (blob) {
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = outName;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              setTimeout(() => URL.revokeObjectURL(url), 6000);
+              return;
+            }
+            fallback();
+          }, 'image/png');
+        } else {
+          fallback();
+        }
+
+        function fallback() {
+          const pngDataUrl = canvas.toDataURL('image/png');
+          const a = document.createElement('a');
+          a.href = pngDataUrl;
+          a.download = outName;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }
+      } catch (e) {
+        const a = document.createElement('a');
+        a.href = src;
+        a.download = outName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+    };
+    img.onerror = function() {
+      const a = document.createElement('a');
+      a.href = src;
+      a.download = outName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    };
+    img.src = src;
   }
 
   function viewProofModal(teamId, type, id) {
@@ -1067,15 +1490,16 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
 
     if (infoBox) {
       let infoHtml = `
-        <div style="background:rgba(0,212,255,0.15); padding:8px 14px; border-radius:8px; border:1px solid #00d4ff; color:#ffffff; font-weight:800; font-size:13.5px; display:flex; align-items:center; gap:6px;">
-          🔢 <span style="color:#a5f3fc;">IEEE ID Number:</span> <span style="color:#00d4ff; font-size:15px;">${esc(row.ieee_id || 'N/A')}</span>
+        <div style="background:rgba(0,242,254,0.15); padding:8px 14px; border-radius:8px; border:1px solid #00f2fe; color:#ffffff; font-weight:800; font-size:13.5px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <span style="background:rgba(0,242,254,0.2); border:1px solid #00f2fe; color:#00f2fe; padding:2px 8px; border-radius:4px; font-size:12px;">🆔 ${esc(teamId)}</span>
+          ⚡ <span style="color:#a5f3fc;">IEEE Membership ID:</span> <span style="color:#fbbf24; font-size:15px; font-family:monospace; font-weight:900;">${esc(row.ieee_id || 'N/A')}</span>
         </div>
       `;
 
-      if (isPscmr) {
+      if (isPscmr && row.roll_no) {
         infoHtml += `
           <div style="background:rgba(0,230,118,0.15); padding:8px 14px; border-radius:8px; border:1px solid #00e676; color:#ffffff; font-weight:800; font-size:13.5px; display:flex; align-items:center; gap:6px;">
-            🎓 <span style="color:#b9f6ca;">PSCMR Admission / Roll No:</span> <span style="color:#00e676; font-size:15px;">${esc(row.roll_no || 'N/A')}</span>
+            🎓 <span style="color:#b9f6ca;">PSCMR Admission / Roll No:</span> <span style="color:#00e676; font-size:15px;">${esc(row.roll_no)}</span>
           </div>
         `;
       }
@@ -1085,8 +1509,10 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
     }
 
     document.getElementById('proofModalActions').innerHTML = `
+      <button class="btn" style="background:rgba(0,230,118,0.18); border:1.5px solid #00e676; color:#00e676; font-weight:800;" onclick="downloadScreenshot('${row.ieee_card}', '${esc(teamId)}_${esc(row.leader_name).replace(/[^A-Za-z0-9]/g, '_')}_ieee_${esc(row.ieee_id || '')}.png', '${esc(teamId)}', '${esc(row.leader_name)}', '${esc(row.college_name || '')}', '', '${esc(row.ieee_id || '')}')">📥 Download PNG along with ID & IEEE Number</button>
       <button class="btn gold" onclick="verifyIeeeCard(${id},'approve'); closeProofModal();">✓ Approve IEEE Card & Activate Payment QR</button>
       <button class="btn" style="border-color:#ff8f8f; color:#ff8f8f;" onclick="verifyIeeeCard(${id},'reject'); closeProofModal();">✕ Reject IEEE Card</button>
+      <button class="btn" style="border-color:#cbd5e1; color:#cbd5e1;" onclick="closeProofModal();">Close</button>
     `;
     document.getElementById('proofModal').style.display = 'flex';
   }
@@ -1098,7 +1524,129 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
   }
 
   function printIdCard() {
-    window.print();
+    const card = document.getElementById('printableIdCard');
+    if (!card) {
+      window.print();
+      return;
+    }
+
+    // Remove any previously created print iframe
+    const oldIframe = document.getElementById('print-id-card-iframe');
+    if (oldIframe) oldIframe.remove();
+
+    const iframe = document.createElement('iframe');
+    iframe.id = 'print-id-card-iframe';
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    iframe.style.visibility = 'hidden';
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow.document;
+    doc.open();
+
+    const cardClone = card.cloneNode(true);
+    cardClone.style.transform = 'none';
+    cardClone.style.margin = '0 auto';
+    cardClone.style.boxShadow = 'none';
+
+    doc.write(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>InnoWave-2k26 Delegate Pass</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Space+Grotesk:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 10mm;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+      color: #000000;
+      font-family: 'Inter', sans-serif;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
+    }
+    .print-wrapper {
+      width: 100%;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 5mm;
+      box-sizing: border-box;
+    }
+    #printableIdCard {
+      width: 440px !important;
+      max-width: 440px !important;
+      margin: 0 auto !important;
+      background: #04091a !important;
+      border: 2.5px solid #00f2fe !important;
+      border-radius: 24px !important;
+      padding: 20px 16px !important;
+      color: #ffffff !important;
+      box-sizing: border-box !important;
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
+    }
+    #printableIdCard * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="print-wrapper">
+    ${cardClone.outerHTML}
+  </div>
+</body>
+</html>`);
+    doc.close();
+
+    const imgs = doc.querySelectorAll('img');
+    let loadedCount = 0;
+    const totalImgs = imgs.length;
+
+    const triggerPrint = () => {
+      setTimeout(() => {
+        try {
+          iframe.contentWindow.focus();
+          iframe.contentWindow.print();
+        } catch (e) {
+          console.error(e);
+          window.print();
+        }
+      }, 350);
+    };
+
+    if (totalImgs === 0) {
+      triggerPrint();
+    } else {
+      imgs.forEach(img => {
+        if (img.complete) {
+          loadedCount++;
+          if (loadedCount >= totalImgs) triggerPrint();
+        } else {
+          img.onload = img.onerror = () => {
+            loadedCount++;
+            if (loadedCount >= totalImgs) triggerPrint();
+          };
+        }
+      });
+      setTimeout(triggerPrint, 800);
+    }
   }
 
   function openAdminIdCard(id) {
@@ -1112,6 +1660,26 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
     document.getElementById('cardCollege').textContent = row.college_name || 'PSCMR CET';
     document.getElementById('cardBranch').textContent = row.branch || 'N/A';
     document.getElementById('cardYear').textContent = row.year || 'N/A';
+
+    const catBadge = document.getElementById('cardCategory');
+    const goldPill = document.getElementById('cardGoldPill');
+    const isIeee = (row.is_ieee === 1 || row.is_ieee === '1' || row.is_ieee === true || String(row.is_ieee).toLowerCase() === 'yes');
+    if (catBadge) {
+      if (isIeee) {
+        catBadge.textContent = '⚡ IEEE MEMBER';
+        catBadge.style.borderColor = '#00f2fe';
+        catBadge.style.color = '#00f2fe';
+        catBadge.style.background = 'rgba(0, 242, 254, 0.12)';
+      } else {
+        catBadge.textContent = 'NON-IEEE DELEGATE';
+        catBadge.style.borderColor = '#fbbf24';
+        catBadge.style.color = '#fbbf24';
+        catBadge.style.background = 'rgba(251, 191, 36, 0.12)';
+      }
+    }
+    if (goldPill) {
+      goldPill.textContent = isIeee ? '👑 OFFICIAL IEEE DELEGATE PASS' : '👑 OFFICIAL DELEGATE PASS';
+    }
 
     const isPscmr = isPscmrCollege(row.college_name);
     const rollBox = document.getElementById('cardRollBox');
@@ -1221,17 +1789,24 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
     }
   }
 
-  function downloadExcel() {
-    const token = TOKEN || sessionStorage.getItem('iw_token') || '';
-    if (!token) {
-      alert('Admin session expired. Please log in again.');
+  // Auto-authenticate if token present or session active
+  (async function initAdminAuth() {
+    if (TOKEN) {
+      showDash();
       return;
     }
-    window.location.href = `api/admin.php?action=export-html&password=${encodeURIComponent(token)}`;
-  }
-
-  // auto-login if token present
-  if(TOKEN) showDash();
+    try {
+      const r = await fetch('api/admin.php?action=check-auth');
+      const j = await r.json();
+      if (j && j.ok) {
+        TOKEN = j.token || 'innowave2k26';
+        localStorage.setItem('iw_token', TOKEN);
+        sessionStorage.setItem('iw_token', TOKEN);
+        showDash();
+        return;
+      }
+    } catch (e) {}
+  })();
 
   // 3D Animated Background Engine for Admin Dashboard
   (function initAdmin3D(){

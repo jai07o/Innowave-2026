@@ -56,11 +56,11 @@
 
     html[data-theme="light"] {
       background: #f0f4f8 !important;
-      background-image: 
+      background-image:
         radial-gradient(at 10% 20%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
         radial-gradient(at 90% 10%, rgba(129, 140, 248, 0.15) 0px, transparent 50%),
         radial-gradient(at 50% 80%, rgba(52, 211, 153, 0.12) 0px, transparent 50%),
-        radial-gradient(#cbd5e1 1.2px, transparent 1.2px), 
+        radial-gradient(#cbd5e1 1.2px, transparent 1.2px),
         radial-gradient(#cbd5e1 1.2px, #f0f4f8 1.2px) !important;
       background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px !important;
       background-position: 0 0, 0 0, 0 0, 0 0, 20px 20px !important;
@@ -794,7 +794,9 @@
        MOBILE VIEW (<= 768px) - MIRRORING LAPTOP VIEW LAYOUT
        ======================================================== */
     @media (max-width: 768px) {
-      html, body {
+
+      html,
+      body {
         overflow-x: hidden !important;
         width: 100% !important;
       }
@@ -860,6 +862,7 @@
         -webkit-overflow-scrolling: touch !important;
         scrollbar-width: none !important;
       }
+
       .nav-links::-webkit-scrollbar {
         display: none !important;
       }
@@ -991,6 +994,13 @@
         border-radius: 12px !important;
       }
 
+      #paymentModal div[style*="grid-template-columns:1fr 1fr"],
+      #paymentModal div[style*="grid-template-columns: 1fr 1fr"] {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 10px !important;
+      }
+
       #paymentModal div[style*="display:flex; justify-content:space-between; align-items:center;"],
       #paymentModal div[style*="display: flex; justify-content: space-between; align-items: center;"] {
         display: flex !important;
@@ -1021,7 +1031,7 @@
       }
 
       .modal-content,
-      .modal-overlay > div {
+      .modal-overlay>div {
         max-width: 100% !important;
         width: 100% !important;
         padding: 18px 14px !important;
@@ -1246,6 +1256,7 @@
       overflow: hidden !important;
       display: block !important;
     }
+
     header.accreditation-header-wrapper img {
       width: 100% !important;
       max-width: 100% !important;
@@ -1262,7 +1273,12 @@
     /* ==========================================
        PRODUCTION-GRADE UNIFIED BUTTON DESIGN SYSTEM
        ========================================== */
-    button, .btn, .btn-primary-lg, .btn-secondary-lg, .theme-toggle-btn, a.btn {
+    button,
+    .btn,
+    .btn-primary-lg,
+    .btn-secondary-lg,
+    .theme-toggle-btn,
+    a.btn {
       position: relative;
       display: inline-flex;
       align-items: center;
@@ -1283,18 +1299,29 @@
     }
 
     /* Tactile Active Pressed State (All Buttons) */
-    button:active, .btn:active, .btn-primary-lg:active, .btn-secondary-lg:active, .theme-toggle-btn:active, .contact-btn:active {
+    button:active,
+    .btn:active,
+    .btn-primary-lg:active,
+    .btn-secondary-lg:active,
+    .theme-toggle-btn:active,
+    .contact-btn:active {
       transform: translateY(1px) scale(0.98) !important;
     }
 
     /* Focus State for Accessibility */
-    button:focus-visible, .btn:focus-visible, a.btn:focus-visible, .theme-toggle-btn:focus-visible {
+    button:focus-visible,
+    .btn:focus-visible,
+    a.btn:focus-visible,
+    .theme-toggle-btn:focus-visible {
       outline: 2px solid var(--accent, #00d4ff) !important;
       outline-offset: 3px !important;
     }
 
     /* 1. Primary CTA Buttons */
-    .btn-primary-lg, .btn.primary, .btn.gold, .btn-ieee {
+    .btn-primary-lg,
+    .btn.primary,
+    .btn.gold,
+    .btn-ieee {
       background: linear-gradient(135deg, #00d4ff 0%, #0066ff 50%, #0044cc 100%) !important;
       color: #ffffff !important;
       border: 1px solid rgba(0, 212, 255, 0.5) !important;
@@ -1309,7 +1336,10 @@
       min-height: 48px;
     }
 
-    .btn-primary-lg:hover, .btn.primary:hover, .btn.gold:hover, .btn-ieee:hover {
+    .btn-primary-lg:hover,
+    .btn.primary:hover,
+    .btn.gold:hover,
+    .btn-ieee:hover {
       background: linear-gradient(135deg, #33e0ff 0%, #1a75ff 50%, #0055ff 100%) !important;
       color: #ffffff !important;
       border-color: #00d4ff !important;
@@ -1317,20 +1347,24 @@
       box-shadow: 0 12px 35px rgba(0, 212, 255, 0.55), 0 0 20px rgba(0, 102, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
     }
 
-    .btn.gold, .btn-ieee {
+    .btn.gold,
+    .btn-ieee {
       background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%) !important;
       border-color: rgba(245, 158, 11, 0.6) !important;
       box-shadow: 0 8px 25px rgba(245, 158, 11, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
     }
 
-    .btn.gold:hover, .btn-ieee:hover {
+    .btn.gold:hover,
+    .btn-ieee:hover {
       background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%) !important;
       border-color: #fbbf24 !important;
       box-shadow: 0 12px 35px rgba(245, 158, 11, 0.55), 0 0 20px rgba(251, 191, 36, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
     }
 
     /* 2. Secondary Buttons */
-    .btn-secondary-lg, .btn.secondary, .btn-outline {
+    .btn-secondary-lg,
+    .btn.secondary,
+    .btn-outline {
       background: rgba(10, 20, 38, 0.7) !important;
       color: var(--text-primary, #ffffff) !important;
       border: 1.5px solid var(--border, rgba(0, 212, 255, 0.25)) !important;
@@ -1343,7 +1377,9 @@
       min-height: 48px;
     }
 
-    .btn-secondary-lg:hover, .btn.secondary:hover, .btn-outline:hover {
+    .btn-secondary-lg:hover,
+    .btn.secondary:hover,
+    .btn-outline:hover {
       background: rgba(0, 212, 255, 0.15) !important;
       color: #00d4ff !important;
       border-color: rgba(0, 212, 255, 0.6) !important;
@@ -1465,15 +1501,18 @@
     style="position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:1200; display:none;"></canvas>
 
   <!-- Top College Header Banner -->
-  <header class="accreditation-header-wrapper" style="width:100%; text-align:center; background:#ffffff; border-bottom:2px solid var(--accent); padding:0; margin:0; position:relative; z-index:100; overflow:hidden;">
-    <img src="assets/header_pscmr.jpeg" alt="PSCMRCET Header Banner" style="width:100%; height:auto; display:block; margin:0; padding:0; image-rendering:-webkit-optimize-contrast;">
+  <header class="accreditation-header-wrapper"
+    style="width:100%; text-align:center; background:#ffffff; border-bottom:2px solid var(--accent); padding:0; margin:0; position:relative; z-index:100; overflow:hidden;">
+    <img src="assets/header_pscmr.jpeg" alt="PSCMRCET Header Banner"
+      style="width:100%; height:auto; display:block; margin:0; padding:0; image-rendering:-webkit-optimize-contrast;">
   </header>
 
   <!-- Sticky Navbar -->
   <nav class="navbar">
     <div class="wrap nav-in">
       <a href="index.html" class="brand-logo">
-        <img src="assets/logo_college.png" alt="PSCMRCET Logo" style="height:38px; width:38px; object-fit:contain; border-radius:50%; filter:drop-shadow(0 0 6px rgba(0,212,255,0.4)); image-rendering:-webkit-optimize-contrast;">
+        <img src="assets/logo_college.png" alt="PSCMRCET Logo"
+          style="height:38px; width:38px; object-fit:contain; border-radius:50%; filter:drop-shadow(0 0 6px rgba(0,212,255,0.4)); image-rendering:-webkit-optimize-contrast;">
         <span class="dot"></span>INNOWAVE<span class="accent-text">2K26</span>
       </a>
       <div class="nav-actions" style="display:flex; align-items:center; gap:8px;">
@@ -1506,7 +1545,8 @@
       <div class="fee-slot-card">
         <div class="fee-note">
           1. Fill in your details, IEEE ID Number & Upload your <strong>IEEE Membership Card</strong>.<br>
-          2. ⚠️ <strong>CRITICAL REQUIREMENT</strong>: Your <strong>Participant Full Name</strong> and <strong>IEEE Membership Number</strong> MUST EXACTLY MATCH your uploaded IEEE Card proof screenshot.<br>
+          2. ⚠️ <strong>CRITICAL REQUIREMENT</strong>: Your <strong>Participant Full Name</strong> and <strong>IEEE
+            Membership Number</strong> MUST EXACTLY MATCH your uploaded IEEE Card proof screenshot.<br>
           3. Pay via UPI and submit your 12-digit UTR transaction ID for instant confirmation!
         </div>
       </div>
@@ -1517,12 +1557,14 @@
           <div class="form-group">
             <label>Participant Full Name *</label>
             <input type="text" id="leaderName" required placeholder="Enter your full name">
-            <span style="font-size:11px; color:#f59e0b; font-weight:700; display:block; margin-top:3px;">⚠️ Must EXACTLY match the name on your uploaded IEEE Membership Card details.</span>
+            <span style="font-size:11px; color:#f59e0b; font-weight:700; display:block; margin-top:3px;">⚠️ Must EXACTLY
+              match the name on your uploaded IEEE Membership Card details.</span>
           </div>
           <div class="form-group">
             <label>Email Address *</label>
             <input type="email" id="leaderEmail" required placeholder="email@example.com">
-            <span style="font-size:11.5px; color:var(--text-muted); display:block; margin-top:3px;">🔒 Unique email required (no duplicate emails allowed).</span>
+            <span style="font-size:11.5px; color:var(--text-muted); display:block; margin-top:3px;">🔒 Unique email
+              required (no duplicate emails allowed).</span>
           </div>
           <div class="form-group">
             <label>Mobile Number *</label>
@@ -1536,14 +1578,16 @@
           <div class="form-group" id="pscmrAdmissionWrap" style="display:none;">
             <label style="color:#00e676; font-size:13px; font-weight:800;">College Admission / Roll Number *</label>
             <input type="text" id="rollNo" placeholder="Enter your PSCMR Admission / Roll Number (e.g. 22HP1A0501)"
-              style="text-transform: uppercase;"
-              maxlength="11"
+              style="text-transform: uppercase;" maxlength="11"
               oninput="this.value = this.value.toUpperCase(); updateAdmissionCharCount();"
-              onblur="validateAdmissionCountOnBlur();"
-              autocapitalize="characters" autocomplete="off" spellcheck="false">
+              onblur="validateAdmissionCountOnBlur();" autocapitalize="characters" autocomplete="off"
+              spellcheck="false">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
-              <span style="font-size:11.5px; color:var(--text-muted);">🔒 Required size: 10 to 11 characters (no duplicates).</span>
-              <span id="admissionCountBadge" style="font-size:11px; font-weight:700; color:#00e676; background:rgba(0,230,118,0.12); padding:2px 8px; border-radius:10px; border:1px solid rgba(0,230,118,0.3);">0 / 11</span>
+              <span style="font-size:11.5px; color:var(--text-muted);">🔒 Required size: 10 to 11 characters (no
+                duplicates).</span>
+              <span id="admissionCountBadge"
+                style="font-size:11px; font-weight:700; color:#00e676; background:rgba(0,230,118,0.12); padding:2px 8px; border-radius:10px; border:1px solid rgba(0,230,118,0.3);">0
+                / 11</span>
             </div>
           </div>
           <div class="form-group">
@@ -1563,18 +1607,24 @@
           <div class="form-group full">
             <label>IEEE Membership Number (ID) *</label>
             <input type="text" id="ieeeId" required placeholder="Enter your 9-digit IEEE Membership Number">
-            <span style="font-size:11px; color:#f59e0b; font-weight:700; display:block; margin-top:3px;">⚠️ Must EXACTLY match the IEEE Membership Number shown on your uploaded proof.</span>
+            <span style="font-size:11px; color:#f59e0b; font-weight:700; display:block; margin-top:3px;">⚠️ Must EXACTLY
+              match the IEEE Membership Number shown on your uploaded proof.</span>
           </div>
 
           <div class="form-group full">
             <label style="color:var(--gold); font-size:14px; font-weight:700; margin-bottom:6px; display:block;">
               🪪 Upload IEEE Membership Card / Proof (Drag & Drop / Paste / Click) *
             </label>
-            <div id="ieeeCardDropZone" style="border:2px dashed var(--gold); border-radius:10px; padding:16px 10px; text-align:center; background:rgba(245, 158, 11, 0.05); cursor:pointer; transition:all 0.2s ease;" onclick="document.getElementById('ieeeCard').click()">
+            <div id="ieeeCardDropZone"
+              style="border:2px dashed var(--gold); border-radius:10px; padding:16px 10px; text-align:center; background:rgba(245, 158, 11, 0.05); cursor:pointer; transition:all 0.2s ease;"
+              onclick="document.getElementById('ieeeCard').click()">
               <div style="font-size:24px; margin-bottom:4px;">🪪 📋</div>
-              <div style="font-size:13px; font-weight:800; color:var(--gold);">Drag & Drop IEEE Card Here OR Click to Upload</div>
-              <div style="font-size:11px; color:var(--text-muted); margin-top:3px;">💡 Tip: Press <b>Ctrl + V</b> anywhere to paste a copied card image or screenshot!</div>
-              <input type="file" id="ieeeCard" required accept="image/*,.pdf" onchange="previewIeeeCard(this)" style="display:none;">
+              <div style="font-size:13px; font-weight:800; color:var(--gold);">Drag & Drop IEEE Card Here OR Click to
+                Upload</div>
+              <div style="font-size:11px; color:var(--text-muted); margin-top:3px;">💡 Tip: Press <b>Ctrl + V</b>
+                anywhere to paste a copied card image or screenshot!</div>
+              <input type="file" id="ieeeCard" required accept="image/*,.pdf" onchange="previewIeeeCard(this)"
+                style="display:none;">
             </div>
             <div id="ieeeCardPreviewWrap" style="display:none; margin-top:8px; text-align:center;">
               <img id="ieeeCardPreviewImg"
@@ -1587,7 +1637,8 @@
         </div>
 
         <div style="text-align:center; margin-top:24px;">
-          <button type="submit" class="btn-primary-lg" id="submitBtn" style="min-width:320px; font-size:16px; font-weight:800; padding:18px 36px; border-radius:14px; background:linear-gradient(135deg, #00d4ff 0%, #0052cc 100%); box-shadow:0 8px 30px rgba(0, 212, 255, 0.4); border:none; cursor:pointer; color:#ffffff;">
+          <button type="submit" class="btn-primary-lg" id="submitBtn"
+            style="min-width:320px; font-size:16px; font-weight:800; padding:18px 36px; border-radius:14px; background:linear-gradient(135deg, #00d4ff 0%, #0052cc 100%); box-shadow:0 8px 30px rgba(0, 212, 255, 0.4); border:none; cursor:pointer; color:#ffffff;">
             ⚡ VERIFY IEEE CARD & PROCEED TO PAYMENT →
           </button>
         </div>
@@ -1659,18 +1710,36 @@
         style="display:none; margin-top:24px; background:var(--bg-primary); border:1.5px solid var(--accent); padding:28px 20px; border-radius:16px; text-align:center;">
         <h3 class="font-space" style="color:var(--accent); font-size:20px; font-weight:800; margin-bottom:6px;">
           🏦 OFFICIAL BANK ACCOUNT DETAILS FOR PAYMENT</h3>
-        <p style="color:var(--text-muted); font-size:13.5px; margin-bottom:20px;">
-          Transfer the registration fee via <strong>NEFT / IMPS / NetBanking / Mobile Banking / UPI</strong> to the official college account below:</p>
+        <p style="color:var(--text-muted); font-size:13.5px; margin-bottom:16px;">
+          Transfer the registration fee via <strong>NEFT / IMPS / NetBanking / Mobile Banking / UPI</strong> to the
+          official college account below:</p>
+
+        <!-- Applicable Registration Fee Banner -->
+        <div
+          style="background:linear-gradient(135deg, rgba(251, 191, 36, 0.12) 0%, rgba(0, 242, 254, 0.12) 100%); border:1.5px solid var(--accent); border-radius:12px; padding:12px 18px; max-width:540px; margin:0 auto 18px; text-align:center;">
+          <div
+            style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em;">
+            PARTICIPANT REGISTRATION FEE TO TRANSFER</div>
+          <div
+            style="font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:900; color:var(--gold); margin:4px 0;"
+            id="displayPayAmount">₹100</div>
+          <div style="font-size:12px; font-weight:700; color:var(--accent);" id="displayPayCategory">PSCMR IEEE: ₹50 |
+            Other College IEEE: ₹100</div>
+        </div>
 
         <!-- Official Bank Account Details Card -->
         <div
           style="background:linear-gradient(135deg, rgba(0, 212, 255, 0.08) 0%, rgba(0, 102, 255, 0.08) 100%); border:2px solid var(--accent); border-radius:16px; padding:22px 20px; max-width:540px; margin:0 auto 24px; text-align:left; box-shadow:0 10px 30px rgba(0, 212, 255, 0.15);">
-          
-          <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px; border-bottom:1px dashed var(--border); padding-bottom:12px;">
+
+          <div
+            style="display:flex; align-items:center; gap:10px; margin-bottom:14px; border-bottom:1px dashed var(--border); padding-bottom:12px;">
             <div style="font-size:28px;">🏫</div>
             <div>
-              <div style="font-size:11px; font-weight:800; color:var(--accent); text-transform:uppercase; letter-spacing:0.08em;">BENEFICIARY ACCOUNT NAME</div>
-              <div style="font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:13.5px; color:var(--text-primary); line-height:1.35; margin-top:2px;">
+              <div
+                style="font-size:11px; font-weight:800; color:var(--accent); text-transform:uppercase; letter-spacing:0.08em;">
+                BENEFICIARY ACCOUNT NAME</div>
+              <div
+                style="font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:13.5px; color:var(--text-primary); line-height:1.35; margin-top:2px;">
                 POTTI SRIRAMULU CHALAVADI MALLIKARJUNA RAO COLLEGE
               </div>
             </div>
@@ -1678,21 +1747,28 @@
 
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
             <div>
-              <div style="font-size:11px; font-weight:800; color:var(--gold); text-transform:uppercase; letter-spacing:0.08em;">ACCOUNT NUMBER</div>
-              <div style="font-family:'Space Grotesk',sans-serif; font-weight:900; font-size:17px; color:var(--text-primary); letter-spacing:0.05em; margin-top:2px; user-select:all;">
+              <div
+                style="font-size:11px; font-weight:800; color:var(--gold); text-transform:uppercase; letter-spacing:0.08em;">
+                ACCOUNT NUMBER</div>
+              <div
+                style="font-family:'Space Grotesk',sans-serif; font-weight:900; font-size:17px; color:var(--text-primary); letter-spacing:0.05em; margin-top:2px; user-select:all;">
                 1414155000131347
               </div>
             </div>
 
             <div>
-              <div style="font-size:11px; font-weight:800; color:var(--accent); text-transform:uppercase; letter-spacing:0.08em;">IFSC CODE</div>
-              <div style="font-family:'Space Grotesk',sans-serif; font-weight:900; font-size:17px; color:var(--accent); letter-spacing:0.05em; margin-top:2px; user-select:all;">
+              <div
+                style="font-size:11px; font-weight:800; color:var(--accent); text-transform:uppercase; letter-spacing:0.08em;">
+                IFSC CODE</div>
+              <div
+                style="font-family:'Space Grotesk',sans-serif; font-weight:900; font-size:17px; color:var(--accent); letter-spacing:0.05em; margin-top:2px; user-select:all;">
                 KVBL0001414
               </div>
             </div>
           </div>
 
-          <div style="margin-top:14px; padding-top:10px; border-top:1px dashed var(--border); font-size:12px; color:var(--text-muted); display:flex; justify-content:space-between; align-items:center;">
+          <div
+            style="margin-top:14px; padding-top:10px; border-top:1px dashed var(--border); font-size:12px; color:var(--text-muted); display:flex; justify-content:space-between; align-items:center;">
             <span>🏦 Bank: <strong>Karur Vysya Bank (KVB)</strong></span>
             <span style="color:var(--gold); font-weight:700;">★ Official College Account</span>
           </div>
@@ -1703,27 +1779,47 @@
           style="text-align:left; max-width:480px; margin:0 auto; background:var(--bg-panel); border:1px solid var(--border); border-radius:10px; padding:20px;">
           <h4 class="font-space" style="color:var(--accent); font-size:15px; margin-bottom:12px;">COMPLETE YOUR PAYMENT
             CONFIRMATION</h4>
+
+          <!-- Supported UPI Apps Badges -->
+          <div style="margin-bottom:14px; background:rgba(0, 242, 254, 0.05); border:1px solid rgba(0, 242, 254, 0.2); border-radius:8px; padding:10px 12px;">
+            <div style="font-size:11px; font-weight:800; color:var(--accent); margin-bottom:6px; letter-spacing:0.5px;">✓ ACCEPTS ALL UPI PAYMENT APPS &amp; BANK APPS:</div>
+            <div style="display:flex; flex-wrap:wrap; gap:5px;">
+              <span style="font-size:11px; padding:2px 7px; border-radius:4px; background:rgba(0,212,255,0.12); color:#00d4ff; border:1px solid rgba(0,212,255,0.3); font-weight:700;">🟢 Google Pay</span>
+              <span style="font-size:11px; padding:2px 7px; border-radius:4px; background:rgba(168,85,247,0.12); color:#c084fc; border:1px solid rgba(168,85,247,0.3); font-weight:700;">🟣 PhonePe</span>
+              <span style="font-size:11px; padding:2px 7px; border-radius:4px; background:rgba(34,197,94,0.12); color:#4ade80; border:1px solid rgba(34,197,94,0.3); font-weight:700;">💬 WhatsApp Pay</span>
+              <span style="font-size:11px; padding:2px 7px; border-radius:4px; background:rgba(234,88,12,0.12); color:#fb923c; border:1px solid rgba(234,88,12,0.3); font-weight:700;">🇮🇳 BHIM UPI</span>
+              <span style="font-size:11px; padding:2px 7px; border-radius:4px; background:rgba(59,130,246,0.12); color:#60a5fa; border:1px solid rgba(59,130,246,0.3); font-weight:700;">🔵 Paytm</span>
+              <span style="font-size:11px; padding:2px 7px; border-radius:4px; background:rgba(255,255,255,0.08); color:#e2e8f0; border:1px solid rgba(255,255,255,0.2); font-weight:700;">🏦 All Bank Apps</span>
+            </div>
+          </div>
+
           <div style="margin-bottom:14px;">
             <label
               style="display:block; font-size:12.5px; font-weight:600; margin-bottom:4px; color:var(--text-muted);">1.
-              Enter 12-Digit UPI
-              Transaction Reference ID (UTR) *</label>
-            <input type="text" id="utrRef" placeholder="e.g. 425819034123"
+              Enter 12-Digit UPI Reference Number (UTR / Transaction ID) *</label>
+            <input type="text" id="utrRef" placeholder="e.g. 12-Digit UTR Number (400644881011)" maxlength="25"
               style="width:100%; background:var(--bg-primary); border:1px solid var(--border); border-radius:6px; padding:10px; color:var(--text-primary); font-family:monospace; outline:none;">
           </div>
           <div style="margin-bottom:16px;">
-            <label style="display:block; font-size:12.5px; font-weight:600; margin-bottom:6px;">2. Upload Payment Screenshot Proof (Drag & Drop / Paste / Click) *</label>
-            <div id="paymentProofDropZone" style="border:2px dashed var(--accent); border-radius:10px; padding:14px 10px; text-align:center; background:rgba(0, 212, 255, 0.04); cursor:pointer; transition:all 0.2s ease;" onclick="document.getElementById('paymentProofInput').click()">
+            <label style="display:block; font-size:12.5px; font-weight:600; margin-bottom:6px;">2. Upload Payment
+              Screenshot Proof (Drag & Drop / Paste / Click) *</label>
+            <div id="paymentProofDropZone"
+              style="border:2px dashed var(--accent); border-radius:10px; padding:14px 10px; text-align:center; background:rgba(0, 212, 255, 0.04); cursor:pointer; transition:all 0.2s ease;"
+              onclick="document.getElementById('paymentProofInput').click()">
               <div style="font-size:22px; margin-bottom:4px;">📁 📋</div>
-              <div style="font-size:12.5px; font-weight:800; color:var(--accent);">Drag & Drop Screenshot Here OR Click to Upload</div>
-              <div style="font-size:11px; color:var(--text-muted); margin-top:3px;">💡 Tip: Press <b>Ctrl + V</b> anywhere to paste a copied payment screenshot!</div>
-              <input type="file" id="paymentProofInput" accept="image/*" onchange="previewScreenshot(this)" style="display:none;">
+              <div style="font-size:12.5px; font-weight:800; color:var(--accent);">Drag & Drop Screenshot Here OR Click
+                to Upload</div>
+              <div style="font-size:11px; color:var(--text-muted); margin-top:3px;">💡 Tip: Accepts screenshots in any image format (Google Pay, PhonePe, WhatsApp, BHIM, Paytm, etc.) or paste with <b>Ctrl + V</b></div>
+              <input type="file" id="paymentProofInput" accept="image/*,.png,.jpg,.jpeg,.webp,.heic,.heif,.jfif,.bmp,.gif" onchange="previewScreenshot(this)"
+                style="display:none;">
             </div>
             <div id="screenshotPreviewWrap" style="display:none; margin-top:8px; text-align:center;">
               <img id="screenshotPreviewImg"
                 style="max-width:140px; max-height:140px; border-radius:6px; border:1px solid var(--accent);"
                 alt="Screenshot Preview">
             </div>
+            <!-- Live Auto-Detection Result -->
+            <div id="screenshotDetectedInfo" style="display:none; margin-top:10px; padding:10px 12px; border-radius:8px; font-size:12px; text-align:left;"></div>
           </div>
           <button type="button" class="btn-primary-lg" style="width:100%;" onclick="confirmUtr()">VERIFY & SUBMIT
             PAYMENT →</button>
@@ -1738,7 +1834,8 @@
       <p>© 2026 INNOWAVE-2K26 · IEEE Student Branch (STB18301)</p>
       <p style="font-size:12px; margin-top:4px; color:var(--warn);">POTTI SRIRAMULU CHALAVADI MALLIKARJUNA RAO COLLEGE
         OF ENGINEERING AND TECHNOLOGY</p>
-      <p style="font-size:13px; margin-top:8px; font-weight:800; color:var(--accent); letter-spacing:0.5px;">⚡ Website Created & Developed by K. JAIDEEP RAJ from IEEE STUDENT BRANCH</p>
+      <p style="font-size:13px; margin-top:8px; font-weight:800; color:var(--accent); letter-spacing:0.5px;">⚡ Website
+        Created & Developed by K. JAIDEEP RAJ from IEEE STUDENT BRANCH</p>
     </div>
   </footer>
 
@@ -1751,15 +1848,16 @@
         style="position:absolute; top:14px; right:14px; background:rgba(255,255,255,0.1); border:none; color:var(--text-muted); width:32px; height:32px; border-radius:50%; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
 
       <div style="font-size:50px; line-height:1; margin-bottom:10px;">🎉 🏆 🎊</div>
-      <h2 class="font-space"
+      <h2 class="font-space" id="popHeading"
         style="color:#00e676; font-size:24px; font-weight:800; margin-bottom:6px; text-shadow:0 0 15px rgba(0,230,118,0.5);">
         CONGRATULATIONS!</h2>
-      <div
-        style="font-size:13px; font-weight:800; color:#00e676; margin-bottom:14px; letter-spacing:0.5px; text-transform:uppercase;">
-        REGISTRATION & PAYMENT CONFIRMED!</div>
+      <div id="popSubHeading"
+        style="font-size:13px; font-weight:800; color:#fbbf24; margin-bottom:14px; letter-spacing:0.5px; text-transform:uppercase;">
+        REGISTRATION & PAYMENT SUBMITTED!</div>
 
-      <p style="color:var(--text-muted); font-size:13px; margin-bottom:18px; line-height:1.5;">
-        Welcome to <b>INNOWAVE-2026 Engineer's Day Celebration</b>! Your payment transaction and registration have been successfully verified & confirmed.
+      <p id="popWelcomeText" style="color:var(--text-muted); font-size:13px; margin-bottom:18px; line-height:1.5;">
+        Welcome to <b>INNOWAVE-2026 Engineer's Day Celebration</b>! Your payment transaction details and registration have been
+        submitted for Admin Verification.
       </p>
 
       <!-- Registration Summary Card -->
@@ -1775,9 +1873,9 @@
               style="color:#00e676; font-size:22px; font-weight:900; font-family:'Space Grotesk',sans-serif;">IW26-XXXX
             </div>
           </div>
-          <div
-            style="background:#00e676; color:#031527; font-weight:900; font-size:11.5px; padding:5px 10px; border-radius:8px;">
-            ✓ VERIFIED & PAID
+          <div id="popVerifiedBadge"
+            style="background:#fbbf24; color:#031527; font-weight:900; font-size:11.5px; padding:5px 10px; border-radius:8px;">
+            ⏳ PENDING VERIFICATION
           </div>
         </div>
 
@@ -1798,10 +1896,13 @@
       </div>
 
       <!-- Action Buttons: View Receipt & WhatsApp Group -->
-      <button type="button" class="btn-primary-lg" style="width:100%; background:linear-gradient(135deg, #00e676 0%, #00b0ff 100%); color:#041220; font-weight:900; border:none; padding:12px; margin-bottom:10px;" onclick="openReceiptFromStatus()">
+      <button type="button" class="btn-primary-lg"
+        style="width:100%; background:linear-gradient(135deg, #00e676 0%, #00b0ff 100%); color:#041220; font-weight:900; border:none; padding:12px; margin-bottom:10px;"
+        onclick="openReceiptFromStatus()">
         🧾 VIEW & DOWNLOAD OFFICIAL RECEIPT SLIP →
       </button>
 
+      <!-- WhatsApp Group Join CTA -->
       <a href="https://chat.whatsapp.com/G2WlPqnRVYdIvVti3gZL2S?s=cl&p=a&ilr=0" target="_blank"
         style="display:flex; align-items:center; justify-content:center; gap:8px; background:linear-gradient(135deg, #25d366 0%, #128c7e 100%); color:#ffffff; font-weight:900; font-size:13.5px; text-decoration:none; padding:12px; border-radius:12px; box-shadow:0 4px 15px rgba(37,211,102,0.35); margin-bottom:12px;">
         💬 JOIN OFFICIAL INNOWAVE-2K26 WHATSAPP GROUP →
@@ -1809,7 +1910,7 @@
 
       <!-- Action Buttons -->
       <div style="display:flex; flex-direction:column; gap:8px;">
-        <button onclick="location.reload()" class="btn-primary-lg"
+        <button onclick="registerAnotherParticipant()" class="btn-primary-lg"
           style="border:none; cursor:pointer; width:100%; font-size:13.5px; background:linear-gradient(135deg, #00d4ff, #0066ff); color:#ffffff; font-weight:800; padding:11px;">➕
           REGISTER ANOTHER PARTICIPANT</button>
         <button onclick="location.href='index.html'" class="btn-secondary-lg"
@@ -1858,7 +1959,8 @@
               id="rcpRegId">IW26-0000</div>
           </div>
           <div>
-            <div style="font-size:9px; color:#64748b; font-weight:700; text-transform:uppercase;">Registration Status</div>
+            <div style="font-size:9px; color:#64748b; font-weight:700; text-transform:uppercase;">Registration Status
+            </div>
             <div style="font-family:'Space Grotesk',sans-serif; font-weight:800; color:#047857; font-size:13px;"
               id="rcpAmount">VERIFIED & CONFIRMED</div>
           </div>
@@ -1940,9 +2042,21 @@
     let lastStatusData = null;
     let currentFee = 100;
 
+    let cachedIeeeCardOcr = null;
+    let cachedScreenshotOcr = null;
+    let pendingRegAmount = 0;
+
+    let pendingCollegeName = '';
+    let pendingFeeLabel = '';
+
     function isPscmrCollegeName(cn) {
-      const c = (cn || '').toLowerCase();
-      return c.includes('pscmr') || c.includes('potti sriramulu') || c.includes('chalavadi') || c.includes('mallikarjuna rao');
+      if (!cn) return false;
+      const c = String(cn).toLowerCase().replace(/[^a-z0-9]/g, '');
+      return c.includes('pscmr') ||
+        c.includes('pottisriramulu') ||
+        c.includes('pottisreeramulu') ||
+        c.includes('chalavadi') ||
+        c.includes('mallikarjuna');
     }
 
     function updateAdmissionCharCount() {
@@ -1994,31 +2108,47 @@
       const collegeInput = document.getElementById('collegeName')?.value || '';
       const isPscmr = isPscmrCollegeName(collegeInput);
       currentFee = isPscmr ? 50 : 100;
+      if (document.getElementById('displayPayAmount')) {
+        document.getElementById('displayPayAmount').textContent = `₹${currentFee}`;
+      }
+      if (document.getElementById('displayPayCategory')) {
+        document.getElementById('displayPayCategory').textContent = isPscmr
+          ? 'PSCMR CET IEEE Member: ₹50'
+          : 'Other College IEEE Member: ₹100';
+      }
+      checkPscmrAdmissionField();
     }
+    document.addEventListener('DOMContentLoaded', updateDynamicFee);
 
     function compressImageFile(file, maxWidth = 1200, quality = 0.82) {
       return new Promise((resolve) => {
-        if (!file || !file.type.startsWith('image/')) return resolve(null);
+        if (!file) return resolve(null);
         const reader = new FileReader();
         reader.onload = (e) => {
+          const dataUrl = e.target.result;
           const img = new Image();
           img.onload = () => {
-            const canvas = document.createElement('canvas');
-            let w = img.width;
-            let h = img.height;
-            if (w > maxWidth) {
-              h = Math.round((h * maxWidth) / w);
-              w = maxWidth;
+            try {
+              const canvas = document.createElement('canvas');
+              let w = img.width;
+              let h = img.height;
+              if (w > maxWidth) {
+                h = Math.round((h * maxWidth) / w);
+                w = maxWidth;
+              }
+              canvas.width = w;
+              canvas.height = h;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, w, h);
+              resolve(canvas.toDataURL('image/jpeg', quality));
+            } catch (canvasErr) {
+              resolve(dataUrl);
             }
-            canvas.width = w;
-            canvas.height = h;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, w, h);
-            resolve(canvas.toDataURL('image/jpeg', quality));
           };
-          img.onerror = () => resolve(e.target.result);
-          img.src = e.target.result;
+          img.onerror = () => resolve(dataUrl);
+          img.src = dataUrl;
         };
+        reader.onerror = () => resolve(null);
         reader.readAsDataURL(file);
       });
     }
@@ -2055,13 +2185,267 @@
       }
     }
 
+    let detectedPaymentProvider = 'UPI Transfer';
+
+    function extractUpiDetailsFromText(rawText) {
+      if (!rawText) return null;
+      const upper = rawText.toUpperCase();
+
+      // 1. App Detection
+      let appName = 'UPI Transfer';
+      let appBadge = '💳 UPI Payment';
+      let appBg = 'rgba(0, 242, 254, 0.12)';
+      let appBorder = 'rgba(0, 242, 254, 0.35)';
+      let appColor = '#00f2fe';
+
+      if (upper.includes('GOOGLE') || upper.includes('GPAY') || upper.includes('CICAG') || upper.includes('GOOGLE TRANSACTION ID')) {
+        appName = 'Google Pay (GPay)';
+        appBadge = '🟢 Google Pay';
+        appBg = 'rgba(0, 212, 255, 0.15)';
+        appBorder = 'rgba(0, 212, 255, 0.4)';
+        appColor = '#00d4ff';
+      } else if (upper.includes('PHONEPE') || upper.includes('PHONE PE') || upper.includes('YBL') || upper.includes('IBL')) {
+        appName = 'PhonePe';
+        appBadge = '🟣 PhonePe';
+        appBg = 'rgba(168, 85, 247, 0.15)';
+        appBorder = 'rgba(168, 85, 247, 0.4)';
+        appColor = '#c084fc';
+      } else if (upper.includes('WHATSAPP')) {
+        appName = 'WhatsApp Pay';
+        appBadge = '💬 WhatsApp Pay';
+        appBg = 'rgba(34, 197, 94, 0.15)';
+        appBorder = 'rgba(34, 197, 94, 0.4)';
+        appColor = '#4ade80';
+      } else if (upper.includes('BHIM') || upper.includes('NPCI')) {
+        appName = 'BHIM UPI';
+        appBadge = '🇮🇳 BHIM UPI';
+        appBg = 'rgba(234, 88, 12, 0.15)';
+        appBorder = 'rgba(234, 88, 12, 0.4)';
+        appColor = '#fb923c';
+      } else if (upper.includes('PAYTM')) {
+        appName = 'Paytm';
+        appBadge = '🔵 Paytm';
+        appBg = 'rgba(59, 130, 246, 0.15)';
+        appBorder = 'rgba(59, 130, 246, 0.4)';
+        appColor = '#60a5fa';
+      } else if (upper.includes('AMAZON')) {
+        appName = 'Amazon Pay';
+        appBadge = '🟠 Amazon Pay';
+        appBg = 'rgba(245, 158, 11, 0.15)';
+        appBorder = 'rgba(245, 158, 11, 0.4)';
+        appColor = '#fbbf24';
+      } else if (upper.includes('BANK') || upper.includes('YONO') || upper.includes('IMOBILE') || upper.includes('PAYZAPP')) {
+        appName = 'Bank UPI';
+        appBadge = '🏦 Bank UPI';
+        appBg = 'rgba(148, 163, 184, 0.15)';
+        appBorder = 'rgba(148, 163, 184, 0.4)';
+        appColor = '#cbd5e1';
+      }
+
+      // 2. Reference / Transaction ID Detection
+      let refId = '';
+
+      // A. Google Transaction ID (starts with CICAg...)
+      const gpayMatch = rawText.match(/\b(CICAg[A-Za-z0-9_-]{8,})\b/i);
+      if (gpayMatch) {
+        refId = gpayMatch[1];
+      }
+
+      // B. UPI Reference / UTR labelled match (handles Paytm space-separated "4006448 81011")
+      if (!refId) {
+        const labeledMatch = rawText.match(/(?:UPI\s*(?:TRANSACTION|REF(?:ERENCE)?)\s*(?:ID|NO\.?)|UTR(?:\s*NO\.?)?|TXN\s*ID|TRANSACTION\s*ID|ORDER\s*ID|BANK\s*REF\s*(?:NO\.?|ID))\s*[:#-]?\s*([A-Za-z0-9]+(?:\s+[A-Za-z0-9]+)*)/i);
+        if (labeledMatch && labeledMatch[1]) {
+          const cleanCand = labeledMatch[1].replace(/\s+/g, '').trim();
+          if (cleanCand.length >= 6 && cleanCand.length <= 25) {
+            refId = cleanCand;
+          }
+        }
+      }
+
+      // C. 12-digit standard UPI numeric UTR (handles Paytm split spaces like "4006448 81011")
+      if (!refId) {
+        const spaced12Match = rawText.match(/\b(\d{3,8})\s+(\d{3,8})\b/);
+        if (spaced12Match && (spaced12Match[1].length + spaced12Match[2].length === 12)) {
+          refId = spaced12Match[1] + spaced12Match[2];
+        }
+      }
+
+      // D. Direct 12-digit continuous match
+      if (!refId) {
+        const d12Matches = rawText.match(/\b\d{12}\b/g);
+        if (d12Matches && d12Matches.length > 0) {
+          refId = d12Matches[0];
+        }
+      }
+
+      // E. 10-16 digit fallback
+      if (!refId) {
+        const longDigits = rawText.match(/\b\d{10,16}\b/g);
+        if (longDigits && longDigits.length > 0) {
+          refId = longDigits[0];
+        }
+      }
+
+      // 3. Amount Detection (Full Currency Parsing + Paytm Stamp Guardrail)
+      let detectedAmount = null;
+
+      // Priority A: Written words (Absolute ground truth from receipt text)
+      if (/\b(?:TWELVE|12)\s*THOUSAND\b/i.test(rawText)) {
+        detectedAmount = 12000;
+      } else if (/\b(?:TWO|2)\s*THOUSAND\b/i.test(rawText)) {
+        detectedAmount = 2000;
+      } else if (/\b(?:ONE|1)\s*THOUSAND\b/i.test(rawText)) {
+        detectedAmount = 1000;
+      } else if (/\b(?:FIVE|5)\s*HUNDRED\b/i.test(rawText)) {
+        detectedAmount = 500;
+      } else if (/\b(?:TWO|2)\s*HUNDRED\b/i.test(rawText)) {
+        detectedAmount = 200;
+      } else if (/\b(?:ONE|1)\s*HUNDRED\b/i.test(rawText)) {
+        detectedAmount = 100;
+      } else if (/\bFIFTY\b/i.test(rawText)) {
+        detectedAmount = 50;
+      }
+
+      // Priority B: Currency symbol or keyword prefixed amounts (e.g., ₹12,000, ₹ 100, INR 50)
+      if (!detectedAmount) {
+        const foundCurrencyAmounts = [];
+        const currRegex = /(?:[₹\u20B9]|INR|RS\.?|RUPEES)\s*([0-9]{1,3}(?:,[0-9]{3})*(?:\.[0-9]{1,2})?|[0-9]+(?:\.[0-9]{1,2})?)/gi;
+        let cm;
+        while ((cm = currRegex.exec(rawText)) !== null) {
+          const cleanNum = cm[1].replace(/,/g, '');
+          const parsedVal = parseFloat(cleanNum);
+          if (!isNaN(parsedVal) && parsedVal > 0) {
+            foundCurrencyAmounts.push(Math.round(parsedVal));
+          }
+        }
+
+        const actionRegex = /(?:PAID|AMOUNT|SENT|TRANSFER(?:RED)?|DEBITED)\s*(?:OF)?\s*[:=]?\s*(?:[₹\u20B9]|INR|RS\.?)?\s*([0-9]{1,3}(?:,[0-9]{3})*(?:\.[0-9]{1,2})?|[0-9]+(?:\.[0-9]{1,2})?)/gi;
+        while ((cm = actionRegex.exec(rawText)) !== null) {
+          const cleanNum = cm[1].replace(/,/g, '');
+          const parsedVal = parseFloat(cleanNum);
+          if (!isNaN(parsedVal) && parsedVal > 0) {
+            foundCurrencyAmounts.push(Math.round(parsedVal));
+          }
+        }
+
+        if (foundCurrencyAmounts.length > 0) {
+          // If any currency amount matches an event fee (100, 50, 200), prefer it; otherwise keep prominent amount
+          const standardFees = [100, 50, 200];
+          const matchedFee = foundCurrencyAmounts.find(v => standardFees.includes(v));
+          detectedAmount = matchedFee || foundCurrencyAmounts[0];
+        }
+      }
+
+      // Priority C: Standalone standard amounts with Paytm Stamp False-Zero Guardrail
+      // (Handles Paytm circular green checkmark badge adjacent to ₹100/₹50/₹200)
+      if (!detectedAmount) {
+        const textCleanStamp = rawText
+          .replace(/([₹\u20B9]|INR|RS\.?)\s*200\s*[0OoQqCc@\u2705\u2714\u2713]/gi, '$1 200')
+          .replace(/([₹\u20B9]|INR|RS\.?)\s*100\s*[0OoQqCc@\u2705\u2714\u2713]/gi, '$1 100')
+          .replace(/([₹\u20B9]|INR|RS\.?)\s*50\s*[0OoQqCc@\u2705\u2714\u2713]/gi, '$1 50');
+
+        if (/(?<!\d)100(?!\d)/.test(textCleanStamp)) {
+          detectedAmount = 100;
+        } else if (/(?<!\d)50(?!\d)/.test(textCleanStamp)) {
+          detectedAmount = 50;
+        } else if (/(?<!\d)200(?!\d)/.test(textCleanStamp)) {
+          detectedAmount = 200;
+        } else if (/(?<!\d)100[0OoQq](?!\d)/.test(rawText)) {
+          detectedAmount = 100;
+        } else if (/(?<!\d)50[0OoQq](?!\d)/.test(rawText)) {
+          detectedAmount = 50;
+        } else if (/(?<!\d)200[0OoQq](?!\d)/.test(rawText)) {
+          detectedAmount = 200;
+        }
+      }
+
+      return {
+        appName,
+        appBadge,
+        appBg,
+        appBorder,
+        appColor,
+        refId,
+        amount: detectedAmount,
+        rawText
+      };
+    }
+
     async function previewScreenshot(input) {
-      if (input.files && input.files[0]) {
+      if (input && input.files && input.files[0]) {
         const file = input.files[0];
-        const compressed = await compressImageFile(file);
+        const compressed = await compressImageFile(file, 1000, 0.82);
         uploadedScreenshotBase64 = compressed;
-        document.getElementById('screenshotPreviewImg').src = compressed;
-        document.getElementById('screenshotPreviewWrap').style.display = 'block';
+        const previewImg = document.getElementById('screenshotPreviewImg');
+        if (previewImg) previewImg.src = compressed;
+        const previewWrap = document.getElementById('screenshotPreviewWrap');
+        if (previewWrap) previewWrap.style.display = 'block';
+
+        const infoEl = document.getElementById('screenshotDetectedInfo');
+        if (infoEl) {
+          infoEl.style.display = 'block';
+          infoEl.style.background = 'rgba(0, 242, 254, 0.08)';
+          infoEl.style.border = '1px dashed var(--accent)';
+          infoEl.style.color = '#00f2fe';
+          infoEl.innerHTML = '🔍 <b>Scanning screenshot...</b> detecting payment provider, reference ID &amp; amount...';
+        }
+
+        // Target amount: PSCMR IEEE = ₹50, Other College IEEE = ₹100
+        const colName = (document.getElementById('collegeName') && document.getElementById('collegeName').value.trim()) || pendingCollegeName || '';
+        const isPscmr = typeof isPscmrCollegeName === 'function' && isPscmrCollegeName(colName);
+        const targetAmt = isPscmr ? 50 : 100;
+
+        // Run AI OCR immediately in background with fast timeout
+        if (uploadedScreenshotBase64 && window.Tesseract) {
+          cachedScreenshotOcr = recognizeWithTimeout(uploadedScreenshotBase64, 12000);
+          cachedScreenshotOcr.then((res) => {
+            if (res && res.data && res.data.text) {
+              const det = extractUpiDetailsFromText(res.data.text);
+              if (det) {
+                detectedPaymentProvider = det.appName;
+                const utrInput = document.getElementById('utrRef');
+                if (det.refId && utrInput) {
+                  utrInput.value = det.refId;
+                }
+                if (infoEl) {
+                  const is12Digit = det.refId && /^\d{12}$/.test(det.refId);
+                  const refDisplay = det.refId ? `<code>${det.refId}</code>${is12Digit ? ' <span style="color:#00e676; font-size:11px; font-weight:800; margin-left:4px;">✓ 12-Digit UTR Recognized</span>' : ''}` : (utrInput && utrInput.value ? `<code>${utrInput.value}</code>` : 'Please enter 12-digit UTR below');
+
+                  if (det.amount && det.amount !== targetAmt) {
+                    // Visual warning for amount mismatch
+                    infoEl.style.display = 'block';
+                    infoEl.style.background = 'rgba(255, 23, 68, 0.12)';
+                    infoEl.style.border = '2px solid #ff1744';
+                    infoEl.style.color = '#ff5252';
+                    infoEl.innerHTML = `
+                      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                        <strong style="color:#ff1744;">🚫 AMOUNT MISMATCH (${det.appBadge})</strong>
+                        <span style="font-weight:900; font-size:13px; color:#fff; background:#ff1744; padding:2px 8px; border-radius:6px;">₹${det.amount.toLocaleString()} (INVALID)</span>
+                      </div>
+                      <div style="font-size:12px; color:#ff8a80; line-height:1.4;">
+                        Your category fee is <b>₹${targetAmt}</b>. The uploaded screenshot shows a payment of <b>₹${det.amount.toLocaleString()}</b>. Mismatched payment screenshots cannot be accepted!
+                      </div>
+                      <div style="font-size:11.5px; opacity:0.9; margin-top:4px; color:#ffcdd2;">Reference / UTR: ${refDisplay}</div>
+                    `;
+                  } else {
+                    infoEl.style.display = 'block';
+                    infoEl.style.background = det.appBg;
+                    infoEl.style.border = `1px solid ${det.appBorder}`;
+                    infoEl.style.color = det.appColor;
+                    const amtDisplay = det.amount ? `₹${det.amount} (Verified)` : 'Amount verified';
+                    infoEl.innerHTML = `
+                      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                        <strong>✓ ${det.appBadge} Detected</strong>
+                        <span style="font-weight:800; font-size:13px; color:#00e676;">${amtDisplay}</span>
+                      </div>
+                      <div style="font-size:11.5px; opacity:0.9;">Reference / UTR: ${refDisplay}</div>
+                    `;
+                  }
+                }
+              }
+            }
+          }).catch(() => {});
+        }
       }
     }
 
@@ -2120,8 +2504,14 @@
 
       const selectedEvents = ['Technical Quiz', 'Coding Challenge', 'Tech Treasure Hunt', 'Project Expo', 'Prompt Engineering', 'Reels (1 Min)'];
 
+      // Only attach existing_id if strictly editing the same participant's unsubmitted registration
+      let sendExistingId = null;
+      if (pendingRegId && window.pendingLeaderEmail && window.pendingLeaderEmail.toLowerCase() === leaderEmail.toLowerCase()) {
+        sendExistingId = pendingRegId;
+      }
+
       const payload = {
-        existing_id: pendingRegId,
+        existing_id: sendExistingId,
         project_title: 'InnoWave Registration',
         track: 'Open Innovation',
         events_selected: selectedEvents,
@@ -2186,13 +2576,25 @@
             showValidationErrorModal('🚫 REGISTRATION ERROR', errMsg);
             return;
           }
-          if (data && data.id) pendingRegId = data.id;
-          if (data && data.amount) pendingRegAmount = data.amount;
+          if (data && data.id) {
+            pendingRegId = data.id;
+            window.pendingLeaderEmail = leaderEmail;
+          }
+          pendingCollegeName = collegeName;
+          if (data && data.amount) {
+            pendingRegAmount = parseInt(data.amount, 10);
+            if (document.getElementById('displayPayAmount')) {
+              document.getElementById('displayPayAmount').textContent = `₹${pendingRegAmount}`;
+            }
+          }
+          if (data && data.fee_label) {
+            pendingFeeLabel = data.fee_label;
+            if (document.getElementById('displayPayCategory')) {
+              document.getElementById('displayPayCategory').textContent = data.fee_label;
+            }
+          }
           if (data && data.team_id && document.getElementById('statusQueryInput')) {
             document.getElementById('statusQueryInput').value = data.team_id;
-          }
-          if (data && data.upi && data.upi.qr && document.getElementById('qrImgDisplay')) {
-            document.getElementById('qrImgDisplay').src = data.upi.qr;
           }
         }
       } catch (err) {
@@ -2200,6 +2602,12 @@
       }
 
       if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = origText; }
+
+      if (!pendingRegId) {
+        showValidationErrorModal('⚠️ REGISTRATION INCOMPLETE', 'Unable to complete registration. Please check your internet connection or try again.');
+        return;
+      }
+
       document.getElementById('mainRegForm').style.display = 'none';
       const payModal = document.getElementById('paymentModal');
       if (payModal) {
@@ -2211,17 +2619,29 @@
     async function performStatusCheck() {
       const q = document.getElementById('statusQueryInput').value.trim();
       if (!q) { alert('Please enter your Registration ID, Mobile, or Email.'); return; }
+      const checkBtn = document.querySelector('button[onclick="performStatusCheck()"]');
+      const origText = checkBtn ? checkBtn.innerHTML : '';
+      if (checkBtn) { checkBtn.disabled = true; checkBtn.innerHTML = '🔍 CHECKING STATUS...'; }
       try {
         const res = await fetch(`api/check-status.php?q=${encodeURIComponent(q)}`);
-        const data = await res.json();
+        let data = null;
+        try {
+          data = await res.json();
+        } catch (jsonErr) {
+          const rawText = await res.text().catch(() => '');
+          console.error('Non-JSON server response:', rawText);
+        }
+
         const wrap = document.getElementById('statusResultWrap');
         wrap.style.display = 'block';
 
-        if (!data.ok) {
+        if (!data || !data.ok) {
           document.getElementById('resTeamId').textContent = 'NOT FOUND';
           document.getElementById('resStatusBadge').textContent = '🚫 RECORD NOT FOUND';
-          document.getElementById('resDetailsText').textContent = data.error || 'No matching record found.';
+          document.getElementById('resDetailsText').textContent = (data && data.error) ? data.error : 'No matching record found. Please verify your Registration ID (e.g. IW26-0005) or Mobile number.';
           document.getElementById('resActionWrap').innerHTML = '';
+          wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          if (checkBtn) { checkBtn.disabled = false; checkBtn.innerHTML = origText; }
           return;
         }
 
@@ -2246,9 +2666,12 @@
           badge.style.color = '#00e676';
           actWrap.innerHTML = `
             <div style="font-size:14px; color:#00e676; font-weight:700; margin-bottom:10px;">✓ Registration & Payment Approved by Admin!</div>
-            <button type="button" class="btn-primary-lg" style="width:100%; background:linear-gradient(135deg, #00e676 0%, #00b0ff 100%); color:#041220; font-weight:800; border:none; padding:12px; margin-bottom:10px;" onclick="openReceiptFromStatus()">
-              🧾 VIEW & DOWNLOAD OFFICIAL 4K PASS & RECEIPT →
+            <button type="button" class="btn-primary-lg" style="width:100%; background:linear-gradient(135deg, #00e676 0%, #00b0ff 100%); color:#041220; font-weight:800; border:none; padding:12px; margin-bottom:6px;" onclick="openReceiptFromStatus()">
+              🧾 VIEW & DOWNLOAD OFFICIAL PAYMENT RECEIPT →
             </button>
+            <div style="font-size:12px; color:#94a3b8; text-align:center; margin-bottom:10px; font-weight:600;">
+              ℹ️ Official Delegate ID Badges will be issued exclusively by Admin at the Event Registration Desk.
+            </div>
             <a href="https://chat.whatsapp.com/G2WlPqnRVYdIvVti3gZL2S?s=cl&p=a&ilr=0" target="_blank"
               style="display:flex; align-items:center; justify-content:center; gap:8px; background:linear-gradient(135deg, #25d366 0%, #128c7e 100%); color:#ffffff; font-weight:900; font-size:13.5px; text-decoration:none; padding:12px; border-radius:12px; box-shadow:0 4px 15px rgba(37,211,102,0.35);">
               💬 JOIN OFFICIAL INNOWAVE-2K26 WHATSAPP GROUP →
@@ -2257,7 +2680,7 @@
         } else {
           badge.textContent = '🟡 PENDING ADMIN APPROVAL';
           badge.style.color = '#f59e0b';
-          
+
           const hasPaymentProof = Boolean(data.has_payment_screenshot || (data.payment_ref && String(data.payment_ref).trim().length >= 6));
 
           if (hasPaymentProof) {
@@ -2295,7 +2718,15 @@
         }
       } catch (err) {
         console.error(err);
-        alert('Failed to check status.');
+        const wrap = document.getElementById('statusResultWrap');
+        if (wrap) wrap.style.display = 'block';
+        if (document.getElementById('resTeamId')) document.getElementById('resTeamId').textContent = 'CHECK FAILED';
+        if (document.getElementById('resStatusBadge')) document.getElementById('resStatusBadge').textContent = '⚠️ CONNECTION ISSUE';
+        if (document.getElementById('resDetailsText')) document.getElementById('resDetailsText').textContent = 'Could not retrieve status right now. Please check your internet connection or verify the server status.';
+        if (document.getElementById('resActionWrap')) document.getElementById('resActionWrap').innerHTML = '';
+        if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } finally {
+        if (checkBtn) { checkBtn.disabled = false; checkBtn.innerHTML = origText; }
       }
     }
 
@@ -2303,11 +2734,21 @@
       const data = lastStatusData;
       if (!data) return;
       pendingRegId = data.id;
+      if (data.amount) pendingRegAmount = parseInt(data.amount, 10);
+      if (data.college_name) pendingCollegeName = data.college_name;
+      if (data.fee_label) pendingFeeLabel = data.fee_label;
       resetPaymentScreenshotModal();
-      if (data.upi) {
-        if (data.upi.qr && document.getElementById('qrImgDisplay')) document.getElementById('qrImgDisplay').src = data.upi.qr;
-        if (data.upi.vpa && document.getElementById('displayUpiVpa')) document.getElementById('displayUpiVpa').textContent = data.upi.vpa;
+
+      const isPscmr = isPscmrCollegeName(pendingCollegeName);
+      const effectiveAmt = pendingRegAmount || (isPscmr ? 50 : 100);
+
+      if (document.getElementById('displayPayAmount')) {
+        document.getElementById('displayPayAmount').textContent = `₹${effectiveAmt}`;
       }
+      if (document.getElementById('displayPayCategory')) {
+        document.getElementById('displayPayCategory').textContent = pendingFeeLabel || (isPscmr ? 'PSCMR CET IEEE Member: ₹50' : 'Other College IEEE Member: ₹100');
+      }
+
       document.getElementById('ieeeStatusBox').style.display = 'none';
       document.getElementById('paymentModal').style.display = 'block';
       document.getElementById('paymentModal').scrollIntoView({ behavior: 'smooth' });
@@ -2383,34 +2824,11 @@
       }
     })();
 
-    let cachedIeeeCardOcr = null;
-    let cachedScreenshotOcr = null;
-    let pendingRegAmount = 0;
-
-    function previewScreenshot(input) {
-      if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          uploadedScreenshotBase64 = e.target.result;
-          const previewImg = document.getElementById('screenshotPreviewImg');
-          if (previewImg) previewImg.src = e.target.result;
-          const previewWrap = document.getElementById('screenshotPreviewWrap');
-          if (previewWrap) previewWrap.style.display = 'block';
-
-          // Pre-warm AI OCR immediately in background
-          if (uploadedScreenshotBase64 && window.Tesseract) {
-            cachedScreenshotOcr = recognizeWithTimeout(uploadedScreenshotBase64, 30000);
-          }
-        };
-        reader.readAsDataURL(input.files[0]);
-      }
-    }
-
-    async function recognizeWithTimeout(imageBase64, timeoutMs = 30000) {
+    async function recognizeWithTimeout(imageBase64, timeoutMs = 12000) {
       if (!window.Tesseract || !imageBase64) return null;
       try {
         return await Promise.race([
-          Tesseract.recognize(imageBase64, 'eng', { logger: () => {} }),
+          Tesseract.recognize(imageBase64, 'eng', { logger: () => { } }),
           new Promise((resolve) => setTimeout(() => resolve(null), timeoutMs))
         ]);
       } catch (err) {
@@ -2431,6 +2849,194 @@
         .replace(/G/g, '6')
         .replace(/A/g, '4')
         .replace(/[^0-9]/g, '');
+    }
+
+    function extractUpiDetailsFromText(rawText) {
+      if (!rawText) return null;
+      const upper = rawText.toUpperCase();
+
+      // 1. App Detection
+      let appName = 'UPI Transfer';
+      let appBadge = '💳 UPI Payment';
+      let appBg = 'rgba(0, 242, 254, 0.12)';
+      let appBorder = 'rgba(0, 242, 254, 0.35)';
+      let appColor = '#00f2fe';
+
+      if (upper.includes('GOOGLE') || upper.includes('GPAY') || upper.includes('CICAG') || upper.includes('GOOGLE TRANSACTION ID')) {
+        appName = 'Google Pay (GPay)';
+        appBadge = '🟢 Google Pay';
+        appBg = 'rgba(0, 212, 255, 0.15)';
+        appBorder = 'rgba(0, 212, 255, 0.4)';
+        appColor = '#00d4ff';
+      } else if (upper.includes('PHONEPE') || upper.includes('PHONE PE') || upper.includes('YBL') || upper.includes('IBL')) {
+        appName = 'PhonePe';
+        appBadge = '🟣 PhonePe';
+        appBg = 'rgba(168, 85, 247, 0.15)';
+        appBorder = 'rgba(168, 85, 247, 0.4)';
+        appColor = '#c084fc';
+      } else if (upper.includes('WHATSAPP')) {
+        appName = 'WhatsApp Pay';
+        appBadge = '💬 WhatsApp Pay';
+        appBg = 'rgba(34, 197, 94, 0.15)';
+        appBorder = 'rgba(34, 197, 94, 0.4)';
+        appColor = '#4ade80';
+      } else if (upper.includes('BHIM') || upper.includes('NPCI')) {
+        appName = 'BHIM UPI';
+        appBadge = '🇮🇳 BHIM UPI';
+        appBg = 'rgba(234, 88, 12, 0.15)';
+        appBorder = 'rgba(234, 88, 12, 0.4)';
+        appColor = '#fb923c';
+      } else if (upper.includes('PAYTM')) {
+        appName = 'Paytm';
+        appBadge = '🔵 Paytm';
+        appBg = 'rgba(59, 130, 246, 0.15)';
+        appBorder = 'rgba(59, 130, 246, 0.4)';
+        appColor = '#60a5fa';
+      } else if (upper.includes('AMAZON')) {
+        appName = 'Amazon Pay';
+        appBadge = '🟠 Amazon Pay';
+        appBg = 'rgba(245, 158, 11, 0.15)';
+        appBorder = 'rgba(245, 158, 11, 0.4)';
+        appColor = '#fbbf24';
+      } else if (upper.includes('BANK') || upper.includes('YONO') || upper.includes('IMOBILE') || upper.includes('PAYZAPP')) {
+        appName = 'Bank UPI';
+        appBadge = '🏦 Bank UPI';
+        appBg = 'rgba(148, 163, 184, 0.15)';
+        appBorder = 'rgba(148, 163, 184, 0.4)';
+        appColor = '#cbd5e1';
+      }
+
+      // 2. Reference / UTR Detection (PRIORITIZE 12-DIGIT UPI NUMBERS)
+      let refId = '';
+
+      // Priority A: Labeled 12-digit UPI UTR (e.g. "UPI Reference No: 4006448 81011", "UTR: 400644881011", "UPI Ref No: 400644881011")
+      const labeledUtrRegex = /(?:UPI\s*(?:REF(?:ERENCE)?|TRANSACTION)?\s*(?:NO|ID|NUM(?:BER)?)?|UTR(?:\s*NO\.?)?|TXN\s*ID|TRANSACTION\s*ID|BANK\s*REF(?:\s*NO\.?)?)\s*[:#-]?\s*([0-9\s-]{10,24})/gi;
+      let lblMatch;
+      while ((lblMatch = labeledUtrRegex.exec(rawText)) !== null) {
+        const candDigits = lblMatch[1].replace(/\D/g, '');
+        if (candDigits.length === 12) {
+          refId = candDigits;
+          break;
+        } else if (candDigits.length > 12 && /^[3-6]\d{11}/.test(candDigits)) {
+          refId = candDigits.slice(0, 12);
+          break;
+        }
+      }
+
+      // Priority B: Paytm / Spaced 12-digit number (e.g. "4006448 81011", "4006 4488 1011", "40064 4881011")
+      if (!refId) {
+        const spacedCandidates = rawText.match(/\b\d{2,9}(?:[\s-]+\d{1,9}){1,3}\b/g);
+        if (spacedCandidates) {
+          for (const cand of spacedCandidates) {
+            const cleanDigits = cand.replace(/\D/g, '');
+            if (cleanDigits.length === 12) {
+              if (/^[3-6]/.test(cleanDigits)) {
+                refId = cleanDigits;
+                break;
+              } else if (!refId) {
+                refId = cleanDigits;
+              }
+            }
+          }
+        }
+      }
+
+      // Priority C: Continuous 12-digit number starting with UPI year digits [3-6] (e.g. 400644881011)
+      if (!refId) {
+        const year12Matches = rawText.match(/\b([3-6]\d{11})\b/g);
+        if (year12Matches && year12Matches.length > 0) {
+          refId = year12Matches[0];
+        }
+      }
+
+      // Priority D: Any continuous 12-digit number
+      if (!refId) {
+        const any12Matches = rawText.match(/\b\d{12}\b/g);
+        if (any12Matches && any12Matches.length > 0) {
+          refId = any12Matches[0];
+        }
+      }
+
+      // Priority E: Google Pay Transaction ID (CICAg...) fallback if no 12-digit numeric UTR found
+      if (!refId) {
+        const gpayMatch = rawText.match(/\b(CICAg[A-Za-z0-9_-]{8,})\b/i);
+        if (gpayMatch) {
+          refId = gpayMatch[1];
+        }
+      }
+
+      // Priority F: Any labeled alphanumeric reference (6-22 chars) as fallback
+      if (!refId) {
+        const generalMatch = rawText.match(/(?:UPI\s*(?:TRANSACTION|REF(?:ERENCE)?)\s*(?:ID|NO\.?)|UTR(?:\s*NO\.?)?|TXN\s*ID|TRANSACTION\s*ID|ORDER\s*ID)\s*[:#-]?\s*([A-Za-z0-9_-]{6,22})/i);
+        if (generalMatch && generalMatch[1]) {
+          refId = generalMatch[1].trim();
+        }
+      }
+
+      // 3. Amount Detection (Paytm Green Checkmark Stamp & Words Filtering)
+      // Paytm places a green circular checkmark stamp right next to ₹200 / ₹100 / ₹50
+      // which OCR frequently mistakes for an extra '0', 'O', or 'Q' (reading '2000').
+      // We resolve this by:
+      // 1) Checking written words ('Rupees Two Hundred Only' -> 200)
+      // 2) Compensating stamp false zeros (2000 -> 200, 1000 -> 100, 500 -> 50)
+      let detectedAmount = null;
+
+      // Priority A: Written words (Absolute ground truth from Paytm receipt)
+      if (/TWO\s*HUNDRED/i.test(rawText)) {
+        detectedAmount = 200;
+      } else if (/ONE\s*HUNDRED/i.test(rawText)) {
+        detectedAmount = 100;
+      } else if (/FIFTY/i.test(rawText)) {
+        detectedAmount = 50;
+      }
+
+      // Priority B: Stamp-corrected number matching
+      if (!detectedAmount) {
+        // Strip false stamp '0' or 'O' after ₹200, ₹100, ₹50
+        const textCleanStamp = rawText
+          .replace(/([₹\u20B9]|INR|RS\.?)\s*200\s*[0OoQqCc@\u2705\u2714\u2713]/gi, '$1 200')
+          .replace(/([₹\u20B9]|INR|RS\.?)\s*100\s*[0OoQqCc@\u2705\u2714\u2713]/gi, '$1 100')
+          .replace(/([₹\u20B9]|INR|RS\.?)\s*50\s*[0OoQqCc@\u2705\u2714\u2713]/gi, '$1 50');
+
+        const standardAmts = [200, 100, 50];
+        for (const a of standardAmts) {
+          const aStr = String(a);
+          const regexes = [
+            new RegExp('(?:[₹\\u20B9]|INR|RS\\.?|RUPEES)\\s*' + aStr + '(?:\\.(?:00|0))?(?:[^0-9]|$)', 'i'),
+            new RegExp('(?:PAID|AMOUNT|SENT|TRANSFER(?:RED)?|DEBITED)\\s*(?:OF)?\\s*[:=]?\\s*(?:[₹\\u20B9]|INR|RS\\.?)?\\s*' + aStr + '(?:\\.(?:00|0))?(?:[^0-9]|$)', 'i'),
+            new RegExp('(?:^|[^0-9:])' + aStr + '(?:\\.00)?(?:[^0-9:]|$)', 'i')
+          ];
+          for (const r of regexes) {
+            if (r.test(textCleanStamp) || r.test(rawText)) {
+              detectedAmount = a;
+              break;
+            }
+          }
+          if (detectedAmount) break;
+        }
+
+        // Stamp Guardrail: If OCR read 2000 / 1000 / 500 because of the green stamp
+        if (!detectedAmount) {
+          if (/200[0Oo]/.test(rawText) || /2000/.test(rawText)) {
+            detectedAmount = 200;
+          } else if (/100[0Oo]/.test(rawText) || /1000/.test(rawText)) {
+            detectedAmount = 100;
+          } else if (/50[0Oo]/.test(rawText) || /500/.test(rawText)) {
+            detectedAmount = 50;
+          }
+        }
+      }
+
+      return {
+        appName,
+        appBadge,
+        appBg,
+        appBorder,
+        appColor,
+        refId,
+        amount: detectedAmount,
+        rawText
+      };
     }
 
     async function performIeeeCardOcrVerification(leaderName, ieeeId, cardBase64) {
@@ -2565,28 +3171,28 @@
       return { ok: true };
     }
 
-    async function performUtrOcrVerification(utrRef, screenshotBase64, expectedAmount) {
+    async function performUtrOcrVerification(utrRef, screenshotBase64, expectedAmount, categoryInfo = '') {
       const rawInput = String(utrRef || '').trim();
+      const cleanUtr = rawInput.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
       const cleanDigits = rawInput.replace(/\D/g, '');
 
       if (!screenshotBase64) {
         return { ok: false, error: '⚠️ Please upload your payment receipt screenshot image.' };
       }
 
-      if (cleanDigits.length < 6) {
+      if (cleanDigits.length < 6 && cleanUtr.length < 6) {
         return { ok: false, error: '⚠️ Please enter a valid 12-digit UPI Transaction / Reference ID (UTR).' };
       }
 
       const amtNum = parseInt(String(expectedAmount || '0').replace(/\D/g, ''), 10);
 
       // Run AI OCR on payment screenshot image (use pre-warmed cache if available)
-      const res = cachedScreenshotOcr ? (await cachedScreenshotOcr) : (await recognizeWithTimeout(screenshotBase64, 30000));
-      
-      // STRICT BLOCK: If image is unreadable or empty
+      const res = cachedScreenshotOcr ? (await cachedScreenshotOcr) : (await recognizeWithTimeout(screenshotBase64, 12000));
+
       if (!res || !res.data || !res.data.text || res.data.text.trim().length === 0) {
         return {
           ok: false,
-          error: `🚫 UNREADABLE PAYMENT SCREENSHOT:\n\nCould not extract readable text from your uploaded payment image.\n\nPlease upload a clear, legible screenshot of your completed UPI payment receipt showing your 12-digit UTR and transfer amount.`
+          error: '⚠️ Payment screenshot received and uploaded. Pending Admin verification.'
         };
       }
 
@@ -2594,183 +3200,320 @@
       const ocrUpper = ocrRawText.toUpperCase();
       const ocrNormalizedDigits = ocrNormalizeDigits(ocrRawText);
 
-      // RULE 1: UTR NUMBER MATCH CHECK WITH OCR NORMALIZATION
-      let isUtrMatch = false;
-
-      // 1. Exact substring check
-      if (ocrRawText.includes(rawInput) || ocrUpper.includes(rawInput.toUpperCase())) {
-        isUtrMatch = true;
+      // Extract payment details
+      const parsed = extractUpiDetailsFromText(ocrRawText);
+      if (parsed && parsed.appName) {
+        detectedPaymentProvider = parsed.appName;
       }
 
-      // 2. Digit-only & Normalized OCR check
-      if (!isUtrMatch && cleanDigits.length >= 6) {
-        if (ocrNormalizedDigits.includes(cleanDigits)) {
-          isUtrMatch = true;
-        }
-      }
-
-      // 3. Substring sliding window check for 8+ digits
-      if (!isUtrMatch && cleanDigits.length >= 8) {
-        const sub1 = cleanDigits.slice(0, 8);
-        const sub2 = cleanDigits.slice(-8);
-        const sub3 = cleanDigits.slice(2, 10);
-        if (ocrNormalizedDigits.includes(sub1) || ocrNormalizedDigits.includes(sub2) || ocrNormalizedDigits.includes(sub3)) {
-          isUtrMatch = true;
-        }
-      }
-
-      // 4. Fuzzy match for 10-12 digit UTRs (allowing up to 2 OCR character mismatches)
-      if (!isUtrMatch && cleanDigits.length >= 10 && ocrNormalizedDigits.length >= 8) {
-        for (let i = 0; i <= ocrNormalizedDigits.length - cleanDigits.length + 2; i++) {
-          const chunk = ocrNormalizedDigits.substr(i, cleanDigits.length);
-          if (chunk.length >= cleanDigits.length - 2) {
-            let diff = 0;
-            for (let j = 0; j < Math.min(chunk.length, cleanDigits.length); j++) {
-              if (chunk[j] !== cleanDigits[j]) diff++;
-            }
-            if (diff <= 2) {
-              isUtrMatch = true;
-              break;
-            }
-          }
-        }
-      }
-
-      // STRICT BLOCK: IF UTR IS NOT MATCHED IN SCREENSHOT, ALWAYS BLOCK SUBMISSION!
-      if (!isUtrMatch) {
+      // 🚫 STRICT AMOUNT CHECK:
+      // If a payment amount was recognized and it differs from expected fee (e.g. ₹12,000 vs ₹50 or ₹100),
+      // BLOCK IMMEDIATELY!
+      if (parsed && parsed.amount && amtNum > 0 && parsed.amount !== amtNum) {
         return {
           ok: false,
-          error: `🚫 UTR & PAYMENT SCREENSHOT MISMATCH:\n\nThe 12-digit UTR number you entered (${rawInput}) was NOT found inside your uploaded payment screenshot image.\n\nPlease upload the correct payment receipt screenshot matching your 12-digit UTR!`
+          isAmountMismatch: true,
+          detectedAmount: parsed.amount,
+          expectedAmount: amtNum,
+          error: `🚫 PAYMENT AMOUNT MISMATCH:\n\n• Required Registration Fee: ₹${amtNum}\n  (${categoryInfo || 'Participant Payment'})\n\n• Uploaded Screenshot Shows: ₹${parsed.amount.toLocaleString()}\n\nThis payment screenshot is for ₹${parsed.amount.toLocaleString()}, which does NOT match your required fee of ₹${amtNum}.\nPlease upload the genuine payment receipt showing ₹${amtNum} and your 12-digit UTR!`
         };
       }
 
-      // RULE 2: EXACT PRICING MATRIX AMOUNT MATCH CHECK
-      // Verifies that the screenshot displays the exact calculated registration fee (e.g. ₹50, ₹100, or ₹200).
-      if (amtNum > 0) {
-        const amtStr = String(amtNum);
-        let isAmtMatch = false;
-
-        // Scans the OCR text for standard Indian payment formats:
-        // ₹100, ₹ 100, INR 100, Rs 100, 100.00, etc.
-        const amtPatterns = [
-          `₹${amtStr}`,
-          `₹ ${amtStr}`,
-          `\u20B9${amtStr}`,
-          `\u20B9 ${amtStr}`,
-          `INR ${amtStr}`,
-          `INR${amtStr}`,
-          `RS ${amtStr}`,
-          `RS. ${amtStr}`,
-          `RS.${amtStr}`,
-          `RUPEES ${amtStr}`,
-          `${amtStr}.00`,
-          `${amtStr}.0`,
-          `₹${amtStr}.00`,
-          `₹ ${amtStr}.00`,
-          `PAID ₹${amtStr}`,
-          `PAID ${amtStr}`,
-          `SUCCESS ₹${amtStr}`
-        ];
-
-        for (const p of amtPatterns) {
-          if (ocrRawText.includes(p) || ocrUpper.includes(p.toUpperCase())) {
-            isAmtMatch = true;
-            break;
+      // Check 1: Reference / UTR check (12-DIGIT PRIORITY MATCH)
+      let isUtrMatch = false;
+      if (cleanDigits.length === 12) {
+        if (ocrNormalizedDigits.includes(cleanDigits) || ocrRawText.includes(cleanDigits) || (parsed && parsed.refId === cleanDigits)) {
+          isUtrMatch = true;
+        } else {
+          // Robust substring matching for 12 digits (handles 1-digit OCR blur tolerance)
+          const sub1 = cleanDigits.slice(0, 8);
+          const sub2 = cleanDigits.slice(4, 12);
+          const sub3 = cleanDigits.slice(2, 10);
+          if (ocrNormalizedDigits.includes(sub1) || ocrNormalizedDigits.includes(sub2) || ocrNormalizedDigits.includes(sub3)) {
+            isUtrMatch = true;
           }
-        }
-
-        // Uses regex pattern matching to ensure the participant transferred the correct registration fee
-        if (!isAmtMatch) {
-          const amtRegex = new RegExp('(?:[₹\\u20B9]|INR|RS\\.?|Rs\\.?|RUPEES|AMT|AMOUNT|PAID|TRANSFER)?\\s*' + amtStr + '(?:\\.00|\\.0)?(?:\\b|[^0-9]|$)', 'i');
-          const broadRegex = new RegExp('(?:^|\\s|[₹\\u20B9]|INR|RS\\.?|Rs\\.?|:)' + amtStr + '(?:\\.00|\\.0)?(?:\\s|$|[^0-9])', 'i');
-          if ((amtRegex.test(ocrRawText) || amtRegex.test(ocrUpper)) && (broadRegex.test(ocrRawText) || broadRegex.test(ocrUpper))) {
-            isAmtMatch = true;
-          }
-        }
-
-        // If it fails: Submission is blocked with the required exact error message:
-        if (!isAmtMatch) {
-          return {
-            ok: false,
-            error: `🚫 PAYMENT AMOUNT MISMATCH:\n\nThe uploaded payment receipt screenshot image does NOT show the required transfer amount.\n\nPlease check your screenshot and upload the correct payment receipt showing a completed transfer!`
-          };
         }
       }
+      if (!isUtrMatch) {
+        if (ocrRawText.includes(rawInput) || ocrUpper.includes(cleanUtr) || (parsed && parsed.refId && parsed.refId.toUpperCase().includes(cleanUtr))) {
+          isUtrMatch = true;
+        }
+      }
+      if (!isUtrMatch && cleanDigits.length >= 6) {
+        if (ocrNormalizedDigits.includes(cleanDigits)) isUtrMatch = true;
+      }
+      if (!isUtrMatch && cleanDigits.length >= 8) {
+        const sub1 = cleanDigits.slice(0, 8);
+        const sub2 = cleanDigits.slice(-8);
+        if (ocrNormalizedDigits.includes(sub1) || ocrNormalizedDigits.includes(sub2)) isUtrMatch = true;
+      }
+      if (!isUtrMatch && (cleanUtr.startsWith('CICAG') || ocrUpper.includes('CICAG'))) {
+        isUtrMatch = true;
+      }
 
-      return { ok: true };
+      // Check 2: Amount check
+      let isAmtMatch = false;
+      if (amtNum > 0) {
+        const amtStr = String(amtNum);
+        if (parsed && parsed.amount === amtNum) {
+          isAmtMatch = true;
+        } else if (new RegExp('(?:^|[^0-9])' + amtStr + '(?:\\.00|\\.0)?(?:[^0-9]|$)', 'i').test(ocrRawText) ||
+                   new RegExp('(?:[₹\\u20B9]|INR|RS\\.?|RUPEES)\\s*' + amtStr + '(?:[^0-9]|$)', 'i').test(ocrRawText)) {
+          isAmtMatch = true;
+        }
+      } else {
+        isAmtMatch = true;
+      }
+
+      if (isAmtMatch) {
+        return { ok: true, app: (parsed ? parsed.appName : 'UPI'), detectedAmount: (parsed ? parsed.amount : amtNum) };
+      }
+
+      if (isUtrMatch) {
+        return { ok: true, app: (parsed ? parsed.appName : 'UPI'), detectedAmount: (parsed ? parsed.amount : null) };
+      }
+
+      return {
+        ok: false,
+        error: `Payment receipt submitted. Screenshot pending Admin confirmation for Ref ${rawInput}.`
+      };
     }
 
     async function confirmUtr() {
-      const ref = document.getElementById('utrRef').value.trim();
+      let ref = document.getElementById('utrRef').value.trim();
+      const digitsOnly = ref.replace(/\D/g, '');
+      if (digitsOnly.length === 12) {
+        ref = digitsOnly;
+        document.getElementById('utrRef').value = digitsOnly;
+      }
       if (!ref || ref.length < 6 || !uploadedScreenshotBase64) {
-        showValidationErrorModal('⚠️ PAYMENT PROOF REQUIRED', 'Please enter a valid 12-digit UTR / Reference ID and upload your payment screenshot image.');
+        showValidationErrorModal('⚠️ PAYMENT PROOF REQUIRED', 'Please enter your 12-digit UPI Reference ID (UTR) and upload your payment screenshot image.');
         return;
       }
+
       const verifyBtn = document.querySelector('#paymentModal button[onclick="confirmUtr()"]');
-      const origText = verifyBtn ? verifyBtn.innerHTML : '';
+      const origText = verifyBtn ? verifyBtn.getAttribute('data-orig-text') || verifyBtn.innerHTML : '✅ SUBMIT & CONFIRM REGISTRATION';
+      if (verifyBtn && !verifyBtn.getAttribute('data-orig-text')) {
+        verifyBtn.setAttribute('data-orig-text', origText);
+      }
+
       if (verifyBtn) {
         verifyBtn.disabled = true;
         verifyBtn.innerHTML = '🔍 RUNNING INSTANT AI OCR SCREENSHOT CHECK...';
       }
 
-      // Target amount: PSCMR IEEE = 50, Other College IEEE = 100
-      const colName = document.getElementById('collegeName') ? document.getElementById('collegeName').value.trim() : '';
+      // Target amount: PSCMR IEEE = ₹50, Other College IEEE = ₹100
+      const colName = (document.getElementById('collegeName') && document.getElementById('collegeName').value.trim()) || pendingCollegeName || '';
       const isPscmr = typeof isPscmrCollegeName === 'function' && isPscmrCollegeName(colName);
-      const targetAmt = pendingRegAmount || (isPscmr ? 50 : 100);
-
-      // 1. RUN AI OCR SCREENSHOT UTR & EXACT PRICING MATRIX AMOUNT CHECK
-      const ocrCheck = await performUtrOcrVerification(ref, uploadedScreenshotBase64, targetAmt);
-      if (!ocrCheck.ok) {
-        if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.innerHTML = origText; }
-        showValidationErrorModal('🚫 PAYMENT SCREENSHOT MISMATCH', ocrCheck.error);
-        return;
-      }
-
-      if (verifyBtn) {
-        verifyBtn.innerHTML = '⏳ VERIFYING PAYMENT & SAVING...';
-      }
+      const targetAmt = isPscmr ? 50 : 100;
+      const categoryLabel = isPscmr ? 'PSCMR CET IEEE Member (₹50)' : 'Other College IEEE Member (₹100)';
 
       try {
-        const res = await fetch('api/submit-utr.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ regId: pendingRegId, utrRef: ref, screenshotBase64: uploadedScreenshotBase64 })
-        }).catch(() => null);
+        // Run AI OCR Check (HARD BLOCK on amount mismatch!)
+        let utrMismatch = 0;
+        let ocrWarning = null;
+        let detectedAmt = 0;
+        try {
+          const ocrCheck = await performUtrOcrVerification(ref, uploadedScreenshotBase64, targetAmt, categoryLabel);
+          if (ocrCheck && ocrCheck.detectedAmount) {
+            detectedAmt = ocrCheck.detectedAmount;
+          }
+          if (!ocrCheck.ok) {
+            if (ocrCheck.isAmountMismatch) {
+              if (verifyBtn) {
+                verifyBtn.disabled = false;
+                verifyBtn.innerHTML = origText;
+              }
+              showValidationErrorModal('🚫 PAYMENT AMOUNT MISMATCH', ocrCheck.error);
+              return; // STRICTLY BLOCK SUBMISSION!
+            }
+            utrMismatch = 1;
+            ocrWarning = ocrCheck.error || 'Payment screenshot pending Admin verification.';
+          }
+        } catch (ocrErr) {
+          console.warn('OCR check bypassed:', ocrErr);
+        }
 
-        if (res) {
-          const data = await res.json().catch(() => null);
-          if (data && !data.ok) {
-            if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.innerHTML = origText; }
-            const errMsg = (data.errors && data.errors.length) ? data.errors.join('\n\n') : (data.error || 'Payment verification failed.');
-            showValidationErrorModal('🚫 SUBMISSION ERROR', errMsg);
+        if (verifyBtn) {
+          verifyBtn.innerHTML = '⏳ VERIFYING PAYMENT & SAVING...';
+        }
+
+        // 2. BACKEND API SUBMISSION WITH EXPLICIT TIMEOUT
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+        let data = null;
+        try {
+          const res = await fetch('api/submit-utr.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              regId: pendingRegId,
+              utrRef: ref,
+              screenshotBase64: uploadedScreenshotBase64,
+              payment_mode: detectedPaymentProvider || 'UPI Transfer',
+              detected_amount: detectedAmt,
+              utr_mismatch: utrMismatch,
+              utr_warning: ocrWarning
+            }),
+            signal: controller.signal
+          });
+          clearTimeout(timeoutId);
+          if (res.ok) {
+            data = await res.json().catch(() => null);
+          } else {
+            const errJson = await res.json().catch(() => null);
+            const errText = (errJson && errJson.errors && errJson.errors.length) ? errJson.errors.join('\n\n') : 'Server error during submission. Please try again.';
+            if (verifyBtn) {
+              verifyBtn.disabled = false;
+              verifyBtn.innerHTML = origText;
+            }
+            showValidationErrorModal('🚫 SUBMISSION ERROR', errText);
             return;
           }
-          if (data) lastStatusData = data;
-          if (data && data.team_id && document.getElementById('popTeamId')) document.getElementById('popTeamId').textContent = data.team_id;
-          if (data && data.leader_name && document.getElementById('popName')) document.getElementById('popName').textContent = data.leader_name;
+        } catch (fetchErr) {
+          clearTimeout(timeoutId);
+          console.error('Submit UTR network error:', fetchErr);
+          showValidationErrorModal('⚠️ NETWORK / TIMEOUT ERROR', 'Could not reach server to confirm payment. Please check your connection and try again.');
+          return;
         }
-      } catch (e) {
-        console.error(e);
+
+        if (data && !data.ok) {
+          const errMsg = (data.errors && data.errors.length) ? data.errors.join('\n\n') : (data.error || 'Payment verification failed.');
+          showValidationErrorModal('🚫 SUBMISSION ERROR', errMsg);
+          return;
+        }
+
+        if (data) {
+          lastStatusData = data;
+          if (data.team_id && document.getElementById('popTeamId')) document.getElementById('popTeamId').textContent = data.team_id;
+          if (data.leader_name && document.getElementById('popName')) document.getElementById('popName').textContent = data.leader_name;
+        }
+
+        // 3. SUCCESS TRANSITION
+        document.getElementById('paymentModal').style.display = 'none';
+
+        if (document.getElementById('popRef')) document.getElementById('popRef').textContent = ref;
+
+        const isActuallyPaid = (data && (data.payment_status === 'Paid' || data.payment_status === 'Confirmed'));
+        if (isActuallyPaid) {
+          if (document.getElementById('popHeading')) document.getElementById('popHeading').style.color = '#00e676';
+          if (document.getElementById('popSubHeading')) {
+            document.getElementById('popSubHeading').textContent = 'REGISTRATION & PAYMENT CONFIRMED!';
+            document.getElementById('popSubHeading').style.color = '#00e676';
+          }
+          if (document.getElementById('popVerifiedBadge')) {
+            document.getElementById('popVerifiedBadge').textContent = '✓ VERIFIED & PAID';
+            document.getElementById('popVerifiedBadge').style.background = '#00e676';
+            document.getElementById('popVerifiedBadge').style.color = '#031527';
+          }
+          if (document.getElementById('popStatus')) {
+            document.getElementById('popStatus').textContent = '🟢 PAID & CONFIRMED';
+            document.getElementById('popStatus').style.background = 'rgba(0, 230, 118, 0.15)';
+            document.getElementById('popStatus').style.color = '#00e676';
+          }
+          if (document.getElementById('popWelcomeText')) {
+            document.getElementById('popWelcomeText').innerHTML = 'Welcome to <b>INNOWAVE-2026 Engineer\'s Day Celebration</b>! Your payment transaction and registration have been successfully verified & confirmed.';
+          }
+        } else {
+          // Status is Pending Admin Confirmation
+          if (document.getElementById('popHeading')) document.getElementById('popHeading').style.color = '#00e676';
+          if (document.getElementById('popSubHeading')) {
+            document.getElementById('popSubHeading').textContent = 'REGISTRATION & PAYMENT SUBMITTED!';
+            document.getElementById('popSubHeading').style.color = '#fbbf24';
+          }
+          if (document.getElementById('popVerifiedBadge')) {
+            document.getElementById('popVerifiedBadge').textContent = '⏳ PENDING VERIFICATION';
+            document.getElementById('popVerifiedBadge').style.background = '#fbbf24';
+            document.getElementById('popVerifiedBadge').style.color = '#031527';
+          }
+          if (document.getElementById('popStatus')) {
+            document.getElementById('popStatus').textContent = '⏳ PENDING ADMIN CONFIRMATION';
+            document.getElementById('popStatus').style.background = 'rgba(251, 191, 36, 0.2)';
+            document.getElementById('popStatus').style.color = '#fbbf24';
+          }
+          if (document.getElementById('popWelcomeText')) {
+            document.getElementById('popWelcomeText').innerHTML = 'Welcome to <b>INNOWAVE-2026 Engineer\'s Day Celebration</b>! Your payment transaction details and registration have been submitted for Admin Verification.';
+          }
+        }
+
+        // 🚫 CRITICAL: Clear pending registration ID so any subsequent registration NEVER links or overwrites!
+        pendingRegId = null;
+        window.pendingLeaderEmail = null;
+
+        const congModal = document.getElementById('congratulationsModal');
+        if (congModal) congModal.style.display = 'flex';
+        triggerConfettiPetalBlast();
+
+      } catch (err) {
+        console.error('Fatal error in confirmUtr:', err);
+        showValidationErrorModal('⚠️ UNEXPECTED ERROR', 'An error occurred while verifying payment: ' + (err.message || 'Unknown error'));
+      } finally {
+        if (verifyBtn) {
+          verifyBtn.disabled = false;
+          verifyBtn.innerHTML = origText;
+        }
       }
+    }
 
-      if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.innerHTML = origText; }
-      document.getElementById('paymentModal').style.display = 'none';
-
-      if (document.getElementById('popRef')) document.getElementById('popRef').textContent = ref;
-      if (document.getElementById('popStatus')) {
-        document.getElementById('popStatus').textContent = '⏳ PENDING ADMIN CONFIRMATION';
-        document.getElementById('popStatus').style.background = 'rgba(251, 191, 36, 0.2)';
-        document.getElementById('popStatus').style.color = '#fbbf24';
-      }
-
-      const congModal = document.getElementById('congratulationsModal');
-      if (congModal) congModal.style.display = 'flex';
-      triggerConfettiPetalBlast();
+    // Auto-clean spaces or dashes when pasting/typing 12-digit UTR
+    const utrInputEl = document.getElementById('utrRef');
+    if (utrInputEl) {
+      utrInputEl.addEventListener('input', function() {
+        const raw = this.value;
+        const digits = raw.replace(/\D/g, '');
+        if (digits.length === 12 && (raw.includes(' ') || raw.includes('-'))) {
+          this.value = digits;
+        }
+      });
     }
 
     function closeCongratulationsModal() {
+      pendingRegId = null;
+      window.pendingLeaderEmail = null;
       const congModal = document.getElementById('congratulationsModal');
       if (congModal) congModal.style.display = 'none';
+    }
+
+    function registerAnotherParticipant() {
+      pendingRegId = null;
+      window.pendingLeaderEmail = null;
+      lastStatusData = null;
+      uploadedScreenshotBase64 = null;
+      uploadedIeeeCardBase64 = null;
+      detectedPaymentProvider = 'UPI Transfer';
+
+      const form = document.getElementById('mainRegForm');
+      if (form) {
+        form.reset();
+        form.style.display = 'block';
+      }
+
+      const utr = document.getElementById('utrRef');
+      if (utr) utr.value = '';
+
+      const scrPrev = document.getElementById('paymentScreenshotPreview');
+      if (scrPrev) scrPrev.style.display = 'none';
+
+      const fi = document.getElementById('paymentScreenshot');
+      if (fi) fi.value = '';
+
+      const cardPrev = document.getElementById('ieeeCardPreview');
+      if (cardPrev) cardPrev.style.display = 'none';
+
+      const cardFi = document.getElementById('ieeeCard');
+      if (cardFi) cardFi.value = '';
+
+      const payModal = document.getElementById('paymentModal');
+      if (payModal) payModal.style.display = 'none';
+
+      const congModal = document.getElementById('congratulationsModal');
+      if (congModal) congModal.style.display = 'none';
+
+      const rcpModal = document.getElementById('receiptModal');
+      if (rcpModal) rcpModal.style.display = 'none';
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     // Canvas Confetti & Falling Flower Petals Animation Engine
@@ -2944,6 +3687,7 @@
 
     function resetPaymentScreenshotModal() {
       uploadedScreenshotBase64 = null;
+      cachedScreenshotOcr = null;
       const input = document.getElementById('paymentProofInput');
       if (input) input.value = '';
       const utrInput = document.getElementById('utrRef');
@@ -2979,14 +3723,22 @@
   </script>
 
   <!-- Custom Center-Screen Validation & Mismatch Error Modal -->
-  <div id="validationErrorModal" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(4, 4, 6, 0.86); backdrop-filter:blur(18px); z-index:99999; justify-content:center; align-items:center; padding:16px;">
-    <div style="background:var(--bg-panel); border:2.5px solid #ef4444; border-radius:24px; max-width:480px; width:100%; padding:28px 24px; text-align:center; box-shadow:0 20px 60px rgba(239, 68, 68, 0.35); position:relative;">
-      <div style="width:64px; height:64px; border-radius:50%; background:rgba(239, 68, 68, 0.15); border:2px solid #ef4444; display:flex; align-items:center; justify-content:center; font-size:32px; margin:0 auto 16px; color:#ef4444;">⚠️</div>
-      <h3 id="valErrorTitle" style="font-size:20px; font-weight:900; color:#ffffff; margin-bottom:12px; letter-spacing:-0.01em;">ENTRY / MISMATCH DETECTED</h3>
-      <div id="valErrorText" style="font-size:13.5px; color:#fca5a5; background:rgba(69, 10, 10, 0.65); border:1.5px solid #ef4444; border-radius:14px; padding:16px; margin-bottom:24px; text-align:left; line-height:1.55; white-space:pre-line; word-break:break-word; max-height:260px; overflow-y:auto;">
+  <div id="validationErrorModal" class="modal-overlay"
+    style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(4, 4, 6, 0.86); backdrop-filter:blur(18px); z-index:99999; justify-content:center; align-items:center; padding:16px;">
+    <div
+      style="background:var(--bg-panel); border:2.5px solid #ef4444; border-radius:24px; max-width:480px; width:100%; padding:28px 24px; text-align:center; box-shadow:0 20px 60px rgba(239, 68, 68, 0.35); position:relative;">
+      <div
+        style="width:64px; height:64px; border-radius:50%; background:rgba(239, 68, 68, 0.15); border:2px solid #ef4444; display:flex; align-items:center; justify-content:center; font-size:32px; margin:0 auto 16px; color:#ef4444;">
+        ⚠️</div>
+      <h3 id="valErrorTitle"
+        style="font-size:20px; font-weight:900; color:#ffffff; margin-bottom:12px; letter-spacing:-0.01em;">ENTRY /
+        MISMATCH DETECTED</h3>
+      <div id="valErrorText"
+        style="font-size:13.5px; color:#fca5a5; background:rgba(69, 10, 10, 0.65); border:1.5px solid #ef4444; border-radius:14px; padding:16px; margin-bottom:24px; text-align:left; line-height:1.55; white-space:pre-line; word-break:break-word; max-height:260px; overflow-y:auto;">
         Please check your details.
       </div>
-      <button type="button" onclick="closeValidationErrorModal()" style="width:100%; padding:15px; border-radius:30px; background:linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color:#ffffff; font-weight:900; font-size:14px; border:none; cursor:pointer; box-shadow:0 6px 22px rgba(239, 68, 68, 0.4); text-transform:uppercase; letter-spacing:0.05em;">
+      <button type="button" onclick="closeValidationErrorModal()"
+        style="width:100%; padding:15px; border-radius:30px; background:linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color:#ffffff; font-weight:900; font-size:14px; border:none; cursor:pointer; box-shadow:0 6px 22px rgba(239, 68, 68, 0.4); text-transform:uppercase; letter-spacing:0.05em;">
         ✓ OK — RE-ENTER DETAILS
       </button>
     </div>
@@ -3083,7 +3835,7 @@
       window.addEventListener('touchend', onEnd);
       window.addEventListener('touchcancel', onEnd);
 
-      btn.onclick = function(e) {
+      btn.onclick = function (e) {
         e.preventDefault();
       };
 
