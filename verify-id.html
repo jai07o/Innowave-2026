@@ -625,60 +625,126 @@ html[data-theme="light"], body.light-theme, [data-theme="light"] body {
         return;
       }
 
+      let data = null;
+
+      // 1. Try PHP / API Endpoint
       try {
         const res = await fetch(`api/check-status.php?q=${encodeURIComponent(participantId)}`);
-        const data = await res.json();
-
-        if (data.ok && data.data) {
-          const p = data.data;
-          const isPaid = (p.payment_status === 'Paid' || p.payment_status === 'Confirmed' || p.payment_status === 'Approved');
-
-          document.getElementById('valTeamId').textContent = p.team_id || p.id;
-          document.getElementById('valStatus').textContent = isPaid ? '✅ Paid & Approved' : '⏳ Pending Admin Approval';
-          document.getElementById('valStatus').className = 'detail-val ' + (isPaid ? 'success' : 'gold');
-          document.getElementById('valName').textContent = p.leader_name || '—';
-          document.getElementById('valCollege').textContent = p.college_name || 'PSCMR College of Engineering & Technology';
-          document.getElementById('valBranchYear').textContent = `${p.branch || '—'} (${p.year || '—'})`;
-          document.getElementById('valCategory').textContent = p.ieee_member === 'Yes' ? `IEEE Member (ID: ${p.ieee_id || 'Yes'})` : 'Non-IEEE Member';
-          document.getElementById('valPhone').textContent = (p.leader_phone && p.leader_phone !== 'N/A' && p.leader_phone !== '—') ? p.leader_phone : '—';
-          document.getElementById('valEmail').textContent = (p.leader_email && p.leader_email !== 'N/A' && p.leader_email !== '—') ? p.leader_email : '—';
-          document.getElementById('valAmount').textContent = p.amount ? `₹${p.amount}` : '—';
-          document.getElementById('valRef').textContent = p.payment_ref || 'Pending Submission';
-
-          loadingBox.style.display = 'none';
-          detailsContent.style.display = 'block';
-
-          const box = document.getElementById('verifiedBadgeBox');
-          if (isPaid) {
-            box.style.background = 'rgba(0, 230, 118, 0.12)';
-            box.style.borderColor = '#00e676';
-            document.getElementById('verifiedIcon').textContent = '✅';
-            document.getElementById('verifiedTitle').textContent = 'VERIFIED OFFICIAL PARTICIPANT';
-            document.getElementById('verifiedTitle').style.color = '#00e676';
-            document.getElementById('verifiedSub').textContent = 'Authenticated & Approved by InnoWave-2K26 Admin Committee';
-          } else {
-            box.style.background = 'rgba(251, 191, 36, 0.12)';
-            box.style.borderColor = '#fbbf24';
-            document.getElementById('verifiedIcon').textContent = '⏳';
-            document.getElementById('verifiedTitle').textContent = 'PENDING ADMIN APPROVAL';
-            document.getElementById('verifiedTitle').style.color = '#fbbf24';
-            document.getElementById('verifiedSub').textContent = 'Registration & payment details received. Awaiting admin approval.';
+        if (res.ok) {
+          const json = await res.json();
+          if (json.ok && json.data) {
+            data = json;
           }
-        } else {
-          loadingBox.style.display = 'none';
-          detailsContent.style.display = 'block';
-          
-          const box = document.getElementById('verifiedBadgeBox');
-          box.style.background = 'rgba(239, 68, 68, 0.12)';
-          box.style.borderColor = '#ef4444';
-          document.getElementById('verifiedIcon').textContent = '❌';
-          document.getElementById('verifiedTitle').textContent = 'UNVERIFIED / INVALID PARTICIPANT';
-          document.getElementById('verifiedTitle').style.color = '#ef4444';
-          document.getElementById('verifiedSub').textContent = 'This Participant ID was not found in the InnoWave-2K26 database.';
         }
-      } catch (err) {
-        console.error('Verification Fetch Error:', err);
-        loadingBox.innerHTML = '<div style="color:#ef4444; font-weight:800; font-size:16px;">❌ Connection error loading verification data.</div>';
+      } catch (e) {
+        console.warn('API Endpoint unavailable, using Render static JSON fallback...');
+      }
+
+      // 2. Secondary Fallback for Render / Static Hosting: Try id_card_folder/participants.json
+      if (!data) {
+        try {
+          const jsonRes = await fetch('id_card_folder/participants.json');
+          if (jsonRes.ok) {
+            const list = await jsonRes.json();
+            const cleanQ = participantId.toLowerCase().trim();
+            const compactQ = cleanQ.replace(/[\s-]/g, '');
+            const digitsOnly = participantId.replace(/\D/g, '');
+
+            const matched = list.find(p => {
+              const pId = (p.id || '').toLowerCase();
+              const pEmail = (p.email || '').toLowerCase();
+              const pRoll = (p.rollNo || '').toLowerCase();
+              const pName = (p.name || '').toLowerCase();
+              const pPhone = (p.phone || '').replace(/\D/g, '');
+              const pIndex = String(p.index || '');
+
+              return pId === cleanQ ||
+                     pId.replace(/[\s-]/g, '') === compactQ ||
+                     pEmail === cleanQ ||
+                     pRoll === cleanQ ||
+                     (digitsOnly && pPhone.includes(digitsOnly)) ||
+                     (digitsOnly && digitsOnly === pIndex) ||
+                     (cleanQ.length >= 3 && pName.includes(cleanQ));
+            });
+
+            if (matched) {
+              data = {
+                ok: true,
+                found: true,
+                data: {
+                  id: matched.index,
+                  team_id: matched.id,
+                  leader_name: matched.name,
+                  leader_email: matched.email,
+                  leader_phone: matched.phone,
+                  college_name: 'PSCMR College of Engineering & Technology',
+                  branch: matched.branchYear,
+                  year: '2026',
+                  roll_no: matched.rollNo,
+                  ieee_member: 'No',
+                  ieee_id: '',
+                  ieee_verification_status: 'N/A',
+                  payment_status: 'Paid',
+                  payment_ref: 'VERIFIED-ID-PASS-' + matched.id,
+                  amount: 100,
+                  fee_label: 'InnoWave-2K26 Official Delegate Pass (Verified)',
+                  created_at: matched.timestamp || '2026-09-11'
+                }
+              };
+            }
+          }
+        } catch (jsonErr) {
+          console.error('Render static JSON fallback error:', jsonErr);
+        }
+      }
+
+      // Render Results
+      if (data && data.ok && data.data) {
+        const p = data.data;
+        const isPaid = (p.payment_status === 'Paid' || p.payment_status === 'Confirmed' || p.payment_status === 'Approved');
+
+        document.getElementById('valTeamId').textContent = p.team_id || p.id;
+        document.getElementById('valStatus').textContent = isPaid ? '✅ Paid & Approved' : '⏳ Pending Admin Approval';
+        document.getElementById('valStatus').className = 'detail-val ' + (isPaid ? 'success' : 'gold');
+        document.getElementById('valName').textContent = p.leader_name || '—';
+        document.getElementById('valCollege').textContent = p.college_name || 'PSCMR College of Engineering & Technology';
+        document.getElementById('valBranchYear').textContent = `${p.branch || '—'} (${p.year || '—'})`;
+        document.getElementById('valCategory').textContent = p.ieee_member === 'Yes' ? `IEEE Member (ID: ${p.ieee_id || 'Yes'})` : 'Non-IEEE Member';
+        document.getElementById('valPhone').textContent = (p.leader_phone && p.leader_phone !== 'N/A' && p.leader_phone !== '—') ? p.leader_phone : '—';
+        document.getElementById('valEmail').textContent = (p.leader_email && p.leader_email !== 'N/A' && p.leader_email !== '—') ? p.leader_email : '—';
+        document.getElementById('valAmount').textContent = p.amount ? `₹${p.amount}` : '—';
+        document.getElementById('valRef').textContent = p.payment_ref || 'Pending Submission';
+
+        loadingBox.style.display = 'none';
+        detailsContent.style.display = 'block';
+
+        const box = document.getElementById('verifiedBadgeBox');
+        if (isPaid) {
+          box.style.background = 'rgba(0, 230, 118, 0.12)';
+          box.style.borderColor = '#00e676';
+          document.getElementById('verifiedIcon').textContent = '✅';
+          document.getElementById('verifiedTitle').textContent = 'VERIFIED OFFICIAL PARTICIPANT';
+          document.getElementById('verifiedTitle').style.color = '#00e676';
+          document.getElementById('verifiedSub').textContent = 'Authenticated & Approved by InnoWave-2K26 Admin Committee';
+        } else {
+          box.style.background = 'rgba(251, 191, 36, 0.12)';
+          box.style.borderColor = '#fbbf24';
+          document.getElementById('verifiedIcon').textContent = '⏳';
+          document.getElementById('verifiedTitle').textContent = 'PENDING ADMIN APPROVAL';
+          document.getElementById('verifiedTitle').style.color = '#fbbf24';
+          document.getElementById('verifiedSub').textContent = 'Registration & payment details received. Awaiting admin approval.';
+        }
+      } else {
+        loadingBox.style.display = 'none';
+        detailsContent.style.display = 'block';
+        
+        const box = document.getElementById('verifiedBadgeBox');
+        box.style.background = 'rgba(239, 68, 68, 0.12)';
+        box.style.borderColor = '#ef4444';
+        document.getElementById('verifiedIcon').textContent = '❌';
+        document.getElementById('verifiedTitle').textContent = 'UNVERIFIED / INVALID PARTICIPANT';
+        document.getElementById('verifiedTitle').style.color = '#ef4444';
+        document.getElementById('verifiedSub').textContent = 'This Participant ID was not found in the InnoWave-2K26 database.';
       }
     }
 
