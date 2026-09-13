@@ -2,9 +2,25 @@
 /**
  * INNOWAVE-2K26 — Robust Registration API Endpoint (PHP + MySQL)
  */
+if (!ob_get_level()) {
+    if (extension_loaded('zlib') && !ini_get('zlib.output_compression')) {
+        @ob_start('ob_gzhandler');
+    } else {
+        @ob_start();
+    }
+}
 require_once __DIR__ . '/db.php';
 
 header('Content-Type: application/json');
+
+if (!isset($pdo) || !$pdo) {
+    http_response_code(500);
+    echo json_encode([
+        'ok' => false,
+        'errors' => ['MySQL Database is offline: ' . ($lastMysqlError ?: 'Please verify MySQL database credentials in api/config.php.')]
+    ]);
+    exit;
+}
 
 $rawInput = file_get_contents('php://input');
 $data = json_decode($rawInput, true);
@@ -88,30 +104,62 @@ if (!empty($errors)) {
     exit;
 }
 
-// Compute Fee (Other College IEEE Member = EXACTLY ₹100 | PSCMR CET IEEE = ₹50)
-$isPscmr = false;
-$cLower = strtolower($college_name);
-if (strpos($cLower, 'pscmr') !== false || strpos($cLower, 'potti sriramulu') !== false || strpos($cLower, 'chalavadi') !== false || strpos($cLower, 'mallikarjuna rao') !== false) {
-    $isPscmr = true;
-}
+// Compute Fee Strictly Based on Participant Details:
+// PSCMR IEEE = ₹50 | PSCMR Non-IEEE = ₹100
+// Other College IEEE = ₹100 | Other College Non-IEEE = ₹200
+$cleanCollege = strtolower(preg_replace('/[^a-z0-9]/', '', $college_name));
+$isPscmr = (
+    strpos($cleanCollege, 'pscmr') !== false ||
+    strpos($cleanCollege, 'pottisriramulu') !== false ||
+    strpos($cleanCollege, 'pottisreeramulu') !== false ||
+    strpos($cleanCollege, 'chalavadi') !== false ||
+    strpos($cleanCollege, 'mallikarjuna') !== false
+);
 
-$ieeeRate = $isPscmr ? 50 : 100;
-$nonIeeeRate = $isPscmr ? 100 : 200;
+$isIeee = ($ieee_member === 'Yes');
 
-$amount = ($ieee_count * $ieeeRate) + ($non_ieee_count * $nonIeeeRate);
-$fee_label = '';
-if ($ieee_count > 0 && $non_ieee_count > 0) {
-    $fee_label = "{$ieee_count} IEEE (₹" . ($ieee_count * $ieeeRate) . ") + {$non_ieee_count} Non-IEEE (₹" . ($non_ieee_count * $nonIeeeRate) . ") = ₹{$amount}";
-} else if ($ieee_count > 0) {
-    $fee_label = "{$ieee_count} IEEE Member(s) × ₹{$ieeeRate} = ₹{$amount}";
+if ($isPscmr) {
+    $amount = $isIeee ? 50 : 100;
+    $fee_label = $isIeee
+        ? 'PSCMR CET IEEE Member Delegate Fee: ₹50'
+        : 'PSCMR CET Non-IEEE Student Delegate Fee: ₹100';
 } else {
-    $fee_label = "{$non_ieee_count} Non-IEEE Member(s) × ₹{$nonIeeeRate} = ₹{$amount}";
+    $amount = $isIeee ? 100 : 200;
+    $fee_label = $isIeee
+        ? 'Other College IEEE Member Delegate Fee: ₹100'
+        : 'Other College Non-IEEE Student Delegate Fee: ₹200';
 }
 
-// 🚫 STRICT ANTI-CLONING & DUPLICATE BLOCK LOGIC
-
-// 1. Strictly Block Duplicate Email Address
+// 🚫 STRICT ANTI-CLONING & SEAMLESS RE-USE FOR PENDING REGISTRATIONS (EMAIL, ADMISSION NO & UTR)
 $cleanEmail = strtolower(trim($leader_email));
+
+// If the student re-submits with the same email before paying, seamlessly link ONLY IF strictly an unpaid draft
+if (empty($existingId) && !empty($cleanEmail)) {
+    $findEmailStmt = $pdo->prepare("SELECT id, team_id, leader_name, payment_status, payment_ref, paid_at FROM registrations WHERE LOWER(TRIM(leader_email)) = ? ORDER BY id DESC LIMIT 1");
+    $findEmailStmt->execute([$cleanEmail]);
+    $foundEmail = $findEmailStmt->fetch();
+    if ($foundEmail) {
+        $st = strtolower(trim($foundEmail['payment_status'] ?? ''));
+        $hasPaymentRef = !empty($foundEmail['payment_ref']) && trim($foundEmail['payment_ref']) !== '';
+        $hasPaidAt = !empty($foundEmail['paid_at']);
+        $isPaidOrSubmitted = ($st === 'paid' || $st === 'confirmed' || $st === 'approved' || strpos($st, 'paid') !== false || strpos($st, 'pending payment confirmation') !== false || $hasPaymentRef || $hasPaidAt);
+
+        if ($isPaidOrSubmitted) {
+            echo json_encode([
+                'ok' => false,
+                'errors' => [
+                    "✅ ALREADY REGISTERED:\n\nThe email address '{$cleanEmail}' is ALREADY registered with Participant ID {$foundEmail['team_id']}.\n\nPlease check your status on the homepage or status check page instead of re-registering."
+                ]
+            ]);
+            exit;
+        } else {
+            // Only reuse if strictly an unpaid draft without any payment submitted
+            $existingId = intval($foundEmail['id']);
+        }
+    }
+}
+
+// 1. Strictly Block Duplicate Email Address (belonging to another registration)
 if (!empty($cleanEmail)) {
     $emailSql = "SELECT id, team_id, leader_name FROM registrations WHERE LOWER(TRIM(leader_email)) = ?";
     $emailParams = [$cleanEmail];
@@ -231,7 +279,7 @@ if (!empty($submittedUtr)) {
 
 $isIeeeMember = ($ieee_member === 'Yes');
 $ieeeStatus = $isIeeeMember ? 'Card Approved' : 'N/A';
-$initialPaymentStatus = 'Pending Payment Confirmation';
+$initialPaymentStatus = 'Pending Screenshot Upload';
 $ieeeOcrMismatch = 0;
 $ieeeWarning = null;
 
@@ -252,38 +300,86 @@ $regId = $existingId;
 $team_id = '';
 
 if ($existingId) {
-    $getStmt = $pdo->prepare("SELECT team_id FROM registrations WHERE id = ?");
+    $getStmt = $pdo->prepare("SELECT * FROM registrations WHERE id = ?");
     $getStmt->execute([$existingId]);
     $exRow = $getStmt->fetch();
     if ($exRow) {
-        $team_id = $exRow['team_id'];
-        $updStmt = $pdo->prepare("
-            UPDATE registrations SET
-                project_title = ?, track = ?, events_selected = ?, description = ?,
-                leader_name = ?, leader_email = ?, leader_phone = ?, college_name = ?,
-                roll_no = ?, branch = ?, year = ?, ieee_member = ?, ieee_id = ?, ieee_card = ?,
-                ieee_verification_status = ?, ieee_email = ?, ieee_grade = ?, ieee_count = ?, non_ieee_count = ?,
-                team_size = ?, member2 = ?, member3 = ?, member4 = ?, amount = ?, fee_label = ?
-            WHERE id = ?
-        ");
-        $updStmt->execute([
-            $project_title, $track, $eventsJson, $description,
-            $leader_name, $leader_email, $leader_phone, $college_name,
-            $roll_no, $branch, $year, $ieee_member, $ieee_id, $ieee_card,
-            $ieeeStatus, $ieee_email, $ieee_grade, $ieee_count, $non_ieee_count,
-            $team_size, $member2, $member3, $member4, $amount, $fee_label,
-            $existingId
-        ]);
+        $exStatus = strtolower(trim($exRow['payment_status'] ?? ''));
+        $exHasUtr = !empty($exRow['payment_ref']) && trim($exRow['payment_ref']) !== '';
+        $exHasPaid = !empty($exRow['paid_at']);
+        $isPaidOrSubmitted = ($exStatus !== 'pending payment' && $exStatus !== 'pending' && $exStatus !== 'pending screenshot upload') || $exHasUtr || $exHasPaid;
+
+        $emailMatches = (strtolower(trim($exRow['leader_email'] ?? '')) === $cleanEmail);
+        $nameMatches = (strtolower(trim($exRow['leader_name'] ?? '')) === strtolower(trim($leader_name)));
+        $isDifferentPerson = (!$emailMatches && !$nameMatches);
+
+        // 🚫 STRICT GUARDRAIL: Never overwrite a registration that already submitted UTR, is paid, or belongs to another participant!
+        if ($isPaidOrSubmitted || $isDifferentPerson) {
+            $existingId = null;
+            $regId = null;
+            $team_id = '';
+        } else {
+            $team_id = $exRow['team_id'];
+            $updStmt = $pdo->prepare("
+                UPDATE registrations SET
+                    project_title = ?, track = ?, events_selected = ?, description = ?,
+                    leader_name = ?, leader_email = ?, leader_phone = ?, college_name = ?,
+                    roll_no = ?, branch = ?, year = ?, ieee_member = ?, ieee_id = ?, ieee_card = ?,
+                    ieee_verification_status = ?, ieee_email = ?, ieee_grade = ?, ieee_count = ?, non_ieee_count = ?,
+                    team_size = ?, member2 = ?, member3 = ?, member4 = ?, amount = ?, fee_label = ?
+                WHERE id = ?
+            ");
+            $updStmt->execute([
+                $project_title, $track, $eventsJson, $description,
+                $leader_name, $leader_email, $leader_phone, $college_name,
+                $roll_no, $branch, $year, $ieee_member, $ieee_id, $ieee_card,
+                $ieeeStatus, $ieee_email, $ieee_grade, $ieee_count, $non_ieee_count,
+                $team_size, $member2, $member3, $member4, $amount, $fee_label,
+                $existingId
+            ]);
+        }
+    } else {
+        $existingId = null;
+        $regId = null;
+        $team_id = '';
     }
 }
 
 if (empty($team_id)) {
-    // Generate new sequential Team ID (IW26-XXXX)
-    $maxStmt = $pdo->query("SELECT MAX(reg_seq) as max_seq FROM registrations");
-    $maxRow = $maxStmt ? $maxStmt->fetch() : null;
-    $nextSeq = ($maxRow && !empty($maxRow['max_seq'])) ? intval($maxRow['max_seq']) + 1 : 1;
+    // Generate new sequential Team ID (IW26-XXXX) with collision-proof scanning
+    $maxSeq = 0;
+    try {
+        $maxStmt = $pdo->query("SELECT MAX(reg_seq) as max_seq FROM registrations");
+        $maxRow = $maxStmt ? $maxStmt->fetch() : null;
+        if ($maxRow && !empty($maxRow['max_seq'])) {
+            $maxSeq = max($maxSeq, intval($maxRow['max_seq']));
+        }
+
+        $allTeamsStmt = $pdo->query("SELECT team_id FROM registrations WHERE team_id LIKE 'IW26-%'");
+        if ($allTeamsStmt) {
+            while ($tRow = $allTeamsStmt->fetch()) {
+                if (preg_match('/IW26-(\d+)/i', $tRow['team_id'] ?? '', $m)) {
+                    $maxSeq = max($maxSeq, intval($m[1]));
+                }
+            }
+        }
+    } catch (Exception $e) {}
+
+    $nextSeq = max(1, $maxSeq + 1);
     $team_id = 'IW26-' . str_pad($nextSeq, 4, '0', STR_PAD_LEFT);
     $createdAt = date('Y-m-d H:i:s');
+
+    // Guarantee that this team_id is strictly not already in use
+    while (true) {
+        $checkStmt = $pdo->prepare("SELECT id FROM registrations WHERE team_id = ? LIMIT 1");
+        $checkStmt->execute([$team_id]);
+        if ($checkStmt->fetch()) {
+            $nextSeq++;
+            $team_id = 'IW26-' . str_pad($nextSeq, 4, '0', STR_PAD_LEFT);
+        } else {
+            break;
+        }
+    }
 
     $insertStmt = $pdo->prepare("
         INSERT INTO registrations (
@@ -301,38 +397,47 @@ if (empty($team_id)) {
         )
     ");
 
-    try {
-        $insertStmt->execute([
-            $team_id, $nextSeq, $project_title, $track, $eventsJson, $description,
-            $leader_name, $leader_email, $leader_phone, $college_name, $roll_no, $branch, $year,
-            $ieee_member, $ieee_id, $ieee_card, $ieeeStatus, $ieee_email, $ieee_grade, $ieee_count, $non_ieee_count,
-            $team_size, $member2, $member3, $member4, $amount, $fee_label, $initialPaymentStatus,
-            $ieeeOcrMismatch, $ieeeWarning, $createdAt
-        ]);
-        $regId = intval($pdo->lastInsertId());
-    } catch (Exception $ex) {
-        $msg = $ex->getMessage();
-        if (strpos($msg, 'UNIQUE') !== false || strpos($msg, 'Duplicate entry') !== false) {
-            if (strpos($msg, 'leader_email') !== false) {
-                echo json_encode(['ok' => false, 'errors' => ['🚫 Email address is already registered.']]);
-            } else if (strpos($msg, 'ieee_id') !== false) {
-                echo json_encode(['ok' => false, 'errors' => ['🚫 IEEE Membership ID is already registered.']]);
-            } else {
-                echo json_encode(['ok' => false, 'errors' => ['🚫 A registration record with matching details already exists.']]);
+    $inserted = false;
+    for ($retry = 0; $retry < 10; $retry++) {
+        try {
+            $insertStmt->execute([
+                $team_id, $nextSeq, $project_title, $track, $eventsJson, $description,
+                $leader_name, $leader_email, $leader_phone, $college_name, $roll_no, $branch, $year,
+                $ieee_member, $ieee_id, $ieee_card, $ieeeStatus, $ieee_email, $ieee_grade, $ieee_count, $non_ieee_count,
+                $team_size, $member2, $member3, $member4, $amount, $fee_label, $initialPaymentStatus,
+                $ieeeOcrMismatch, $ieeeWarning, $createdAt
+            ]);
+            $regId = intval($pdo->lastInsertId());
+            $inserted = true;
+            break;
+        } catch (Exception $ex) {
+            $msg = $ex->getMessage();
+            if (strpos($msg, 'Duplicate entry') !== false && (strpos($msg, 'team_id') !== false || strpos($msg, 'reg_seq') !== false)) {
+                $nextSeq++;
+                $team_id = 'IW26-' . str_pad($nextSeq, 4, '0', STR_PAD_LEFT);
+                continue;
             }
-        } else {
-            echo json_encode(['ok' => false, 'errors' => ['⚠️ Registration database error: ' . $msg]]);
+            if (strpos($msg, 'UNIQUE') !== false || strpos($msg, 'Duplicate entry') !== false) {
+                if (strpos($msg, 'leader_email') !== false) {
+                    echo json_encode(['ok' => false, 'errors' => ['🚫 Email address is already registered.']]);
+                } else if (strpos($msg, 'ieee_id') !== false) {
+                    echo json_encode(['ok' => false, 'errors' => ['🚫 IEEE Membership ID is already registered.']]);
+                } else {
+                    echo json_encode(['ok' => false, 'errors' => ['🚫 A registration record with matching details already exists.']]);
+                }
+            } else {
+                echo json_encode(['ok' => false, 'errors' => ['⚠️ Registration database error: ' . $msg]]);
+            }
+            exit;
         }
-        exit;
     }
 }
 
-// Build UPI intent & note for POTTI SRIRAMULU CHALAVADI MALLIKARJUNA RAO COLLEGE
-$vpa = '1414155000131347@kvbl0001414.ifsc';
+// Official Bank Account Details for POTTI SRIRAMULU CHALAVADI MALLIKARJUNA RAO COLLEGE
 $payeeName = 'POTTI SRIRAMULU CHALAVADI MALLIKARJUNA RAO COLLEGE';
-$note = "InnoWave-2k26 {$team_id}";
-$upiUri = "upi://pay?pa=" . urlencode($vpa) . "&pn=" . urlencode($payeeName) . "&am={$amount}&cu=INR&tn=" . urlencode($note);
-$qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=" . urlencode($upiUri);
+$accNo = '1414155000131347';
+$ifsc = 'KVBL0001414';
+$bank = 'Karur Vysya Bank (KVB)';
 
 echo json_encode([
     'ok' => true,
@@ -342,14 +447,10 @@ echo json_encode([
     'fee_label' => $fee_label,
     'is_ieee' => $isIeeeMember,
     'ieee_verification_status' => $ieeeStatus,
-    'upi' => [
-        'vpa' => $vpa,
-        'name' => $payeeName,
-        'note' => $note,
-        'upiUri' => $upiUri,
-        'qr' => $qrUrl,
-        'acc_no' => '1414155000131347',
-        'ifsc' => 'KVBL0001414',
-        'bank' => 'Karur Vysya Bank (KVB)'
+    'bank_details' => [
+        'beneficiary' => $payeeName,
+        'acc_no' => $accNo,
+        'ifsc' => $ifsc,
+        'bank' => $bank
     ]
 ]);

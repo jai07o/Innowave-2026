@@ -212,8 +212,14 @@ html[data-theme="light"] body, body.light-theme {
 
     @media (max-width: 600px) {
       .details-grid {
-        grid-template-columns: 1fr;
-        gap: 10px;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      .detail-item {
+        padding: 10px 10px !important;
+      }
+      .detail-val {
+        font-size: 13px !important;
       }
     }
 

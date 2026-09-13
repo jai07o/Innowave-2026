@@ -2,14 +2,31 @@
 /**
  * INNOWAVE-2K26 — Participant ID Card & Ticket Data API Endpoint (PHP + MySQL)
  */
+if (!ob_get_level()) {
+    if (extension_loaded('zlib') && !ini_get('zlib.output_compression')) {
+        @ob_start('ob_gzhandler');
+    } else {
+        @ob_start();
+    }
+}
 require_once __DIR__ . '/db.php';
 
 header('Content-Type: application/json');
 
+if (!isset($pdo) || !$pdo) {
+    http_response_code(500);
+    echo json_encode([
+        'ok' => false,
+        'error' => 'MySQL Database is offline: ' . ($lastMysqlError ?: 'Please verify MySQL database credentials in api/config.php.')
+    ]);
+    exit;
+}
+
 $q = trim($_GET['id'] ?? $_GET['q'] ?? '');
 
 if ($q === 'all' || (!empty($_GET['all']) && $_GET['all'] === 'true')) {
-    $stmt = $pdo->query("SELECT * FROM registrations ORDER BY id ASC");
+    $cols = "id, team_id, reg_seq, project_title, track, events_selected, leader_name, leader_email, leader_phone, college_name, roll_no, branch, year, ieee_member, ieee_id, ieee_verification_status, ieee_email, ieee_grade, ieee_count, non_ieee_count, team_size, member2, member3, member4, amount, fee_label, payment_mode, payment_status, payment_ref, duplicate_utr, utr_mismatch, paid_at, created_at";
+    $stmt = $pdo->query("SELECT {$cols} FROM registrations ORDER BY id ASC");
     $rows = $stmt ? $stmt->fetchAll() : [];
     echo json_encode(['ok' => true, 'count' => count($rows), 'participants' => $rows]);
     exit;
@@ -21,22 +38,32 @@ if (empty($q)) {
 }
 
 $cleanQ = strtolower($q);
+$numVal = intval(preg_replace('/\D/', '', $q));
 
 $stmt = $pdo->prepare("
     SELECT *
     FROM registrations
-    WHERE CAST(id AS CHAR) = ?
-       OR LOWER(team_id) = ?
-       OR leader_phone = ?
-       OR LOWER(leader_email) = ?
+    WHERE id = ?
+       OR reg_seq = ?
+       OR LOWER(TRIM(team_id)) = ?
+       OR REPLACE(LOWER(team_id), ' ', '') = ?
+       OR leader_phone LIKE ?
+       OR LOWER(TRIM(leader_email)) = ?
     ORDER BY id DESC LIMIT 1
 ");
 
-$stmt->execute([$q, $cleanQ, $q, $cleanQ]);
+$stmt->execute([
+    $numVal ?: -1,
+    $numVal ?: -1,
+    $cleanQ,
+    str_replace(' ', '', $cleanQ),
+    '%' . $q . '%',
+    $cleanQ
+]);
 $row = $stmt->fetch();
 
 if (!$row) {
-    echo json_encode(['ok' => false, 'error' => 'Participant record not found in Admin database.']);
+    echo json_encode(['ok' => false, 'error' => 'Participant record not found. Please verify your Registration ID or Mobile number.']);
     exit;
 }
 
