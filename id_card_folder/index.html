@@ -398,6 +398,7 @@
 
       <div class="controls-group">
         <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search Name, Roll No, Phone..." oninput="filterCards()">
+        <input type="text" id="qrHostInput" class="search-input" style="width:260px;" placeholder="🌐 QR Domain Host (e.g. onrender.com)" oninput="updateQRCodesWithCurrentHost()" title="Target Host Domain for QR Code Scanning">
         <button class="btn" onclick="triggerPrintAll()">
           🖨️ PRINT ALL (A4 SHEETS)
         </button>
@@ -16614,22 +16615,36 @@
 
     // Dynamically update QR Codes with absolute host URL so phone camera scanning opens verify-id.html directly
     function updateQRCodesWithCurrentHost() {
-      let hostUrl = window.location.origin;
-      if (!hostUrl || hostUrl.startsWith('file:') || hostUrl === 'null') {
-        hostUrl = window.location.protocol + '//' + (window.location.host || 'localhost:3000');
+      let inputVal = document.getElementById('qrHostInput') ? document.getElementById('qrHostInput').value.trim() : '';
+      let hostUrl = '';
+
+      if (inputVal) {
+        hostUrl = inputVal;
+      } else {
+        hostUrl = window.location.origin;
+        if (!hostUrl || hostUrl.startsWith('file:') || hostUrl === 'null' || hostUrl.includes('verify-id.html')) {
+          hostUrl = window.location.protocol + '//' + (window.location.host || 'localhost:3000');
+        }
       }
-      
-      let rootPath = window.location.pathname;
-      rootPath = rootPath.replace(//id_card_folder/(index.html)?$/i, '');
-      if (!rootPath.endsWith('/')) rootPath += '/';
-      
-      const fullVerifyUrlBase = hostUrl + rootPath + 'verify-id.html';
+
+      // Strip trailing slashes and directory suffixes
+      hostUrl = hostUrl.replace(//+$/, '');
+      hostUrl = hostUrl.replace(//verify-id.html.*$/i, '');
+      hostUrl = hostUrl.replace(//id_card_folder.*$/i, '');
+
+      // Ensure scheme prefix if missing
+      if (!hostUrl.startsWith('http://') && !hostUrl.startsWith('https://')) {
+        hostUrl = 'https://' + hostUrl;
+      }
+
+      const verifyUrlBase = hostUrl + '/verify-id.html';
 
       document.querySelectorAll('.id-card-qr-img').forEach(img => {
         const participantId = img.getAttribute('data-id');
         if (participantId) {
-          const fullUrl = fullVerifyUrlBase + '?id=' + encodeURIComponent(participantId);
-          img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(fullUrl);
+          const fullTargetUrl = verifyUrlBase + '?id=' + encodeURIComponent(participantId);
+          const qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(fullTargetUrl);
+          img.src = qrApiUrl;
         }
       });
     }
