@@ -16,6 +16,7 @@ const htmlContent = `<!DOCTYPE html>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -537,8 +538,8 @@ const htmlContent = `<!DOCTYPE html>
           <!-- Footer with QR & Signature -->
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
-              <div style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img class="id-card-qr-img" data-id="${p.id}" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent('https://innowave-2026.onrender.com/verify-id.html?id=' + p.id)}" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" onerror="this.onerror=null; this.src='https://chart.googleapis.com/chart?cht=qr&chs=150x150&chl=' + encodeURIComponent('https://innowave-2026.onrender.com/verify-id.html?id=' + p.id);" />
+              <div class="qr-box-container id-card-qr-img" data-id="${p.id}" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent('https://innowave-2026.onrender.com/verify-id.html?id=' + p.id)}" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -661,12 +662,27 @@ const htmlContent = `<!DOCTYPE html>
 
       const verifyUrlBase = hostUrl + '/verify-id.html';
 
-      document.querySelectorAll('.id-card-qr-img').forEach(img => {
-        const participantId = img.getAttribute('data-id');
+      document.querySelectorAll('.qr-box-container').forEach(box => {
+        const participantId = box.getAttribute('data-id');
         if (participantId) {
           const fullTargetUrl = verifyUrlBase + '?id=' + encodeURIComponent(participantId);
-          const qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(fullTargetUrl);
-          img.src = qrApiUrl;
+          box.innerHTML = '';
+          if (typeof QRCode !== 'undefined') {
+            try {
+              new QRCode(box, {
+                text: fullTargetUrl,
+                width: 48,
+                height: 48,
+                colorDark: "#04091a",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.M
+              });
+            } catch (e) {
+              box.innerHTML = '<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(fullTargetUrl) + '" style="width:100%;height:100%;object-fit:contain;" crossOrigin="anonymous">';
+            }
+          } else {
+            box.innerHTML = '<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(fullTargetUrl) + '" style="width:100%;height:100%;object-fit:contain;" crossOrigin="anonymous">';
+          }
         }
       });
     }
@@ -743,17 +759,19 @@ const htmlContent = `<!DOCTYPE html>
 
       try {
         const canvas = await html2canvas(el, {
-          scale: 3.5, // 300+ DPI Razor Sharp Output
+          scale: 3.2,
           useCORS: true,
-          allowTaint: true,
+          allowTaint: false,
           backgroundColor: '#04091a',
           logging: false
         });
 
         const link = document.createElement('a');
-        link.download = filename + '.png';
+        link.download = (filename || 'InnoWave_ID_Card') + '.png';
         link.href = canvas.toDataURL('image/png', 1.0);
+        document.body.appendChild(link);
         link.click();
+        document.body.removeChild(link);
 
         if (triggerBtn) {
           triggerBtn.innerHTML = '✅ Saved!';
@@ -764,7 +782,6 @@ const htmlContent = `<!DOCTYPE html>
         }
       } catch (err) {
         console.error('PNG download error:', err);
-        alert('Could not render image. Falling back to print...');
         printSingleCard(cardId);
         if (triggerBtn) {
           triggerBtn.disabled = false;
