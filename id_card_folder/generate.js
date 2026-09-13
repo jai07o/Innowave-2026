@@ -537,7 +537,7 @@ const htmlContent = `<!DOCTYPE html>
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent('verify-id.html?id=' + p.id)}" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" onerror="this.onerror=null; this.src='https://chart.googleapis.com/chart?cht=qr&chs=150x150&chl=' + encodeURIComponent('verify-id.html?id=' + p.id);" />
+                <img class="id-card-qr-img" data-id="${p.id}" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent('verify-id.html?id=' + p.id)}" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" onerror="this.onerror=null; this.src='https://chart.googleapis.com/chart?cht=qr&chs=150x150&chl=' + encodeURIComponent('verify-id.html?id=' + p.id);" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -633,6 +633,29 @@ const htmlContent = `<!DOCTYPE html>
     const PARTICIPANTS = ${JSON.stringify(participants)};
     let activeModalIndex = 0;
     let cancelBatchRequested = false;
+
+    // Dynamically update QR Codes with absolute host URL so phone camera scanning opens verify-id.html directly
+    function updateQRCodesWithCurrentHost() {
+      let hostUrl = window.location.origin;
+      if (!hostUrl || hostUrl.startsWith('file:') || hostUrl === 'null') {
+        hostUrl = window.location.protocol + '//' + (window.location.host || 'localhost:3000');
+      }
+      
+      let rootPath = window.location.pathname;
+      rootPath = rootPath.replace(/\/id_card_folder\/(index\.html)?$/i, '');
+      if (!rootPath.endsWith('/')) rootPath += '/';
+      
+      const fullVerifyUrlBase = hostUrl + rootPath + 'verify-id.html';
+
+      document.querySelectorAll('.id-card-qr-img').forEach(img => {
+        const participantId = img.getAttribute('data-id');
+        if (participantId) {
+          const fullUrl = fullVerifyUrlBase + '?id=' + encodeURIComponent(participantId);
+          img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(fullUrl);
+        }
+      });
+    }
+    window.addEventListener('DOMContentLoaded', updateQRCodesWithCurrentHost);
 
     // Search / Filter Function
     function filterCards() {
