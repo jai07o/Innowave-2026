@@ -198,75 +198,88 @@
       border-radius: 24px;
       padding: 20px 16px;
       color: #ffffff;
-      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 242, 254, 0.2);
-      text-align: center;
-      box-sizing: border-box;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 242, 254, 0.2);
       position: relative;
-      background-image: radial-gradient(circle at 50% 0%, rgba(0, 242, 254, 0.12) 0%, transparent 60%);
+      overflow: hidden;
+      box-sizing: border-box;
       cursor: pointer;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background-image: radial-gradient(circle at 50% 0%, rgba(0, 242, 254, 0.12) 0%, transparent 60%);
     }
     .id-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 242, 254, 0.35);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 242, 254, 0.4);
     }
 
-    /* Print Cutting Guide (Only visible in Print) */
     .print-cut-guide {
+      width: 100%;
+      text-align: center;
+      margin-top: 10px;
+      font-size: 10px;
+      color: #64748b;
+      letter-spacing: 0.05em;
       display: none;
     }
 
-    /* PRINT STYLES (A4 Portrait - Clean 2 Cards Per Page with Cut Lines) */
+    /* Standard A4 Print Rules */
     @media print {
-      @page {
-        size: A4 portrait;
-        margin: 8mm 10mm;
-      }
       body {
         background: #ffffff !important;
         color: #000000 !important;
-        padding: 0 !important;
-        margin: 0 !important;
       }
       .no-print, .header-bar, .notice-bar, .card-top-bar, .card-btn-bar, #cardModal, #progressModal {
         display: none !important;
       }
       .cards-container {
-        display: block !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        gap: 15mm !important;
         margin: 0 !important;
-        padding: 0 !important;
+        padding: 10mm !important;
         max-width: 100% !important;
       }
       .card-unit {
         page-break-inside: avoid !important;
         break-inside: avoid !important;
-        margin: 6mm auto 10mm !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        width: 440px !important;
+        margin-bottom: 10mm !important;
       }
       .print-cut-guide {
         display: block !important;
-        width: 100% !important;
-        text-align: center !important;
-        margin-top: 8mm !important;
-        border-bottom: 1.5px dashed #94a3b8 !important;
-        font-size: 9px !important;
-        color: #64748b !important;
-        letter-spacing: 0.15em !important;
-        padding-bottom: 2px !important;
       }
       .id-card {
         box-shadow: none !important;
-        border: 2.5px solid #00f2fe !important;
-        cursor: default !important;
-        transform: none !important;
+        border: 2px solid #000000 !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
         color-adjust: exact !important;
       }
-      .id-card * {
+    }
+
+    /* Single Card Dedicated Print Area */
+    #printSingleArea {
+      display: none;
+    }
+    @media print {
+      body.printing-single > *:not(#printSingleArea) {
+        display: none !important;
+      }
+      body.printing-single #printSingleArea {
+        display: flex !important;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 15mm;
+        width: 100%;
+        min-height: 100vh;
+        background: #ffffff !important;
+      }
+      body.printing-single #printSingleArea .id-card {
+        width: 440px !important;
+        min-width: 440px !important;
+        max-width: 440px !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
         color-adjust: exact !important;
@@ -321,24 +334,29 @@
       background: #ef4444;
       border-color: #ef4444;
     }
+
     .modal-nav-bar {
       display: flex;
       justify-content: space-between;
-      width: 100%;
-      margin-bottom: 16px;
       align-items: center;
-    }
-    .modal-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
       width: 100%;
-      margin-top: 18px;
+      margin-bottom: 20px;
     }
-    .modal-actions .btn {
-      padding: 12px 16px;
-      font-size: 13.5px;
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      width: 100%;
       justify-content: center;
+      flex-wrap: wrap;
+    }
+    .modal-actions button {
+      flex: 1;
+      min-width: 180px;
+      justify-content: center;
+      padding: 12px 18px;
+      font-size: 13px;
     }
 
     /* Batch Download Progress Modal */
@@ -382,8 +400,8 @@
 </head>
 <body>
 
-  <!-- Hidden iframe for silent, direct 1-click single-card print (no popup blocker) -->
-  <iframe id="silentPrintFrame" style="position:fixed; right:0; bottom:0; width:0; height:0; border:0; visibility:hidden;"></iframe>
+  <!-- Container for single card printing -->
+  <div id="printSingleArea"></div>
 
   <!-- Controls Header Bar -->
   <header class="header-bar no-print">
@@ -533,7 +551,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P001" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P001" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P001" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -681,7 +699,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P002" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P002" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P002" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -829,7 +847,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P003" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P003" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P003" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -977,7 +995,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P004" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P004" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P004" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -1125,7 +1143,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P005" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P005" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P005" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -1273,7 +1291,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P006" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P006" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P006" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -1421,7 +1439,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P007" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P007" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P007" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -1569,7 +1587,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P008" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P008" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P008" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -1717,7 +1735,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P009" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P009" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P009" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -1865,7 +1883,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P010" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P010" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P010" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -2013,7 +2031,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P011" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P011" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P011" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -2161,7 +2179,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P012" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P012" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P012" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -2309,7 +2327,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P013" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P013" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P013" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -2457,7 +2475,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P014" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P014" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P014" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -2605,7 +2623,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P015" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P015" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P015" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -2753,7 +2771,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P016" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P016" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P016" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -2901,7 +2919,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P017" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P017" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P017" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -3049,7 +3067,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P018" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P018" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P018" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -3197,7 +3215,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P019" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P019" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P019" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -3345,7 +3363,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P020" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P020" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P020" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -3493,7 +3511,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P021" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P021" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P021" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -3641,7 +3659,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P022" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P022" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P022" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -3789,7 +3807,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P023" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P023" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P023" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -3937,7 +3955,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P024" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P024" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P024" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -4085,7 +4103,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P025" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P025" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P025" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -4233,7 +4251,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P026" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P026" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P026" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -4381,7 +4399,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P027" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P027" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P027" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -4529,7 +4547,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P028" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P028" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P028" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -4677,7 +4695,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P029" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P029" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P029" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -4825,7 +4843,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P030" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P030" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P030" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -4973,7 +4991,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P031" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P031" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P031" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -5121,7 +5139,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P032" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P032" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P032" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -5269,7 +5287,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P033" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P033" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P033" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -5417,7 +5435,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P034" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P034" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P034" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -5565,7 +5583,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P035" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P035" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P035" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -5713,7 +5731,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P036" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P036" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P036" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -5861,7 +5879,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P037" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P037" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P037" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -6009,7 +6027,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P038" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P038" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P038" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -6157,7 +6175,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P039" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P039" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P039" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -6305,7 +6323,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P040" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P040" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P040" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -6453,7 +6471,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P041" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P041" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P041" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -6601,7 +6619,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P042" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P042" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P042" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -6749,7 +6767,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P043" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P043" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P043" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -6897,7 +6915,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P044" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P044" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P044" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -7045,7 +7063,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P045" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P045" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P045" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -7193,7 +7211,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P046" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P046" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P046" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -7341,7 +7359,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P047" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P047" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P047" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -7489,7 +7507,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P048" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P048" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P048" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -7637,7 +7655,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P049" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P049" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P049" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -7785,7 +7803,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P050" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P050" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P050" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -7933,7 +7951,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P051" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P051" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P051" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -8081,7 +8099,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P052" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P052" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P052" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -8229,7 +8247,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P053" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P053" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P053" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -8377,7 +8395,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P054" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P054" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P054" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -8525,7 +8543,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P055" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P055" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P055" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -8673,7 +8691,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P056" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P056" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P056" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -8821,7 +8839,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P057" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P057" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P057" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -8969,7 +8987,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P058" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P058" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P058" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -9117,7 +9135,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P059" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P059" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P059" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -9265,7 +9283,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P060" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P060" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P060" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -9413,7 +9431,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P061" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P061" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P061" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -9561,7 +9579,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P062" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P062" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P062" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -9709,7 +9727,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P063" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P063" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P063" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -9857,7 +9875,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P064" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P064" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P064" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -10005,7 +10023,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P065" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P065" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P065" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -10153,7 +10171,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P066" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P066" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P066" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -10301,7 +10319,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P067" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P067" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P067" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -10449,7 +10467,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P068" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P068" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P068" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -10597,7 +10615,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P069" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P069" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P069" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -10745,7 +10763,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P070" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P070" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P070" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -10893,7 +10911,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P071" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P071" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P071" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -11041,7 +11059,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P072" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P072" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P072" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -11189,7 +11207,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P073" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P073" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P073" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -11337,7 +11355,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P074" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P074" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P074" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -11485,7 +11503,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P075" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P075" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P075" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -11633,7 +11651,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P076" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P076" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P076" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -11781,7 +11799,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P077" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P077" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P077" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -11929,7 +11947,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P078" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P078" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P078" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -12077,7 +12095,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P079" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P079" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P079" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -12225,7 +12243,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P080" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P080" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P080" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -12373,7 +12391,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P081" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P081" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P081" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -12521,7 +12539,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P082" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P082" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P082" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -12669,7 +12687,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P083" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P083" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P083" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -12817,7 +12835,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P084" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P084" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P084" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -12965,7 +12983,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P085" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P085" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P085" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -13113,7 +13131,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P086" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P086" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P086" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -13261,7 +13279,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P087" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P087" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P087" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -13409,7 +13427,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P088" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P088" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P088" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -13557,7 +13575,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P089" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P089" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P089" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -13705,7 +13723,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P090" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P090" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P090" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -13853,7 +13871,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P091" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P091" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P091" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -14001,7 +14019,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P092" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P092" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P092" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -14149,7 +14167,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P093" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P093" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P093" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -14297,7 +14315,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P094" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P094" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P094" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -14445,7 +14463,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P095" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P095" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P095" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -14593,7 +14611,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P096" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P096" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P096" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -14741,7 +14759,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P097" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P097" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P097" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -14889,7 +14907,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P098" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P098" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P098" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -15037,7 +15055,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P099" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P099" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P099" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -15185,7 +15203,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P100" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P100" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P100" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -15333,7 +15351,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P101" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P101" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P101" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -15481,7 +15499,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P102" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P102" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P102" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -15629,7 +15647,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P103" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P103" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P103" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -15777,7 +15795,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P104" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P104" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P104" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -15925,7 +15943,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P105" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P105" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P105" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -16073,7 +16091,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P106" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P106" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P106" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -16221,7 +16239,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P107" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P107" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P107" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -16369,7 +16387,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P108" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P108" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P108" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -16517,7 +16535,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="IW26-P109" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P109" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Finnowave-2026.onrender.com%2Fverify-id.html%3Fid%3DIW26-P109" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -16583,7 +16601,7 @@
     </div>
   </div>
 
-  <!-- Batch Progress Modal -->
+  <!-- Batch Download Progress Modal -->
   <div id="progressModal" class="no-print">
     <div class="progress-box">
       <div style="font-size:32px; margin-bottom:8px;">📦</div>
@@ -16629,9 +16647,9 @@
       }
 
       // Strip trailing slashes and directory suffixes
-      hostUrl = hostUrl.replace(//+$/, '');
-      hostUrl = hostUrl.replace(//verify-id.html.*$/i, '');
-      hostUrl = hostUrl.replace(//id_card_folder.*$/i, '');
+      hostUrl = hostUrl.replace(new RegExp('/+$'), '');
+      hostUrl = hostUrl.replace(new RegExp('/verify-id\\.html.*$', 'i'), '');
+      hostUrl = hostUrl.replace(new RegExp('/id_card_folder.*$', 'i'), '');
 
       // Ensure scheme prefix if missing
       if (!hostUrl.startsWith('http://') && !hostUrl.startsWith('https://')) {
@@ -16686,7 +16704,7 @@
       document.getElementById('totalCountPill').textContent = visible + ' CARDS FOUND';
     }
 
-    // Modal Operations
+    // Modal Operations (Inspect Button)
     function openModal(idx) {
       activeModalIndex = idx;
       renderModalCard();
@@ -16721,6 +16739,17 @@
       clone.style.cursor = 'default';
       clone.style.transform = 'none';
       clone.removeAttribute('onclick');
+
+      // Copy canvas contents (QR Code) from original to clone
+      const origCanvases = originalCard.querySelectorAll('canvas');
+      const cloneCanvases = clone.querySelectorAll('canvas');
+      origCanvases.forEach((c, i) => {
+        if (cloneCanvases[i]) {
+          const destCtx = cloneCanvases[i].getContext('2d');
+          destCtx.drawImage(c, 0, 0);
+        }
+      });
+
       holder.appendChild(clone);
     }
 
@@ -16736,17 +16765,27 @@
       }
 
       try {
+        if (typeof html2canvas === 'undefined') {
+          alert('HTML2Canvas library is still loading. Please try again in a few seconds.');
+          if (triggerBtn) {
+            triggerBtn.disabled = false;
+            triggerBtn.innerHTML = originalText;
+          }
+          return;
+        }
+
         const canvas = await html2canvas(el, {
-          scale: 3.2,
+          scale: 3.0,
           useCORS: true,
-          allowTaint: false,
+          allowTaint: true,
           backgroundColor: '#04091a',
           logging: false
         });
 
+        const dataUrl = canvas.toDataURL('image/png');
         const link = document.createElement('a');
         link.download = (filename || 'InnoWave_ID_Card') + '.png';
-        link.href = canvas.toDataURL('image/png', 1.0);
+        link.href = dataUrl;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -16760,6 +16799,7 @@
         }
       } catch (err) {
         console.error('PNG download error:', err);
+        alert('Could not auto-save PNG image directly: ' + err.message + '\nOpening Print Preview instead...');
         printSingleCard(cardId);
         if (triggerBtn) {
           triggerBtn.disabled = false;
@@ -16768,72 +16808,39 @@
       }
     }
 
-    // Single Card Direct Print (Using Silent iframe to avoid popup blocker)
+    // Pure CSS Single Card Print (100% Reliable, Works in all browsers without popups or iframe restrictions)
     function printSingleCard(cardId, id, name) {
       const el = document.getElementById(cardId);
       if (!el) return;
 
-      const iframe = document.getElementById('silentPrintFrame');
-      const doc = iframe.contentWindow.document;
-      doc.open();
-      doc.write(`<!DOCTYPE html>
-      <html>
-      <head>
-        <title>ID Card - ${id || 'Delegate'} - ${name || 'InnoWave-2K26'}</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@600;700;800;900&display=swap" rel="stylesheet">
-        <style>
-          @page {
-            size: A4 portrait;
-            margin: 15mm auto;
-          }
-          * { box-sizing: border-box; margin: 0; padding: 0; }
-          body {
-            background: #ffffff;
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding-top: 15px;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            color-adjust: exact !important;
-          }
-          .id-card {
-            width: 440px !important;
-            min-width: 440px !important;
-            max-width: 440px !important;
-            background: #04091a !important;
-            border: 2.5px solid #00f2fe !important;
-            border-radius: 24px !important;
-            padding: 20px 16px !important;
-            color: #ffffff !important;
-            box-sizing: border-box !important;
-            box-shadow: none !important;
-            text-align: center !important;
-            background-image: radial-gradient(circle at 50% 0%, rgba(0, 242, 254, 0.12) 0%, transparent 60%) !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            color-adjust: exact !important;
-          }
-          .id-card * {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            color-adjust: exact !important;
-          }
-        </style>
-      </head>
-      <body>
-        ${el.outerHTML}
-      </body>
-      </html>`);
-      doc.close();
+      const printArea = document.getElementById('printSingleArea');
+      printArea.innerHTML = '';
+
+      const clone = el.cloneNode(true);
+      clone.removeAttribute('onclick');
+      clone.style.cursor = 'default';
+      clone.style.transform = 'none';
+
+      // Copy canvas (QR code) drawings to clone
+      const origCanvases = el.querySelectorAll('canvas');
+      const cloneCanvases = clone.querySelectorAll('canvas');
+      origCanvases.forEach((c, i) => {
+        if (cloneCanvases[i]) {
+          const destCtx = cloneCanvases[i].getContext('2d');
+          destCtx.drawImage(c, 0, 0);
+        }
+      });
+
+      printArea.appendChild(clone);
+      document.body.classList.add('printing-single');
 
       setTimeout(() => {
-        iframe.contentWindow.focus();
-        iframe.contentWindow.print();
-      }, 400);
+        window.print();
+        setTimeout(() => {
+          document.body.classList.remove('printing-single');
+          printArea.innerHTML = '';
+        }, 500);
+      }, 150);
     }
 
     // Modal action delegates
@@ -16850,7 +16857,6 @@
 
     // Print All 109 Cards on standard A4 Sheets
     function triggerPrintAll() {
-      // Ensure all cards are visible before printing
       document.getElementById('searchInput').value = '';
       filterCards();
       window.print();
@@ -16900,7 +16906,6 @@
             folder.file(fname, dataUrl, { base64: true });
           }
 
-          // Small yield to keep UI responsive
           await new Promise(resolve => setTimeout(resolve, 20));
         }
 

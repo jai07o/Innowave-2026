@@ -1,0 +1,1118 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>INNOWAVE 2026 Participants</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+<style>
+  th { background-color: #004085; color: #ffffff; font-weight: bold; border: 1px solid #000; text-align: left; }
+  td { border: 1px solid #ccc; mso-number-format:"\@"; }
+</style>
+</head>
+<body>
+<table>
+  <thead>
+    <tr>
+      <th>ID Number</th>
+      <th>S.No</th>
+      <th>Timestamp</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Phone Number</th>
+      <th>Branch/Year</th>
+      <th>Roll Number</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>IW26-P001</td>
+      <td>1</td>
+      <td>2026/09/11 2:35:17 PM GMT+5:30</td>
+      <td>Manoja Gurrala</td>
+      <td>gurralamanoja@gmail.com</td>
+      <td>7989998787</td>
+      <td>CAI/2026</td>
+      <td>26KT13102006</td>
+    </tr>
+    <tr>
+      <td>IW26-P002</td>
+      <td>2</td>
+      <td>2026/09/11 2:35:24 PM GMT+5:30</td>
+      <td>PAVITRA GUGGILA</td>
+      <td>pavitraguggila65@gmail.com</td>
+      <td>6302249379</td>
+      <td>CAI 2026</td>
+      <td>26kt123456</td>
+    </tr>
+    <tr>
+      <td>IW26-P003</td>
+      <td>3</td>
+      <td>2026/09/11 2:35:28 PM GMT+5:30</td>
+      <td>K.v.s.s vandana</td>
+      <td>vandanakunderu@gmail.com</td>
+      <td>9948515884</td>
+      <td>CAI(1st year)</td>
+      <td>26kT123456</td>
+    </tr>
+    <tr>
+      <td>IW26-P004</td>
+      <td>4</td>
+      <td>2026/09/11 2:37:07 PM GMT+5:30</td>
+      <td>KodibanniYamini</td>
+      <td>iniyam68@gmail.com</td>
+      <td>9618718221</td>
+      <td>CSE/2nd year</td>
+      <td>25KT1A0586</td>
+    </tr>
+    <tr>
+      <td>IW26-P005</td>
+      <td>5</td>
+      <td>2026/09/11 2:38:09 PM GMT+5:30</td>
+      <td>Pavana Narasimhudu M</td>
+      <td>pavananarasimha143@gmail.com</td>
+      <td>8074330456</td>
+      <td>CSE 2nd year</td>
+      <td>25KT1A05A8</td>
+    </tr>
+    <tr>
+      <td>IW26-P006</td>
+      <td>6</td>
+      <td>2026/09/11 2:38:35 PM GMT+5:30</td>
+      <td>M.V.SUDHEER</td>
+      <td>sudheermeda10@gmail.com</td>
+      <td>9030543947</td>
+      <td>CSE/2nd year</td>
+      <td>25KT1A05B0</td>
+    </tr>
+    <tr>
+      <td>IW26-P007</td>
+      <td>7</td>
+      <td>2026/09/11 2:39:15 PM GMT+5:30</td>
+      <td>Neelapu Kushal Kumar</td>
+      <td>neelapuchetan045@gmail.com</td>
+      <td>9346690245</td>
+      <td>Cse/2026</td>
+      <td>26KT12345</td>
+    </tr>
+    <tr>
+      <td>IW26-P008</td>
+      <td>8</td>
+      <td>2026/09/11 2:39:30 PM GMT+5:30</td>
+      <td>Mogili venkata Aneesh</td>
+      <td>mogilianeesh5@gmail.com</td>
+      <td>8074966903</td>
+      <td>CSE 1st year</td>
+      <td>26KT80749</td>
+    </tr>
+    <tr>
+      <td>IW26-P009</td>
+      <td>9</td>
+      <td>2026/09/11 2:39:47 PM GMT+5:30</td>
+      <td>Thota Venkata Sai Charan Teja</td>
+      <td>teja7013257@gmail.com</td>
+      <td>7013257283</td>
+      <td>Cse 1st year</td>
+      <td>26kt84783</td>
+    </tr>
+    <tr>
+      <td>IW26-P010</td>
+      <td>10</td>
+      <td>2026/09/11 2:40:38 PM GMT+5:30</td>
+      <td>D.Bhuvaneswari</td>
+      <td>purnadeepala@gmail.com</td>
+      <td>9573591179</td>
+      <td>CSE/1 year</td>
+      <td>26KT123456</td>
+    </tr>
+    <tr>
+      <td>IW26-P011</td>
+      <td>11</td>
+      <td>2026/09/11 2:41:17 PM GMT+5:30</td>
+      <td>Valmiki deepika</td>
+      <td>deepika12062007@gmail.com</td>
+      <td>9492062843</td>
+      <td>CSE 2nd year</td>
+      <td>26KT5A0513</td>
+    </tr>
+    <tr>
+      <td>IW26-P012</td>
+      <td>12</td>
+      <td>2026/09/11 2:41:33 PM GMT+5:30</td>
+      <td>Karumuri Moulya Padmavathi Srivalli</td>
+      <td>padmavathi7206@gmail.com</td>
+      <td>9502657206</td>
+      <td>CSE-B 2ND YEAR</td>
+      <td>25KT1A0580</td>
+    </tr>
+    <tr>
+      <td>IW26-P013</td>
+      <td>13</td>
+      <td>2026/09/11 2:42:04 PM GMT+5:30</td>
+      <td>PEDDAMUTHI  NEELIMA</td>
+      <td>bhavaniramesh1502@gmail.com</td>
+      <td>8919867224</td>
+      <td>CSE/1 year</td>
+      <td>26KT123456</td>
+    </tr>
+    <tr>
+      <td>IW26-P014</td>
+      <td>14</td>
+      <td>2026/09/11 2:42:37 PM GMT+5:30</td>
+      <td>Mohammad Afrin</td>
+      <td>afrinmohammad151@gmail.com</td>
+      <td>9666731789</td>
+      <td>CSE</td>
+      <td>25KT1A05B3</td>
+    </tr>
+    <tr>
+      <td>IW26-P015</td>
+      <td>15</td>
+      <td>2026/09/11 2:43:32 PM GMT+5:30</td>
+      <td>R. Venkata prabhavathi</td>
+      <td>reddybhanojirao@gmail.com</td>
+      <td>9346066636</td>
+      <td>Cse/1st year</td>
+      <td>26kt6775465</td>
+    </tr>
+    <tr>
+      <td>IW26-P016</td>
+      <td>16</td>
+      <td>2026/09/11 2:45:04 PM GMT+5:30</td>
+      <td>B.abhi</td>
+      <td>abhiboddu865@gmail.com</td>
+      <td>8019070159</td>
+      <td>CSE -A</td>
+      <td>74</td>
+    </tr>
+    <tr>
+      <td>IW26-P017</td>
+      <td>17</td>
+      <td>2026/09/11 2:45:47 PM GMT+5:30</td>
+      <td>Ch. Pallavi</td>
+      <td>chpallavi74@gmail.com</td>
+      <td>9014570840</td>
+      <td>Cse</td>
+      <td>25KT1A0567</td>
+    </tr>
+    <tr>
+      <td>IW26-P018</td>
+      <td>18</td>
+      <td>2026/09/11 2:45:49 PM GMT+5:30</td>
+      <td>Jonnalagadda sai teja sri</td>
+      <td>dr.saitejasri@gmail.com</td>
+      <td>8074634846</td>
+      <td>Cse 2nd year</td>
+      <td>25KT1A0576</td>
+    </tr>
+    <tr>
+      <td>IW26-P019</td>
+      <td>19</td>
+      <td>2026/09/11 2:45:57 PM GMT+5:30</td>
+      <td>M. Hasini</td>
+      <td>madduriravikumar123@gmail.com</td>
+      <td>7981146433</td>
+      <td>CSE/1</td>
+      <td>44</td>
+    </tr>
+    <tr>
+      <td>IW26-P020</td>
+      <td>20</td>
+      <td>2026/09/11 2:46:53 PM GMT+5:30</td>
+      <td>K.Manaswini</td>
+      <td>manaswinik012@gmail.com</td>
+      <td>9666973929</td>
+      <td>CSE-B/II</td>
+      <td>25KT1A0579</td>
+    </tr>
+    <tr>
+      <td>IW26-P021</td>
+      <td>21</td>
+      <td>2026/09/11 2:48:24 PM GMT+5:30</td>
+      <td>Mokshitha Bitra</td>
+      <td>mokshithabitra@gmail.com</td>
+      <td>7457897891</td>
+      <td>cse/2</td>
+      <td>25kt1a05b9</td>
+    </tr>
+    <tr>
+      <td>IW26-P022</td>
+      <td>22</td>
+      <td>2026/09/11 2:50:30 PM GMT+5:30</td>
+      <td>Surekha dasari</td>
+      <td>dasarisurekha999@gmail.com</td>
+      <td>9346433611</td>
+      <td>Cse-A/1st year</td>
+      <td>116</td>
+    </tr>
+    <tr>
+      <td>IW26-P023</td>
+      <td>23</td>
+      <td>2026/09/11 2:50:32 PM GMT+5:30</td>
+      <td>Sarmista</td>
+      <td>sarmistaalluru@gmail.com</td>
+      <td>9704245854</td>
+      <td>CSE/ 1st year</td>
+      <td>160</td>
+    </tr>
+    <tr>
+      <td>IW26-P024</td>
+      <td>24</td>
+      <td>2026/09/11 2:50:42 PM GMT+5:30</td>
+      <td>P  N V praveen kumar</td>
+      <td>praveenpadamata1@gmail.com</td>
+      <td>9989165449</td>
+      <td>CSE-A</td>
+      <td>79</td>
+    </tr>
+    <tr>
+      <td>IW26-P025</td>
+      <td>25</td>
+      <td>2026/09/11 2:52:48 PM GMT+5:30</td>
+      <td>Kolakaleti Susmitha</td>
+      <td>ksusmitha0511@gmail.com</td>
+      <td>7013549044</td>
+      <td>CSE general /1st year</td>
+      <td>26kt 910075</td>
+    </tr>
+    <tr>
+      <td>IW26-P026</td>
+      <td>26</td>
+      <td>2026/09/11 2:55:20 PM GMT+5:30</td>
+      <td>P. Durga hemalatha</td>
+      <td>pilladurgahemalatha133@gmail.com</td>
+      <td>9347284133</td>
+      <td>CSE/1st year</td>
+      <td>41</td>
+    </tr>
+    <tr>
+      <td>IW26-P027</td>
+      <td>27</td>
+      <td>2026/09/11 2:57:57 PM GMT+5:30</td>
+      <td>Ch venkatesh</td>
+      <td>challavenky84@gmail.com</td>
+      <td>8309989720</td>
+      <td>Cse 1</td>
+      <td>26kt1a0001</td>
+    </tr>
+    <tr>
+      <td>IW26-P028</td>
+      <td>28</td>
+      <td>2026/09/11 2:58:26 PM GMT+5:30</td>
+      <td>Jeevan katta</td>
+      <td>kattajeevan397@gmail.com</td>
+      <td>9640104984</td>
+      <td>CSE</td>
+      <td>26kt1a0002</td>
+    </tr>
+    <tr>
+      <td>IW26-P029</td>
+      <td>29</td>
+      <td>2026/09/11 2:58:30 PM GMT+5:30</td>
+      <td>Gude Pardha saradhi bhuvana sekhar</td>
+      <td>pardhasaradhigude@gmail.com</td>
+      <td>7075757727</td>
+      <td>CSE</td>
+      <td>26kt1a0003</td>
+    </tr>
+    <tr>
+      <td>IW26-P030</td>
+      <td>30</td>
+      <td>2026/09/11 2:59:11 PM GMT+5:30</td>
+      <td>Akkaraboyina Hasini</td>
+      <td>chalapathi@9848gmail.com</td>
+      <td>9848242848</td>
+      <td>CSE</td>
+      <td>26kt59</td>
+    </tr>
+    <tr>
+      <td>IW26-P031</td>
+      <td>31</td>
+      <td>2026/09/11 2:59:16 PM GMT+5:30</td>
+      <td>M.Bhuvana</td>
+      <td>munnangibhuvanatara@gmail.com</td>
+      <td>9866627377</td>
+      <td>CSE</td>
+      <td>26kt200712</td>
+    </tr>
+    <tr>
+      <td>IW26-P032</td>
+      <td>32</td>
+      <td>2026/09/11 3:00:05 PM GMT+5:30</td>
+      <td>Akkaraboyina Hasini</td>
+      <td>chalapathi@9848gmail.com</td>
+      <td>9848242848</td>
+      <td>CSE</td>
+      <td>26kt59</td>
+    </tr>
+    <tr>
+      <td>IW26-P033</td>
+      <td>33</td>
+      <td>2026/09/11 3:00:10 PM GMT+5:30</td>
+      <td>Darapureddy Aruna</td>
+      <td>arunanaidu82@gmail.com</td>
+      <td>9951651670</td>
+      <td>CSE/1 year</td>
+      <td>26kt123456</td>
+    </tr>
+    <tr>
+      <td>IW26-P034</td>
+      <td>34</td>
+      <td>2026/09/11 3:00:59 PM GMT+5:30</td>
+      <td>B.Swathi</td>
+      <td>saideepika@gmail.com</td>
+      <td>9867518224</td>
+      <td>CSE 2nd year</td>
+      <td>26KT5A0508</td>
+    </tr>
+    <tr>
+      <td>IW26-P035</td>
+      <td>35</td>
+      <td>2026/09/11 3:02:26 PM GMT+5:30</td>
+      <td>Sk.Azarunnisa</td>
+      <td></td>
+      <td>8008086278</td>
+      <td>CSE</td>
+      <td>26KT2008</td>
+    </tr>
+    <tr>
+      <td>IW26-P036</td>
+      <td>36</td>
+      <td>2026/09/11 3:03:32 PM GMT+5:30</td>
+      <td>P lahari</td>
+      <td>laharipuli2007@gmail.com</td>
+      <td>9392929171</td>
+      <td>Cse 1st year</td>
+      <td>26kt123458</td>
+    </tr>
+    <tr>
+      <td>IW26-P037</td>
+      <td>37</td>
+      <td>2026/09/11 3:05:53 PM GMT+5:30</td>
+      <td>B.sirisha</td>
+      <td></td>
+      <td>9666404818</td>
+      <td>CSE 1st yr</td>
+      <td>26KT123454</td>
+    </tr>
+    <tr>
+      <td>IW26-P038</td>
+      <td>38</td>
+      <td>2026/09/11 3:08:41 PM GMT+5:30</td>
+      <td>Sakethram \</td>
+      <td>challavenky84@gmail.com</td>
+      <td>9966108451</td>
+      <td>Cse 1 \</td>
+      <td>26KT123435</td>
+    </tr>
+    <tr>
+      <td>IW26-P039</td>
+      <td>39</td>
+      <td>2026/09/11 3:08:47 PM GMT+5:30</td>
+      <td>KUDALI SRAVAN KUMAR</td>
+      <td>kudalisravankumar@gmail.com</td>
+      <td>9553461367</td>
+      <td>CSE/1year</td>
+      <td>26kt123456</td>
+    </tr>
+    <tr>
+      <td>IW26-P040</td>
+      <td>40</td>
+      <td>2026/09/11 3:09:34 PM GMT+5:30</td>
+      <td>Pedapudi Ruthvik</td>
+      <td>pedapudiruthvik.7@gmail.com</td>
+      <td>9014926436</td>
+      <td>Eee</td>
+      <td>26kt1a4702</td>
+    </tr>
+    <tr>
+      <td>IW26-P041</td>
+      <td>41</td>
+      <td>2026/09/11 3:09:35 PM GMT+5:30</td>
+      <td>SHAHEED</td>
+      <td>shaheedmohammad067@gmail.com</td>
+      <td>6301349001</td>
+      <td>EEE</td>
+      <td>26kt1a4701</td>
+    </tr>
+    <tr>
+      <td>IW26-P042</td>
+      <td>42</td>
+      <td>2026/09/11 3:10:26 PM GMT+5:30</td>
+      <td>K.surya arjun</td>
+      <td></td>
+      <td>9502244635</td>
+      <td>Cse 1</td>
+      <td>26KT3564</td>
+    </tr>
+    <tr>
+      <td>IW26-P043</td>
+      <td>43</td>
+      <td>2026/09/11 3:12:17 PM GMT+5:30</td>
+      <td>P.uday subhash</td>
+      <td>paruchuriudaysubhash@gmail.com</td>
+      <td>9502698864</td>
+      <td>Ai/ds 1st year</td>
+      <td>26kt1a0001</td>
+    </tr>
+    <tr>
+      <td>IW26-P044</td>
+      <td>44</td>
+      <td>2026/09/11 3:12:42 PM GMT+5:30</td>
+      <td>Renukesh Mallem</td>
+      <td>mallemrenukesh09@gmail.com</td>
+      <td>8019085676</td>
+      <td>ECE</td>
+      <td>26kt1a4701</td>
+    </tr>
+    <tr>
+      <td>IW26-P045</td>
+      <td>45</td>
+      <td>2026/09/11 3:13:13 PM GMT+5:30</td>
+      <td>Ch.komal kumar</td>
+      <td>mahesh07961@gmail.com</td>
+      <td>8341052188</td>
+      <td>Aids 1st year</td>
+      <td>26kt1a0002</td>
+    </tr>
+    <tr>
+      <td>IW26-P046</td>
+      <td>46</td>
+      <td>2026/09/11 3:13:50 PM GMT+5:30</td>
+      <td>Jeevan Vamsi</td>
+      <td>vamsichebathina108@gmail.com</td>
+      <td>9346430182</td>
+      <td>ECE A 1</td>
+      <td>26KT1a0405</td>
+    </tr>
+    <tr>
+      <td>IW26-P047</td>
+      <td>47</td>
+      <td>2026/09/11 3:14:43 PM GMT+5:30</td>
+      <td>Shaik Aymaan</td>
+      <td>shaikaymaan53@gmail.com</td>
+      <td>9390558161</td>
+      <td>AI/DS, 2026</td>
+      <td>26kt1a0003</td>
+    </tr>
+    <tr>
+      <td>IW26-P048</td>
+      <td>48</td>
+      <td>2026/09/11 3:15:28 PM GMT+5:30</td>
+      <td>Anagani Charanya sri</td>
+      <td>anaganicharanyasri@gmail.com</td>
+      <td>9014294799</td>
+      <td>Aids</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>IW26-P049</td>
+      <td>49</td>
+      <td>2026/09/11 3:15:33 PM GMT+5:30</td>
+      <td>Shaik Arfa</td>
+      <td>shaikarfa189@gmail.com</td>
+      <td>8919123939</td>
+      <td>AIDS</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>IW26-P050</td>
+      <td>50</td>
+      <td>2026/09/11 3:16:31 PM GMT+5:30</td>
+      <td>Kola Mahesh</td>
+      <td>maheshkola8328@gmail.com</td>
+      <td>8328081010</td>
+      <td>Aids 1st year</td>
+      <td>26kt1a0005</td>
+    </tr>
+    <tr>
+      <td>IW26-P051</td>
+      <td>51</td>
+      <td>2026/09/11 3:16:41 PM GMT+5:30</td>
+      <td>Moin shaik</td>
+      <td>Khajamoinuddin998@gmail.com</td>
+      <td>8074713663</td>
+      <td>AIDS</td>
+      <td>26kt1a0004</td>
+    </tr>
+    <tr>
+      <td>IW26-P052</td>
+      <td>52</td>
+      <td>2026/09/11 3:17:41 PM GMT+5:30</td>
+      <td>V. Ch. S . Hasini</td>
+      <td></td>
+      <td>9866624564</td>
+      <td>AIDS 1st year</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>IW26-P053</td>
+      <td>53</td>
+      <td>2026/09/11 3:17:49 PM GMT+5:30</td>
+      <td>Shaik sameera</td>
+      <td>shaiksameera0209@gmail.com</td>
+      <td>9347880499</td>
+      <td>Aids</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>IW26-P054</td>
+      <td>54</td>
+      <td>2026/09/11 3:18:05 PM GMT+5:30</td>
+      <td>pathivada yeswanth</td>
+      <td>yeswanthsiddu0@gmail.com</td>
+      <td>7036380115</td>
+      <td>cse</td>
+      <td>26kt1a0501</td>
+    </tr>
+    <tr>
+      <td>IW26-P055</td>
+      <td>55</td>
+      <td>2026/09/11 3:20:32 PM GMT+5:30</td>
+      <td>Anagani Charanya sri</td>
+      <td>anaganicharanyasri@gmail.com</td>
+      <td>9014294799</td>
+      <td>AiDS 1st year</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>IW26-P056</td>
+      <td>56</td>
+      <td>2026/09/11 3:21:58 PM GMT+5:30</td>
+      <td>Yarraguntla siri vidya</td>
+      <td>yarraguntlasirividya24@gmail.com</td>
+      <td>9346181463</td>
+      <td>AI&DS</td>
+      <td>26KT1A0006</td>
+    </tr>
+    <tr>
+      <td>IW26-P057</td>
+      <td>57</td>
+      <td>2026/09/11 3:22:07 PM GMT+5:30</td>
+      <td>Rejeti Hamsika sri</td>
+      <td>hamsikar3019@gmail.com</td>
+      <td>7386953019</td>
+      <td>AIDS 1ST YEAR</td>
+      <td>26kt1a0008</td>
+    </tr>
+    <tr>
+      <td>IW26-P058</td>
+      <td>58</td>
+      <td>2026/09/11 3:22:08 PM GMT+5:30</td>
+      <td>Bhargavi Kolavennu</td>
+      <td>bhargavikolavennu648@gmail.com</td>
+      <td>9032360088</td>
+      <td>Al&DS/1st year</td>
+      <td>26KT1A0007</td>
+    </tr>
+    <tr>
+      <td>IW26-P059</td>
+      <td>59</td>
+      <td>2026/09/11 3:25:16 PM GMT+5:30</td>
+      <td>Devarakonda.siri brahmini</td>
+      <td>d.srinivasarao2678@gmail.com</td>
+      <td>8247349303</td>
+      <td>CIC1st year</td>
+      <td>26KT1A4757</td>
+    </tr>
+    <tr>
+      <td>IW26-P060</td>
+      <td>60</td>
+      <td>2026/09/11 3:30:46 PM GMT+5:30</td>
+      <td>Ch.chatresh nadh</td>
+      <td>chatreshchotu@gmail.com</td>
+      <td>9966536589</td>
+      <td>1th year</td>
+      <td>26KT1A4745</td>
+    </tr>
+    <tr>
+      <td>IW26-P061</td>
+      <td>61</td>
+      <td>2026/09/11 3:33:49 PM GMT+5:30</td>
+      <td>Muvva anil</td>
+      <td>muvvaanil70@gmail.com</td>
+      <td>9848539200</td>
+      <td>Iot/2026</td>
+      <td>26kt984853</td>
+    </tr>
+    <tr>
+      <td>IW26-P062</td>
+      <td>62</td>
+      <td>2026/09/11 3:35:40 PM GMT+5:30</td>
+      <td>Koushik ganesh</td>
+      <td>kowshikganesh0708@gmail.com</td>
+      <td>8897093571</td>
+      <td>IOT/1YEAR</td>
+      <td>26kt123456</td>
+    </tr>
+    <tr>
+      <td>IW26-P063</td>
+      <td>63</td>
+      <td>2026/09/11 3:37:49 PM GMT+5:30</td>
+      <td>Medaboyina elisha</td>
+      <td>rajuthabitha99@gmail.com</td>
+      <td>9963386519</td>
+      <td>Iot(cso) 1st year</td>
+      <td>26kt1a4901</td>
+    </tr>
+    <tr>
+      <td>IW26-P064</td>
+      <td>64</td>
+      <td>2026/09/11 3:38:09 PM GMT+5:30</td>
+      <td>Ch yaswanth</td>
+      <td>chipillayaswanth1@gmail.com</td>
+      <td>9398480376</td>
+      <td>CSO 1st year</td>
+      <td>26kt1a4965</td>
+    </tr>
+    <tr>
+      <td>IW26-P065</td>
+      <td>65</td>
+      <td>2026/09/11 3:38:47 PM GMT+5:30</td>
+      <td>Manasa</td>
+      <td>manasamanu1108567@gmail.com</td>
+      <td>9398220074</td>
+      <td>Iot /2026</td>
+      <td>26KT1A49</td>
+    </tr>
+    <tr>
+      <td>IW26-P066</td>
+      <td>66</td>
+      <td>2026/09/11 3:38:49 PM GMT+5:30</td>
+      <td>Sai sindhuja \</td>
+      <td>ballarisaisindhuja005@gmail.com</td>
+      <td>6300828174</td>
+      <td>Iot/2026</td>
+      <td>26kt1a4903</td>
+    </tr>
+    <tr>
+      <td>IW26-P067</td>
+      <td>67</td>
+      <td>2026/09/11 3:38:59 PM GMT+5:30</td>
+      <td>K.devapriya</td>
+      <td>ammulukonduru01@gmail.com</td>
+      <td>8688964079</td>
+      <td>Cic</td>
+      <td>24kt1a4701</td>
+    </tr>
+    <tr>
+      <td>IW26-P068</td>
+      <td>68</td>
+      <td>2026/09/11 3:40:18 PM GMT+5:30</td>
+      <td>M. Vyshanavi \</td>
+      <td>Shivatalks22@gmail.com</td>
+      <td>6300782335</td>
+      <td>CIC / 1st year</td>
+      <td>24KT1A4769</td>
+    </tr>
+    <tr>
+      <td>IW26-P069</td>
+      <td>69</td>
+      <td>2026/09/11 3:40:35 PM GMT+5:30</td>
+      <td>Sk. Noor Ahmad Basha</td>
+      <td>noorahmad.2411190@gmail.com</td>
+      <td>9014868838</td>
+      <td>IOT(CSO)</td>
+      <td>26kt1a4902</td>
+    </tr>
+    <tr>
+      <td>IW26-P070</td>
+      <td>70</td>
+      <td>2026/09/11 3:40:55 PM GMT+5:30</td>
+      <td>Neha nandini</td>
+      <td>niharsurya71@gmail.com</td>
+      <td>9392742556</td>
+      <td>CIC</td>
+      <td>26KT1A4770</td>
+    </tr>
+    <tr>
+      <td>IW26-P071</td>
+      <td>71</td>
+      <td>2026/09/11 3:41:26 PM GMT+5:30</td>
+      <td>Shaik avesh</td>
+      <td>shaikavesh88@gamul.com</td>
+      <td>7799247177</td>
+      <td>Cso</td>
+      <td>26kt7779925</td>
+    </tr>
+    <tr>
+      <td>IW26-P072</td>
+      <td>72</td>
+      <td>2026/09/11 3:41:55 PM GMT+5:30</td>
+      <td>Brighty varshitha rao \</td>
+      <td></td>
+      <td>6302874661</td>
+      <td>Iot /2026 \</td>
+      <td>26kta1998</td>
+    </tr>
+    <tr>
+      <td>IW26-P073</td>
+      <td>73</td>
+      <td>2026/09/11 3:41:58 PM GMT+5:30</td>
+      <td>Sk Mohammed Ali \</td>
+      <td>mohammadalishaik394@gmail.com</td>
+      <td>8978079207</td>
+      <td>CIC/2026</td>
+      <td>26KT1A4779</td>
+    </tr>
+    <tr>
+      <td>IW26-P074</td>
+      <td>74</td>
+      <td>2026/09/11 3:42:29 PM GMT+5:30</td>
+      <td>M.jyothi</td>
+      <td></td>
+      <td>9346171601</td>
+      <td>IOT/2026</td>
+      <td>26kT1a4944</td>
+    </tr>
+    <tr>
+      <td>IW26-P075</td>
+      <td>75</td>
+      <td>2026/09/11 3:43:04 PM GMT+5:30</td>
+      <td>K uma maheshwara manikanta</td>
+      <td>mamathamiddleclassmamatha@gmail.com</td>
+      <td>9010792000</td>
+      <td>CIC/1st year</td>
+      <td>26kt1a4702</td>
+    </tr>
+    <tr>
+      <td>IW26-P076</td>
+      <td>76</td>
+      <td>2026/09/11 3:44:09 PM GMT+5:30</td>
+      <td>A.pravallika</td>
+      <td>pravallika.edu.3@gmail.com</td>
+      <td>7989795248</td>
+      <td>CIC(2026)</td>
+      <td>24kt1a4713</td>
+    </tr>
+    <tr>
+      <td>IW26-P077</td>
+      <td>77</td>
+      <td>2026/09/11 3:45:39 PM GMT+5:30</td>
+      <td>Sunkara Kalyan Ram charan</td>
+      <td>cherrybhavani999@gmail.con</td>
+      <td>7993939504</td>
+      <td>CIC/1st year</td>
+      <td>26KT1A4703</td>
+    </tr>
+    <tr>
+      <td>IW26-P078</td>
+      <td>78</td>
+      <td>2026/09/11 3:45:54 PM GMT+5:30</td>
+      <td>Md zainab zoya</td>
+      <td>nazeerunnisa51@gmail.com</td>
+      <td>9392165588</td>
+      <td>CIC 1st year</td>
+      <td>24kt1a4712</td>
+    </tr>
+    <tr>
+      <td>IW26-P079</td>
+      <td>79</td>
+      <td>2026/09/11 3:47:01 PM GMT+5:30</td>
+      <td>Rayala Leela subramanyam</td>
+      <td>royalsiva1975@gmail.com</td>
+      <td>7842725569</td>
+      <td>CIC/1st year</td>
+      <td>26KT1A4704</td>
+    </tr>
+    <tr>
+      <td>IW26-P080</td>
+      <td>80</td>
+      <td>2026/09/11 3:47:16 PM GMT+5:30</td>
+      <td>Geethika Durga</td>
+      <td>geethikadurga03@gmail.com</td>
+      <td>8074408186</td>
+      <td>CSO 1year</td>
+      <td>26KT1a4903</td>
+    </tr>
+    <tr>
+      <td>IW26-P081</td>
+      <td>81</td>
+      <td>2026/09/11 3:47:21 PM GMT+5:30</td>
+      <td>Pidugu Vyshnavi</td>
+      <td>vyshnavipidugu222@gmail.com</td>
+      <td>7386382587</td>
+      <td>CSO 1ST YEAR \</td>
+      <td>26KT1a4923</td>
+    </tr>
+    <tr>
+      <td>IW26-P082</td>
+      <td>82</td>
+      <td>2026/09/11 3:47:34 PM GMT+5:30</td>
+      <td>Komma nehasri \</td>
+      <td>chakri.komma@gmail.com</td>
+      <td>7989784204</td>
+      <td>Cic 1 year \</td>
+      <td>26KT1A4713</td>
+    </tr>
+    <tr>
+      <td>IW26-P083</td>
+      <td>83</td>
+      <td>2026/09/11 3:49:21 PM GMT+5:30</td>
+      <td>Karri.jaswitha</td>
+      <td>bhavanisuresh391@gmail.com</td>
+      <td>8008006915</td>
+      <td>Cso(IOT]</td>
+      <td>26KT1A4920</td>
+    </tr>
+    <tr>
+      <td>IW26-P084</td>
+      <td>84</td>
+      <td>2026/09/11 3:50:11 PM GMT+5:30</td>
+      <td>K.Bala poojitha</td>
+      <td>balapoojithakola@gmail.com</td>
+      <td>7981225744</td>
+      <td>CSO/1</td>
+      <td>26kt1a4922</td>
+    </tr>
+    <tr>
+      <td>IW26-P085</td>
+      <td>85</td>
+      <td>2026/09/11 3:51:28 PM GMT+5:30</td>
+      <td>Shaik Rabiya Basari</td>
+      <td>shaikrabiyabasari8@gmail.com</td>
+      <td>9885410415</td>
+      <td>CAI</td>
+      <td>00000000RA</td>
+    </tr>
+    <tr>
+      <td>IW26-P086</td>
+      <td>86</td>
+      <td>2026/09/11 3:54:12 PM GMT+5:30</td>
+      <td>R Naga srinidhi</td>
+      <td>srirayalla161@gmail.com</td>
+      <td>9493208033</td>
+      <td>Iot</td>
+      <td>26kt1a4921</td>
+    </tr>
+    <tr>
+      <td>IW26-P087</td>
+      <td>87</td>
+      <td>2026/09/11 3:56:24 PM GMT+5:30</td>
+      <td>NALLAMAMIDI YASASWINI</td>
+      <td>yasaswininallamamidi@gmail.com</td>
+      <td>9396812239</td>
+      <td>CSE-IOT</td>
+      <td>26KT1A4914</td>
+    </tr>
+    <tr>
+      <td>IW26-P088</td>
+      <td>88</td>
+      <td>2026/09/11 3:58:36 PM GMT+5:30</td>
+      <td>Rama Nageswari</td>
+      <td>srnageswari20@gmail.com</td>
+      <td>9033010056</td>
+      <td>Cic</td>
+      <td>26kt12a345</td>
+    </tr>
+    <tr>
+      <td>IW26-P089</td>
+      <td>89</td>
+      <td>2026/09/11 3:58:37 PM GMT+5:30</td>
+      <td>V.prashanth</td>
+      <td>cherrygamer200910@gmail.com</td>
+      <td>8555003180</td>
+      <td>CIC</td>
+      <td>26KT1A4712</td>
+    </tr>
+    <tr>
+      <td>IW26-P090</td>
+      <td>90</td>
+      <td>2026/09/11 4:06:15 PM GMT+5:30</td>
+      <td>P USha rani</td>
+      <td>usharanipopuriusharani@gmail.com</td>
+      <td>6305954566</td>
+      <td>CSE</td>
+      <td>26kt1A0032</td>
+    </tr>
+    <tr>
+      <td>IW26-P091</td>
+      <td>91</td>
+      <td>2026/09/11 4:12:08 PM GMT+5:30</td>
+      <td>Satya Likhitha Ventrapragada \</td>
+      <td>vslikhitha27@gmail.com</td>
+      <td>6281784306</td>
+      <td>CSO 4th</td>
+      <td>23KT1A4959</td>
+    </tr>
+    <tr>
+      <td>IW26-P092</td>
+      <td>92</td>
+      <td>2026/09/11 4:12:34 PM GMT+5:30</td>
+      <td>Pothireddy Aswitha \</td>
+      <td>ashuaswitha861@gmail.com</td>
+      <td>9063237731</td>
+      <td>IOT/4th year \</td>
+      <td>23KT1A4941</td>
+    </tr>
+    <tr>
+      <td>IW26-P093</td>
+      <td>93</td>
+      <td>2026/09/11 4:12:50 PM GMT+5:30</td>
+      <td>Pathan Ayesha</td>
+      <td>pathanayeshakhan6@gmail.com</td>
+      <td>9948223008</td>
+      <td>IOT/4th year</td>
+      <td>23KT1A4937</td>
+    </tr>
+    <tr>
+      <td>IW26-P094</td>
+      <td>94</td>
+      <td>2026/09/11 4:12:59 PM GMT+5:30</td>
+      <td>Kommera Kamakshi \</td>
+      <td>kamakshikommera16@gmail.com</td>
+      <td>8074685778</td>
+      <td>CSE-IOT \</td>
+      <td>23KT1A4922</td>
+    </tr>
+    <tr>
+      <td>IW26-P095</td>
+      <td>95</td>
+      <td>2026/09/11 4:13:11 PM GMT+5:30</td>
+      <td>SAI RAHITHYA MEDISETTY</td>
+      <td>medisettysairahithya@gmail.com</td>
+      <td>7989706617</td>
+      <td>CSE -IoT 4th year</td>
+      <td>23KT1A4929</td>
+    </tr>
+    <tr>
+      <td>IW26-P096</td>
+      <td>96</td>
+      <td>2026/09/11 4:13:43 PM GMT+5:30</td>
+      <td>V Nandini</td>
+      <td>devaravdurgabavani@gmail.com</td>
+      <td>9704047041</td>
+      <td>CSE</td>
+      <td>26Kt1A0440</td>
+    </tr>
+    <tr>
+      <td>IW26-P097</td>
+      <td>97</td>
+      <td>2026/09/11 4:14:12 PM GMT+5:30</td>
+      <td>P. Tanuja</td>
+      <td>thanupaila2005@gmail.com</td>
+      <td>6301929796</td>
+      <td>CSO 4th year</td>
+      <td>23KT1A4934</td>
+    </tr>
+    <tr>
+      <td>IW26-P098</td>
+      <td>98</td>
+      <td>2026/09/11 4:16:58 PM GMT+5:30</td>
+      <td>Sri Yasaswi Yalamanchili</td>
+      <td>yasaswi.y08@gmail.com</td>
+      <td>8125005495</td>
+      <td>IOT 4th</td>
+      <td>23KT1A4962</td>
+    </tr>
+    <tr>
+      <td>IW26-P099</td>
+      <td>99</td>
+      <td>2026/09/11 4:19:24 PM GMT+5:30</td>
+      <td>Kandula rishitha</td>
+      <td>smileyrishitha932@gmail.com</td>
+      <td>8121219160</td>
+      <td>Cse</td>
+      <td>26KT07</td>
+    </tr>
+    <tr>
+      <td>IW26-P100</td>
+      <td>100</td>
+      <td>2026/09/11 4:19:35 PM GMT+5:30</td>
+      <td>Yuva Naga Latha Tadiboina</td>
+      <td>tadiboinayuvanagalatha11@gmail.com</td>
+      <td>9392815776</td>
+      <td>4th CSO</td>
+      <td>23KT1A4956</td>
+    </tr>
+    <tr>
+      <td>IW26-P101</td>
+      <td>101</td>
+      <td>2026/09/11 4:19:47 PM GMT+5:30</td>
+      <td>JALASUTRAM VENKATA NAGA LAKSHMI</td>
+      <td>vnagalakshmijalasutram@gmail.com</td>
+      <td>6300953566</td>
+      <td>CSE IOT  and 4 th year</td>
+      <td>23KT1A4912</td>
+    </tr>
+    <tr>
+      <td>IW26-P102</td>
+      <td>102</td>
+      <td>2026/09/11 5:25:15 PM GMT+5:30</td>
+      <td>Lochini Pothina</td>
+      <td>lochupothina76@gmail.com</td>
+      <td>7993100476</td>
+      <td>CSE - IoT / 4th year \</td>
+      <td>23KT1A4940</td>
+    </tr>
+    <tr>
+      <td>IW26-P103</td>
+      <td>103</td>
+      <td>2026/09/11 5:45:24 PM GMT+5:30</td>
+      <td>Syed Ajmal \</td>
+      <td>iamchosen0511@gmail.com</td>
+      <td>7386160673</td>
+      <td>CSO/4</td>
+      <td>23KT1A4954</td>
+    </tr>
+    <tr>
+      <td>IW26-P104</td>
+      <td>104</td>
+      <td>2026/09/11 6:07:43 PM GMT+5:30</td>
+      <td>Mehnaaz Shireen</td>
+      <td>mehnaazshireen93@gmail.com</td>
+      <td>7396011592</td>
+      <td>Ece/1st year</td>
+      <td>25</td>
+    </tr>
+    <tr>
+      <td>IW26-P105</td>
+      <td>105</td>
+      <td>2026/09/11 7:14:09 PM GMT+5:30</td>
+      <td>KOPPALA JYOTHSNAVI</td>
+      <td>janukoppala56@gmail.com</td>
+      <td>9701193483</td>
+      <td>CSE-IOT / 4 th year</td>
+      <td>23kt1a4923</td>
+    </tr>
+    <tr>
+      <td>IW26-P106</td>
+      <td>106</td>
+      <td>2026/09/11 7:44:08 PM GMT+5:30</td>
+      <td>K.TEJESH</td>
+      <td>rajuthabitha99@gmail.com</td>
+      <td>7842223831</td>
+      <td>CSE -Ds / 1st year \</td>
+      <td>41</td>
+    </tr>
+    <tr>
+      <td>IW26-P107</td>
+      <td>107</td>
+      <td>2026/09/12 7:06:46 PM GMT+5:30</td>
+      <td>Kotturi Kusal Kumar Sai Sri Krishna \</td>
+      <td>kusalkotturi@gmail.com</td>
+      <td>9381683421</td>
+      <td>CSE(IoT)</td>
+      <td>23KT1A4925</td>
+    </tr>
+    <tr>
+      <td>IW26-P108</td>
+      <td>108</td>
+      <td>2026/09/12 7:31:59 PM GMT+5:30</td>
+      <td>Rishi Prathuru \</td>
+      <td>prathururishi9@gmail.com</td>
+      <td>6304507234</td>
+      <td>Cse-IOT 4th year</td>
+      <td>23KT1A4942</td>
+    </tr>
+    <tr>
+      <td>IW26-P109</td>
+      <td>109</td>
+      <td>2026/09/13 1:21:44 PM GMT+5:30</td>
+      <td>Teja Ambati</td>
+      <td>tejaambati0905@gmail.com</td>
+      <td>7816063727</td>
+      <td>1st \</td>
+      <td>26kt1a4771</td>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>

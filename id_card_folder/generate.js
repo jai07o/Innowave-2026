@@ -204,75 +204,88 @@ const htmlContent = `<!DOCTYPE html>
       border-radius: 24px;
       padding: 20px 16px;
       color: #ffffff;
-      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 242, 254, 0.2);
-      text-align: center;
-      box-sizing: border-box;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 242, 254, 0.2);
       position: relative;
-      background-image: radial-gradient(circle at 50% 0%, rgba(0, 242, 254, 0.12) 0%, transparent 60%);
+      overflow: hidden;
+      box-sizing: border-box;
       cursor: pointer;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background-image: radial-gradient(circle at 50% 0%, rgba(0, 242, 254, 0.12) 0%, transparent 60%);
     }
     .id-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 242, 254, 0.35);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 242, 254, 0.4);
     }
 
-    /* Print Cutting Guide (Only visible in Print) */
     .print-cut-guide {
+      width: 100%;
+      text-align: center;
+      margin-top: 10px;
+      font-size: 10px;
+      color: #64748b;
+      letter-spacing: 0.05em;
       display: none;
     }
 
-    /* PRINT STYLES (A4 Portrait - Clean 2 Cards Per Page with Cut Lines) */
+    /* Standard A4 Print Rules */
     @media print {
-      @page {
-        size: A4 portrait;
-        margin: 8mm 10mm;
-      }
       body {
         background: #ffffff !important;
         color: #000000 !important;
-        padding: 0 !important;
-        margin: 0 !important;
       }
       .no-print, .header-bar, .notice-bar, .card-top-bar, .card-btn-bar, #cardModal, #progressModal {
         display: none !important;
       }
       .cards-container {
-        display: block !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        gap: 15mm !important;
         margin: 0 !important;
-        padding: 0 !important;
+        padding: 10mm !important;
         max-width: 100% !important;
       }
       .card-unit {
         page-break-inside: avoid !important;
         break-inside: avoid !important;
-        margin: 6mm auto 10mm !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        width: 440px !important;
+        margin-bottom: 10mm !important;
       }
       .print-cut-guide {
         display: block !important;
-        width: 100% !important;
-        text-align: center !important;
-        margin-top: 8mm !important;
-        border-bottom: 1.5px dashed #94a3b8 !important;
-        font-size: 9px !important;
-        color: #64748b !important;
-        letter-spacing: 0.15em !important;
-        padding-bottom: 2px !important;
       }
       .id-card {
         box-shadow: none !important;
-        border: 2.5px solid #00f2fe !important;
-        cursor: default !important;
-        transform: none !important;
+        border: 2px solid #000000 !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
         color-adjust: exact !important;
       }
-      .id-card * {
+    }
+
+    /* Single Card Dedicated Print Area */
+    #printSingleArea {
+      display: none;
+    }
+    @media print {
+      body.printing-single > *:not(#printSingleArea) {
+        display: none !important;
+      }
+      body.printing-single #printSingleArea {
+        display: flex !important;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 15mm;
+        width: 100%;
+        min-height: 100vh;
+        background: #ffffff !important;
+      }
+      body.printing-single #printSingleArea .id-card {
+        width: 440px !important;
+        min-width: 440px !important;
+        max-width: 440px !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
         color-adjust: exact !important;
@@ -327,24 +340,29 @@ const htmlContent = `<!DOCTYPE html>
       background: #ef4444;
       border-color: #ef4444;
     }
+
     .modal-nav-bar {
       display: flex;
       justify-content: space-between;
-      width: 100%;
-      margin-bottom: 16px;
       align-items: center;
-    }
-    .modal-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
       width: 100%;
-      margin-top: 18px;
+      margin-bottom: 20px;
     }
-    .modal-actions .btn {
-      padding: 12px 16px;
-      font-size: 13.5px;
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      width: 100%;
       justify-content: center;
+      flex-wrap: wrap;
+    }
+    .modal-actions button {
+      flex: 1;
+      min-width: 180px;
+      justify-content: center;
+      padding: 12px 18px;
+      font-size: 13px;
     }
 
     /* Batch Download Progress Modal */
@@ -388,8 +406,8 @@ const htmlContent = `<!DOCTYPE html>
 </head>
 <body>
 
-  <!-- Hidden iframe for silent, direct 1-click single-card print (no popup blocker) -->
-  <iframe id="silentPrintFrame" style="position:fixed; right:0; bottom:0; width:0; height:0; border:0; visibility:hidden;"></iframe>
+  <!-- Container for single card printing -->
+  <div id="printSingleArea"></div>
 
   <!-- Controls Header Bar -->
   <header class="header-bar no-print">
@@ -539,7 +557,7 @@ const htmlContent = `<!DOCTYPE html>
           <div style="display:flex; justify-content:space-between; align-items:flex-end; padding:2px 6px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="qr-box-container id-card-qr-img" data-id="${p.id}" style="background:#ffffff; padding:3px; border-radius:6px; border:1.5px solid #00f2fe; width:54px; height:54px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent('https://innowave-2026.onrender.com/verify-id.html?id=' + p.id)}" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" />
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent('https://innowave-2026.onrender.com/verify-id.html?id=' + p.id)}" alt="Scan to Verify" style="width:100%; height:100%; object-fit:contain; border-radius:2px;" crossOrigin="anonymous" />
               </div>
               <div style="text-align:left;">
                 <div style="color:#00f2fe; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em;">SCAN TO VERIFY</div>
@@ -605,7 +623,7 @@ const htmlContent = `<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- Batch Progress Modal -->
+  <!-- Batch Download Progress Modal -->
   <div id="progressModal" class="no-print">
     <div class="progress-box">
       <div style="font-size:32px; margin-bottom:8px;">📦</div>
@@ -651,9 +669,9 @@ const htmlContent = `<!DOCTYPE html>
       }
 
       // Strip trailing slashes and directory suffixes
-      hostUrl = hostUrl.replace(/\/+$/, '');
-      hostUrl = hostUrl.replace(/\/verify-id\.html.*$/i, '');
-      hostUrl = hostUrl.replace(/\/id_card_folder.*$/i, '');
+      hostUrl = hostUrl.replace(new RegExp('/+$'), '');
+      hostUrl = hostUrl.replace(new RegExp('/verify-id\\\\.html.*$', 'i'), '');
+      hostUrl = hostUrl.replace(new RegExp('/id_card_folder.*$', 'i'), '');
 
       // Ensure scheme prefix if missing
       if (!hostUrl.startsWith('http://') && !hostUrl.startsWith('https://')) {
@@ -708,7 +726,7 @@ const htmlContent = `<!DOCTYPE html>
       document.getElementById('totalCountPill').textContent = visible + ' CARDS FOUND';
     }
 
-    // Modal Operations
+    // Modal Operations (Inspect Button)
     function openModal(idx) {
       activeModalIndex = idx;
       renderModalCard();
@@ -743,6 +761,17 @@ const htmlContent = `<!DOCTYPE html>
       clone.style.cursor = 'default';
       clone.style.transform = 'none';
       clone.removeAttribute('onclick');
+
+      // Copy canvas contents (QR Code) from original to clone
+      const origCanvases = originalCard.querySelectorAll('canvas');
+      const cloneCanvases = clone.querySelectorAll('canvas');
+      origCanvases.forEach((c, i) => {
+        if (cloneCanvases[i]) {
+          const destCtx = cloneCanvases[i].getContext('2d');
+          destCtx.drawImage(c, 0, 0);
+        }
+      });
+
       holder.appendChild(clone);
     }
 
@@ -758,17 +787,27 @@ const htmlContent = `<!DOCTYPE html>
       }
 
       try {
+        if (typeof html2canvas === 'undefined') {
+          alert('HTML2Canvas library is still loading. Please try again in a few seconds.');
+          if (triggerBtn) {
+            triggerBtn.disabled = false;
+            triggerBtn.innerHTML = originalText;
+          }
+          return;
+        }
+
         const canvas = await html2canvas(el, {
-          scale: 3.2,
+          scale: 3.0,
           useCORS: true,
-          allowTaint: false,
+          allowTaint: true,
           backgroundColor: '#04091a',
           logging: false
         });
 
+        const dataUrl = canvas.toDataURL('image/png');
         const link = document.createElement('a');
         link.download = (filename || 'InnoWave_ID_Card') + '.png';
-        link.href = canvas.toDataURL('image/png', 1.0);
+        link.href = dataUrl;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -782,6 +821,7 @@ const htmlContent = `<!DOCTYPE html>
         }
       } catch (err) {
         console.error('PNG download error:', err);
+        alert('Could not auto-save PNG image directly: ' + err.message + '\\nOpening Print Preview instead...');
         printSingleCard(cardId);
         if (triggerBtn) {
           triggerBtn.disabled = false;
@@ -790,72 +830,39 @@ const htmlContent = `<!DOCTYPE html>
       }
     }
 
-    // Single Card Direct Print (Using Silent iframe to avoid popup blocker)
+    // Pure CSS Single Card Print (100% Reliable, Works in all browsers without popups or iframe restrictions)
     function printSingleCard(cardId, id, name) {
       const el = document.getElementById(cardId);
       if (!el) return;
 
-      const iframe = document.getElementById('silentPrintFrame');
-      const doc = iframe.contentWindow.document;
-      doc.open();
-      doc.write(\`<!DOCTYPE html>
-      <html>
-      <head>
-        <title>ID Card - \${id || 'Delegate'} - \${name || 'InnoWave-2K26'}</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@600;700;800;900&display=swap" rel="stylesheet">
-        <style>
-          @page {
-            size: A4 portrait;
-            margin: 15mm auto;
-          }
-          * { box-sizing: border-box; margin: 0; padding: 0; }
-          body {
-            background: #ffffff;
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding-top: 15px;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            color-adjust: exact !important;
-          }
-          .id-card {
-            width: 440px !important;
-            min-width: 440px !important;
-            max-width: 440px !important;
-            background: #04091a !important;
-            border: 2.5px solid #00f2fe !important;
-            border-radius: 24px !important;
-            padding: 20px 16px !important;
-            color: #ffffff !important;
-            box-sizing: border-box !important;
-            box-shadow: none !important;
-            text-align: center !important;
-            background-image: radial-gradient(circle at 50% 0%, rgba(0, 242, 254, 0.12) 0%, transparent 60%) !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            color-adjust: exact !important;
-          }
-          .id-card * {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            color-adjust: exact !important;
-          }
-        </style>
-      </head>
-      <body>
-        \${el.outerHTML}
-      </body>
-      </html>\`);
-      doc.close();
+      const printArea = document.getElementById('printSingleArea');
+      printArea.innerHTML = '';
+
+      const clone = el.cloneNode(true);
+      clone.removeAttribute('onclick');
+      clone.style.cursor = 'default';
+      clone.style.transform = 'none';
+
+      // Copy canvas (QR code) drawings to clone
+      const origCanvases = el.querySelectorAll('canvas');
+      const cloneCanvases = clone.querySelectorAll('canvas');
+      origCanvases.forEach((c, i) => {
+        if (cloneCanvases[i]) {
+          const destCtx = cloneCanvases[i].getContext('2d');
+          destCtx.drawImage(c, 0, 0);
+        }
+      });
+
+      printArea.appendChild(clone);
+      document.body.classList.add('printing-single');
 
       setTimeout(() => {
-        iframe.contentWindow.focus();
-        iframe.contentWindow.print();
-      }, 400);
+        window.print();
+        setTimeout(() => {
+          document.body.classList.remove('printing-single');
+          printArea.innerHTML = '';
+        }, 500);
+      }, 150);
     }
 
     // Modal action delegates
@@ -872,7 +879,6 @@ const htmlContent = `<!DOCTYPE html>
 
     // Print All 109 Cards on standard A4 Sheets
     function triggerPrintAll() {
-      // Ensure all cards are visible before printing
       document.getElementById('searchInput').value = '';
       filterCards();
       window.print();
@@ -922,7 +928,6 @@ const htmlContent = `<!DOCTYPE html>
             folder.file(fname, dataUrl, { base64: true });
           }
 
-          // Small yield to keep UI responsive
           await new Promise(resolve => setTimeout(resolve, 20));
         }
 
